@@ -1,12 +1,15 @@
 # Design Screen
 
-You are helping the user create a screen design for a section of their product. The screen design will be a props-based React component that can be exported and integrated into any React codebase.
+You are helping the user create a screen design for a section of their product. The screen design will be a Vue 3 component using Composition API that can be exported and integrated into any Vue codebase.
+
+**Important:** This project uses Vue 3 with Composition API. All components must follow the patterns defined in `CLAUDE.md`.
 
 ## Step 1: Check Prerequisites
 
 First, identify the target section and verify that `spec.md`, `data.json`, and `types.ts` all exist.
 
 Read `/product/product-roadmap.md` to get the list of available sections.
+Read `CLAUDE.md` to understand the Vue.js patterns used in this project.
 
 If there's only one section, auto-select it. If there are multiple sections, use the AskUserQuestion tool to ask which section the user wants to create a screen design for.
 
@@ -39,9 +42,9 @@ If design tokens exist, read them and use them for styling. If they don't exist,
 "Note: Design tokens haven't been defined yet. I'll use default styling, but for consistent branding, consider running `/design-tokens` first."
 
 **Shell:**
-- Check if `src/shell/components/AppShell.tsx` exists
+- Check if `src/components/shell/AppShell.vue` exists
 
-If shell exists, the screen design will render inside the shell in Design OS. If not, show a warning:
+If shell exists, the screen design will render inside the shell. If not, show a warning:
 
 "Note: An application shell hasn't been designed yet. The screen design will render standalone. Consider running `/design-shell` first to see section screen designs in the full app context."
 
@@ -51,7 +54,7 @@ Read and analyze all three files:
 
 1. **spec.md** - Understand the user flows and UI requirements
 2. **data.json** - Understand the data structure and sample content
-3. **types.ts** - Understand the TypeScript interfaces and available callbacks
+3. **types.ts** - Understand the TypeScript interfaces and available events
 
 Identify what views are needed based on the spec. Common patterns:
 
@@ -78,193 +81,344 @@ Before creating the screen design, read the `frontend-design` skill to ensure hi
 
 Read the file at `.claude/skills/frontend-design/SKILL.md` and follow its guidance for creating distinctive, production-grade interfaces.
 
-## Step 6: Create the Props-Based Component
+## Step 6: Create the Vue Component
 
-Create the main component file at `src/sections/[section-id]/components/[ViewName].tsx`.
+Create the main component file at `src/components/sections/[section-id]/[ViewName].vue`.
 
 ### Component Structure
 
 The component MUST:
 
+- Use Vue 3 Composition API with `<script setup>`
 - Import types from the types.ts file
-- Accept all data via props (never import data.json directly)
-- Accept callback props for all actions
+- Accept all data via `defineProps`
+- Emit events via `defineEmits` for all actions
+- Use scoped styles
 - Be fully self-contained and portable
 
 Example:
 
-```tsx
-import type { InvoiceListProps } from '@/../product/sections/[section-id]/types'
+```vue
+<script setup lang="ts">
+import type { Invoice, InvoiceListEmits } from '@/../product/sections/invoices/types'
 
-export function InvoiceList({
-  invoices,
-  onView,
-  onEdit,
-  onDelete,
-  onCreate
-}: InvoiceListProps) {
-  return (
-    <div className="max-w-4xl mx-auto">
-      {/* Component content here */}
+// Props
+const props = defineProps<{
+  invoices: Invoice[]
+}>()
 
-      {/* Example: Using a callback */}
-      <button onClick={onCreate}>Create Invoice</button>
+// Events
+const emit = defineEmits<InvoiceListEmits>()
 
-      {/* Example: Mapping data with callbacks */}
-      {invoices.map(invoice => (
-        <div key={invoice.id}>
-          <span>{invoice.clientName}</span>
-          <button onClick={() => onView?.(invoice.id)}>View</button>
-          <button onClick={() => onEdit?.(invoice.id)}>Edit</button>
-          <button onClick={() => onDelete?.(invoice.id)}>Delete</button>
-        </div>
-      ))}
-    </div>
-  )
+// Handlers
+const handleView = (id: string) => {
+  emit('view', id)
 }
+
+const handleCreate = () => {
+  emit('create')
+}
+</script>
+
+<template>
+  <div class="invoice-list">
+    <!-- Header with create button -->
+    <div class="list-header">
+      <h2>Invoices</h2>
+      <button class="btn-primary" @click="handleCreate">
+        Create Invoice
+      </button>
+    </div>
+
+    <!-- Invoice items -->
+    <div class="invoice-items">
+      <div
+        v-for="invoice in invoices"
+        :key="invoice.id"
+        class="invoice-item"
+      >
+        <span class="client-name">{{ invoice.clientName }}</span>
+        <div class="actions">
+          <button @click="emit('view', invoice.id)">View</button>
+          <button @click="emit('edit', invoice.id)">Edit</button>
+          <button @click="emit('delete', invoice.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.invoice-list {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.invoice-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.invoice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--color-neutral-50);
+  border-radius: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .invoice-item {
+    background: var(--color-neutral-800);
+  }
+}
+</style>
 ```
 
 ### Design Requirements
 
-- **Mobile responsive:** Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) and ensure the design layout works gracefully on mobile, tablet and desktop screen sizes.
-- **Light & dark mode:** Use `dark:` variants for all colors
-- **Use design tokens:** If defined, apply the product's color palette and typography
+- **Mobile responsive:** Use CSS media queries or flexible layouts to ensure the design works on mobile, tablet, and desktop
+- **Light & dark mode:** Use CSS custom properties with `@media (prefers-color-scheme: dark)` or CSS variables
+- **Use design tokens:** Apply the product's color palette via CSS custom properties (e.g., `var(--color-primary)`)
 - **Follow the frontend-design skill:** Create distinctive, memorable interfaces
+- **Scoped styles:** Always use `<style scoped>` to prevent CSS leakage
 
 ### Applying Design Tokens
 
 **If `/product/design-system/colors.json` exists:**
-- Use the primary color for buttons, links, and key accents
-- Use the secondary color for tags, highlights, secondary elements
-- Use the neutral color for backgrounds, text, and borders
-- Example: If primary is `lime`, use `lime-500`, `lime-600`, etc. for primary actions
+- Use the primary color for buttons, links, and key accents: `var(--color-primary)`
+- Use the secondary color for tags, highlights: `var(--color-secondary)`
+- Use the neutral color for backgrounds, text, borders: `var(--color-neutral-*)`
 
 **If `/product/design-system/typography.json` exists:**
-- Note the font choices for reference in comments
-- The fonts will be applied at the app level, but use appropriate font weights
+- Use font variables: `var(--font-heading)`, `var(--font-body)`
 
 **If design tokens don't exist:**
-- Fall back to `stone` for neutrals and `lime` for accents (Design OS defaults)
+- Fall back to slate for neutrals and teal for accents
 
 ### What to Include
 
 - Implement ALL user flows and UI requirements from the spec
 - Use the prop data (not hardcoded values)
-- Include realistic UI states (hover, active, etc.)
-- Use the callback props for all interactive elements
-- Handle optional callbacks with optional chaining: `onClick={() => onDelete?.(id)}`
+- Include realistic UI states (hover, active, focus)
+- Emit events for all interactive elements
+- Use Vue's `v-for`, `v-if`, `v-show` directives appropriately
 
 ### What NOT to Include
 
 - No `import data from` statements - data comes via props
 - No features not specified in the spec
-- No routing logic - callbacks handle navigation intent
+- No routing logic - events handle navigation intent
 - No navigation elements (shell handles navigation)
 
 ## Step 7: Create Sub-Components (If Needed)
 
-For complex views, break down into sub-components. Each sub-component should also be props-based.
+For complex views, break down into sub-components. Each sub-component should also use `defineProps` and `defineEmits`.
 
-Create sub-components at `src/sections/[section-id]/components/[SubComponent].tsx`.
+Create sub-components at `src/components/sections/[section-id]/[SubComponent].vue`.
 
 Example:
 
-```tsx
-import type { Invoice } from '@/../product/sections/[section-id]/types'
+```vue
+<script setup lang="ts">
+import type { Invoice } from '@/../product/sections/invoices/types'
 
-interface InvoiceRowProps {
+// Props
+const props = defineProps<{
   invoice: Invoice
-  onView?: () => void
-  onEdit?: () => void
-  onDelete?: () => void
+}>()
+
+// Events
+const emit = defineEmits<{
+  (e: 'view'): void
+  (e: 'edit'): void
+  (e: 'delete'): void
+}>()
+</script>
+
+<template>
+  <div class="invoice-row">
+    <div class="invoice-info">
+      <p class="client-name">{{ invoice.clientName }}</p>
+      <p class="invoice-number">{{ invoice.invoiceNumber }}</p>
+    </div>
+    <div class="invoice-actions">
+      <button @click="emit('view')">View</button>
+      <button @click="emit('edit')">Edit</button>
+      <button @click="emit('delete')">Delete</button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.invoice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-neutral-200);
 }
 
-export function InvoiceRow({ invoice, onView, onEdit, onDelete }: InvoiceRowProps) {
-  return (
-    <div className="flex items-center justify-between p-4 border-b">
-      <div>
-        <p className="font-medium">{invoice.clientName}</p>
-        <p className="text-sm text-stone-500">{invoice.invoiceNumber}</p>
-      </div>
-      <div className="flex gap-2">
-        <button onClick={onView}>View</button>
-        <button onClick={onEdit}>Edit</button>
-        <button onClick={onDelete}>Delete</button>
-      </div>
-    </div>
-  )
+.invoice-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
+
+.client-name {
+  font-weight: 500;
+  color: var(--color-neutral-900);
+}
+
+.invoice-number {
+  font-size: 0.875rem;
+  color: var(--color-neutral-500);
+}
+
+.invoice-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+</style>
 ```
 
 Then import and use in the main component:
 
-```tsx
-import { InvoiceRow } from './InvoiceRow'
+```vue
+<script setup lang="ts">
+import type { Invoice, InvoiceListEmits } from '@/../product/sections/invoices/types'
+import InvoiceRow from './InvoiceRow.vue'
 
-export function InvoiceList({ invoices, onView, onEdit, onDelete }: InvoiceListProps) {
-  return (
-    <div>
-      {invoices.map(invoice => (
-        <InvoiceRow
-          key={invoice.id}
-          invoice={invoice}
-          onView={() => onView?.(invoice.id)}
-          onEdit={() => onEdit?.(invoice.id)}
-          onDelete={() => onDelete?.(invoice.id)}
-        />
-      ))}
-    </div>
-  )
-}
+const props = defineProps<{
+  invoices: Invoice[]
+}>()
+
+const emit = defineEmits<InvoiceListEmits>()
+</script>
+
+<template>
+  <div class="invoice-list">
+    <InvoiceRow
+      v-for="invoice in invoices"
+      :key="invoice.id"
+      :invoice="invoice"
+      @view="emit('view', invoice.id)"
+      @edit="emit('edit', invoice.id)"
+      @delete="emit('delete', invoice.id)"
+    />
+  </div>
+</template>
 ```
 
-## Step 8: Create the Preview Wrapper
+## Step 8: Create the Preview/View Component
 
-Create a preview wrapper at `src/sections/[section-id]/[ViewName].tsx` (note: this is in the section root, not in components/).
+Create a view component at `src/views/sections/[SectionName]View.vue`.
 
-This wrapper is what Design OS renders. It imports the sample data and feeds it to the props-based component.
+This view component imports the sample data and feeds it to the props-based component. It can be used in the router.
 
 Example:
 
-```tsx
-import data from '@/../product/sections/[section-id]/data.json'
-import { InvoiceList } from './components/InvoiceList'
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import data from '@/../product/sections/invoices/data.json'
+import InvoiceList from '@/components/sections/invoices/InvoiceList.vue'
 
-export default function InvoiceListPreview() {
-  return (
-    <InvoiceList
-      invoices={data.invoices}
-      onView={(id) => console.log('View invoice:', id)}
-      onEdit={(id) => console.log('Edit invoice:', id)}
-      onDelete={(id) => console.log('Delete invoice:', id)}
-      onCreate={() => console.log('Create new invoice')}
-    />
-  )
+// Import data
+const invoices = ref(data.invoices)
+
+// Event handlers
+const handleView = (id: string) => {
+  console.log('View invoice:', id)
+  // TODO: Navigate to detail view
 }
+
+const handleEdit = (id: string) => {
+  console.log('Edit invoice:', id)
+  // TODO: Open edit modal or navigate
+}
+
+const handleDelete = (id: string) => {
+  console.log('Delete invoice:', id)
+  // TODO: Show confirmation and delete
+}
+
+const handleCreate = () => {
+  console.log('Create new invoice')
+  // TODO: Open create modal or navigate
+}
+</script>
+
+<template>
+  <InvoiceList
+    :invoices="invoices"
+    @view="handleView"
+    @edit="handleEdit"
+    @delete="handleDelete"
+    @create="handleCreate"
+  />
+</template>
 ```
 
-The preview wrapper:
+The view component:
 
-- Has a `default` export (required for Design OS routing)
 - Imports sample data from data.json
+- Uses `ref()` for reactive data
 - Passes data to the component via props
-- Provides console.log handlers for callbacks (for testing interactions)
-- Is NOT exported to the user's codebase - it's only for Design OS
+- Handles emitted events with console.log (for testing) or real logic
+- Can be registered in Vue Router
 - **Will render inside the shell** if one has been designed
 
 ## Step 9: Create Component Index
 
-Create an index file at `src/sections/[section-id]/components/index.ts` to cleanly export all components.
+Create an index file at `src/components/sections/[section-id]/index.js` to cleanly export all components.
 
 Example:
 
-```tsx
-export { InvoiceList } from './InvoiceList'
-export { InvoiceRow } from './InvoiceRow'
+```javascript
+export { default as InvoiceList } from './InvoiceList.vue'
+export { default as InvoiceRow } from './InvoiceRow.vue'
 // Add other sub-components as needed
 ```
 
-## Step 10: Confirm and Next Steps
+## Step 10: Update Router (Optional)
+
+If the section should be accessible via a route, add it to `src/router/index.js`:
+
+```javascript
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  // ... existing routes
+  {
+    path: '/invoices',
+    name: 'invoices',
+    component: () => import('@/views/sections/InvoicesView.vue')
+  }
+]
+
+export default createRouter({
+  history: createWebHistory(),
+  routes
+})
+```
+
+## Step 11: Confirm and Next Steps
 
 Let the user know:
 
@@ -272,19 +426,19 @@ Let the user know:
 
 **Exportable components** (props-based, portable):
 
-- `src/sections/[section-id]/components/[ViewName].tsx`
-- `src/sections/[section-id]/components/[SubComponent].tsx` (if created)
-- `src/sections/[section-id]/components/index.ts`
+- `src/components/sections/[section-id]/[ViewName].vue`
+- `src/components/sections/[section-id]/[SubComponent].vue` (if created)
+- `src/components/sections/[section-id]/index.js`
 
-**Preview wrapper** (for Design OS only):
+**View component** (for routing):
 
-- `src/sections/[section-id]/[ViewName].tsx`
+- `src/views/sections/[SectionName]View.vue`
 
 **Important:** Restart your dev server to see the changes.
 
 [If shell exists]: The screen design will render inside your application shell, showing the full app experience.
 
-[If design tokens exist]: I've applied your color palette ([primary], [secondary], [neutral]) and typography choices.
+[If design tokens exist]: I've applied your color palette ([primary], [secondary], [neutral]) and typography choices via CSS custom properties.
 
 **Next steps:**
 
@@ -299,11 +453,14 @@ If the spec indicates additional views are needed:
 ## Important Notes
 
 - ALWAYS read the `frontend-design` skill before creating screen designs
-- Components MUST be props-based - never import data.json in exportable components
-- The preview wrapper is the ONLY file that imports data.json
-- Use TypeScript interfaces from types.ts for all props
-- Callbacks should be optional (use `?`) and called with optional chaining (`?.`)
+- Components MUST use Vue 3 Composition API with `<script setup>`
+- Use `defineProps<>()` for type-safe props
+- Use `defineEmits<>()` for type-safe events
+- The view component is the ONLY file that imports data.json
+- Use TypeScript interfaces from types.ts for all props and emits
+- Always use `<style scoped>` to prevent CSS leakage
 - Always remind the user to restart the dev server after creating files
-- Sub-components should also be props-based for maximum portability
-- Apply design tokens when available for consistent branding
-- Screen designs render inside the shell when viewed in Design OS (if shell exists)
+- Sub-components should also use defineProps/defineEmits for maximum portability
+- Apply design tokens via CSS custom properties (e.g., `var(--color-primary)`)
+- Screen designs render inside the shell when wrapped in App.vue (if shell exists)
+- Follow the patterns defined in CLAUDE.md for consistency

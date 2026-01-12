@@ -1,0 +1,192 @@
+{
+  "_meta": {
+    "models": {
+      "cities": "Cities where users can create audio tours. Each city has a hero image and sample audio narration.",
+      "features": "Key features of MyGuide displayed as highlight cards with icons and optional audio clips.",
+      "howItWorksSteps": "Sequential steps explaining how to create a tour, shown as a visual guide.",
+      "testimonials": "User reviews and quotes providing social proof for new visitors.",
+      "audioPreview": "Sample audio narration clips tied to specific cities for the inline player."
+    },
+    "relationships": [
+      "Each City has one AudioPreview (sample narration for that location)",
+      "Features are standalone but may include audio clips demonstrating the feature",
+      "Testimonials reference which City the user created a tour for"
+    ]
+  },
+  "currentCity": {
+    "id": "city-001",
+    "name": "Amsterdam",
+    "country": "Nederland",
+    "heroImageUrl": "/images/cities/amsterdam-hero.jpg",
+    "tourCount": 1247,
+    "averageRating": 4.7,
+    "totalRatings": 892
+  },
+  "cities": [
+    {
+      "id": "city-001",
+      "name": "Amsterdam",
+      "country": "Nederland",
+      "heroImageUrl": "/images/cities/amsterdam-hero.jpg",
+      "tourCount": 1247,
+      "averageRating": 4.7,
+      "totalRatings": 892
+    },
+    {
+      "id": "city-002",
+      "name": "Rotterdam",
+      "country": "Nederland",
+      "heroImageUrl": "/images/cities/rotterdam-hero.jpg",
+      "tourCount": 634,
+      "averageRating": 4.5,
+      "totalRatings": 421
+    },
+    {
+      "id": "city-003",
+      "name": "Utrecht",
+      "country": "Nederland",
+      "heroImageUrl": "/images/cities/utrecht-hero.jpg",
+      "tourCount": 412,
+      "averageRating": 4.8,
+      "totalRatings": 287
+    },
+    {
+      "id": "city-004",
+      "name": "Den Haag",
+      "country": "Nederland",
+      "heroImageUrl": "/images/cities/denhaag-hero.jpg",
+      "tourCount": 389,
+      "averageRating": 4.6,
+      "totalRatings": 256
+    },
+    {
+      "id": "city-005",
+      "name": "Maastricht",
+      "country": "Nederland",
+      "heroImageUrl": "/images/cities/maastricht-hero.jpg",
+      "tourCount": 278,
+      "averageRating": 4.9,
+      "totalRatings": 198
+    }
+  ],
+  "features": [
+    {
+      "id": "feature-001",
+      "icon": "clock",
+      "title": "Jouw tijd, jouw tour",
+      "description": "Geef aan hoeveel tijd je hebt en wij stellen de perfecte route samen. Van een snelle lunch-wandeling tot een hele dag ontdekken.",
+      "audioClipUrl": "/audio/features/time-based-demo.mp3",
+      "audioDuration": 15
+    },
+    {
+      "id": "feature-002",
+      "icon": "sparkles",
+      "title": "AI-gegenereerde verhalen",
+      "description": "Elke stop komt tot leven met boeiende, door AI geschreven verhalen. Alsof je een lokale gids bij je hebt.",
+      "audioClipUrl": "/audio/features/ai-narration-demo.mp3",
+      "audioDuration": 22
+    },
+    {
+      "id": "feature-003",
+      "icon": "sliders",
+      "title": "Kies je interesses",
+      "description": "Geschiedenis, architectuur, eten of kunst? Selecteer wat jou interesseert en ontdek plekken die bij je passen.",
+      "audioClipUrl": null,
+      "audioDuration": null
+    },
+    {
+      "id": "feature-004",
+      "icon": "download",
+      "title": "Offline beschikbaar",
+      "description": "Download je tour en luister zonder internetverbinding. Perfect voor als je in het buitenland bent of data wilt besparen.",
+      "audioClipUrl": null,
+      "audioDuration": null
+    }
+  ],
+  "howItWorksSteps": [
+    {
+      "id": "step-001",
+      "stepNumber": 1,
+      "title": "Kies je stad",
+      "description": "Selecteer de stad die je wilt verkennen of gebruik je huidige locatie.",
+      "iconOrImage": "map-pin"
+    },
+    {
+      "id": "step-002",
+      "stepNumber": 2,
+      "title": "Stel je voorkeuren in",
+      "description": "Geef aan hoeveel tijd je hebt en welke onderwerpen je interesseren.",
+      "iconOrImage": "settings"
+    },
+    {
+      "id": "step-003",
+      "stepNumber": 3,
+      "title": "Start je tour",
+      "description": "Volg de route en luister naar de verhalen bij elke stop. Zo simpel is het!",
+      "iconOrImage": "headphones"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "testimonial-001",
+      "userName": "Marieke van den Berg",
+      "userAvatar": "/images/avatars/marieke.jpg",
+      "cityName": "Amsterdam",
+      "rating": 5,
+      "quote": "Fantastisch! In 2 uur heb ik meer over de Jordaan geleerd dan in al mijn jaren als Amsterdammer. De AI-verhalen zijn verrassend goed.",
+      "tourDuration": "2 uur",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "testimonial-002",
+      "userName": "Thomas Bakker",
+      "userAvatar": "/images/avatars/thomas.jpg",
+      "cityName": "Rotterdam",
+      "rating": 5,
+      "quote": "Perfect voor mijn lunchpauze. Elke week ontdek ik een nieuw stukje Rotterdam. De architectuur-tour was geweldig!",
+      "tourDuration": "45 min",
+      "date": "2024-01-12"
+    },
+    {
+      "id": "testimonial-003",
+      "userName": "Sophie de Vries",
+      "userAvatar": "/images/avatars/sophie.jpg",
+      "cityName": "Utrecht",
+      "rating": 4,
+      "quote": "Leuke manier om Utrecht te ontdekken met de kinderen. Ze vonden de verhalen bij de Dom echt spannend.",
+      "tourDuration": "1.5 uur",
+      "date": "2024-01-08"
+    },
+    {
+      "id": "testimonial-004",
+      "userName": "Jan-Willem Smit",
+      "userAvatar": null,
+      "cityName": "Maastricht",
+      "rating": 5,
+      "quote": "Als toerist wilde ik meer dan de standaard bezienswaardigheden. MyGuide bracht me naar verborgen parels die ik anders nooit had gevonden.",
+      "tourDuration": "3 uur",
+      "date": "2024-01-03"
+    }
+  ],
+  "audioPreview": {
+    "id": "preview-001",
+    "cityId": "city-001",
+    "cityName": "Amsterdam",
+    "stopName": "De Waag",
+    "audioUrl": "/audio/previews/amsterdam-waag.mp3",
+    "duration": 45,
+    "transcript": "De Waag op de Nieuwmarkt is een van de oudste gebouwen van Amsterdam. Gebouwd in 1488 als stadspoort, werd het later een waaggebouw waar goederen werden gewogen voor handel..."
+  },
+  "socialProof": {
+    "totalTours": 3960,
+    "totalUsers": 12847,
+    "averageRating": 4.7,
+    "totalRatings": 2054
+  },
+  "user": {
+    "id": "user-001",
+    "name": "Test User",
+    "isLoggedIn": true,
+    "savedToursCount": 3
+  }
+}
