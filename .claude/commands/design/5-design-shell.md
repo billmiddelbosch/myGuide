@@ -2,6 +2,8 @@
 
 You are helping the user design the application shell — the persistent navigation and layout that wraps all sections. This is a screen design, not implementation code.
 
+**Important:** This project uses Vue 3 with Composition API. All components must follow the patterns defined in `CLAUDE.md`.
+
 ## Step 1: Check Prerequisites
 
 First, verify prerequisites exist:
@@ -9,6 +11,7 @@ First, verify prerequisites exist:
 1. Read `/product/product-overview.md` — Product name and description
 2. Read `/product/product-roadmap.md` — Sections for navigation
 3. Check if `/product/design-system/colors.json` and `/product/design-system/typography.json` exist
+4. Read `CLAUDE.md` — Development guidelines and Vue patterns
 
 If overview or roadmap are missing:
 
@@ -115,77 +118,266 @@ Create `/product/shell/spec.md`:
 
 ## Step 6: Create Shell Components
 
-Create the shell components at `src/shell/components/`:
+Create the shell components at `src/components/shell/`:
 
-### AppShell.tsx
-The main wrapper component that accepts children and provides the layout structure.
+### AppShell.vue
+The main wrapper component that uses slots for content and provides the layout structure.
 
-```tsx
-interface AppShellProps {
-  children: React.ReactNode
-  navigationItems: Array<{ label: string; href: string; isActive?: boolean }>
-  user?: { name: string; avatarUrl?: string }
-  onNavigate?: (href: string) => void
-  onLogout?: () => void
+```vue
+<script setup>
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import MainNav from './MainNav.vue'
+import UserMenu from './UserMenu.vue'
+
+const props = defineProps({
+  navigationItems: {
+    type: Array, // Array<{ label: string; to: string; icon?: string }>
+    required: true
+  },
+  user: {
+    type: Object, // { name: string; avatarUrl?: string }
+    default: null
+  }
+})
+
+const emit = defineEmits(['logout'])
+
+const router = useRouter()
+const route = useRoute()
+
+const navigate = (to) => {
+  router.push(to)
 }
+
+const handleLogout = () => {
+  emit('logout')
+}
+</script>
+
+<template>
+  <div class="app-shell">
+    <MainNav
+      :items="navigationItems"
+      :current-path="route.path"
+      @navigate="navigate"
+    />
+    <main class="main-content">
+      <header class="main-header">
+        <UserMenu
+          v-if="user"
+          :user="user"
+          @logout="handleLogout"
+        />
+      </header>
+      <div class="page-content">
+        <slot />
+      </div>
+    </main>
+  </div>
+</template>
+
+<style scoped>
+/* Component styles here */
+</style>
 ```
 
-### MainNav.tsx
+### MainNav.vue
 The navigation component (sidebar or top nav based on the chosen pattern).
 
-### UserMenu.tsx
+```vue
+<script setup>
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true
+  },
+  currentPath: {
+    type: String,
+    default: '/'
+  }
+})
+
+const emit = defineEmits(['navigate'])
+
+const isActive = (to) => props.currentPath === to
+</script>
+
+<template>
+  <nav class="main-nav">
+    <div class="nav-brand">
+      <!-- Logo here -->
+    </div>
+    <ul class="nav-items">
+      <li
+        v-for="item in items"
+        :key="item.to"
+        :class="{ active: isActive(item.to) }"
+      >
+        <a @click.prevent="emit('navigate', item.to)">
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+</template>
+
+<style scoped>
+/* Navigation styles here */
+</style>
+```
+
+### UserMenu.vue
 The user menu with avatar and dropdown.
 
-### index.ts
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+})
+
+const emit = defineEmits(['logout'])
+
+const isOpen = ref(false)
+
+const toggleMenu = () => {
+  isOpen.value = !isOpen.value
+}
+
+const handleLogout = () => {
+  isOpen.value = false
+  emit('logout')
+}
+</script>
+
+<template>
+  <div class="user-menu">
+    <button @click="toggleMenu" class="user-button">
+      <img
+        v-if="user.avatarUrl"
+        :src="user.avatarUrl"
+        :alt="user.name"
+        class="avatar"
+      />
+      <span v-else class="avatar-placeholder">
+        {{ user.name.charAt(0) }}
+      </span>
+      <span class="user-name">{{ user.name }}</span>
+    </button>
+    <div v-if="isOpen" class="dropdown">
+      <button @click="handleLogout">Logout</button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* User menu styles here */
+</style>
+```
+
+### index.js
 Export all components.
 
+```javascript
+export { default as AppShell } from './AppShell.vue'
+export { default as MainNav } from './MainNav.vue'
+export { default as UserMenu } from './UserMenu.vue'
+```
+
 **Component Requirements:**
-- Use props for all data and callbacks (portable)
-- Apply design tokens if they exist (colors, fonts)
-- Support light and dark mode with `dark:` variants
+- Use Vue 3 Composition API with `<script setup>`
+- Use `defineProps` for props and `defineEmits` for events
+- Use slots instead of children props
+- Use Vue Router (`useRouter`, `useRoute`) for navigation
+- Apply design tokens via CSS custom properties
+- Support light and dark mode with CSS media queries
 - Be mobile responsive
-- Use Tailwind CSS for styling
-- Use lucide-react for icons
+- Use scoped styles to prevent CSS leakage
+- Use lucide-vue-next for icons (if needed)
 
 ## Step 7: Create Shell Preview
 
-Create `src/shell/ShellPreview.tsx` — a preview wrapper for viewing the shell in Design OS:
+Create `src/views/ShellPreview.vue` — a preview wrapper for viewing the shell:
 
-```tsx
-import data from '@/../product/sections/[first-section]/data.json' // if exists
-import { AppShell } from './components/AppShell'
+```vue
+<script setup>
+import { ref } from 'vue'
+import { AppShell } from '@/components/shell'
 
-export default function ShellPreview() {
-  const navigationItems = [
-    { label: '[Section 1]', href: '/section-1', isActive: true },
-    { label: '[Section 2]', href: '/section-2' },
-    { label: '[Section 3]', href: '/section-3' },
-  ]
+const navigationItems = ref([
+  { label: '[Section 1]', to: '/' },
+  { label: '[Section 2]', to: '/section-2' },
+  { label: '[Section 3]', to: '/section-3' },
+])
 
-  const user = {
-    name: 'Alex Morgan',
-    avatarUrl: undefined,
-  }
+const user = ref({
+  name: 'Alex Morgan',
+  avatarUrl: null,
+})
 
-  return (
-    <AppShell
-      navigationItems={navigationItems}
-      user={user}
-      onNavigate={(href) => console.log('Navigate to:', href)}
-      onLogout={() => console.log('Logout')}
-    >
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Content Area</h1>
-        <p className="text-stone-600 dark:text-stone-400">
-          Section content will render here.
-        </p>
-      </div>
-    </AppShell>
-  )
+const handleLogout = () => {
+  console.log('Logout clicked')
 }
+</script>
+
+<template>
+  <AppShell
+    :navigation-items="navigationItems"
+    :user="user"
+    @logout="handleLogout"
+  >
+    <div class="p-8">
+      <h1 class="text-2xl font-bold mb-4">Content Area</h1>
+      <p class="text-slate-600 dark:text-slate-400">
+        Section content will render here.
+      </p>
+    </div>
+  </AppShell>
+</template>
 ```
 
-## Step 8: Apply Design Tokens
+## Step 8: Update Router Configuration
+
+Ensure the router is configured to use the shell. Update `src/router/index.js`:
+
+```javascript
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('@/views/HomeView.vue')
+  },
+  {
+    path: '/builder',
+    name: 'builder',
+    component: () => import('@/views/TourBuilderView.vue')
+  },
+  {
+    path: '/tour/:id',
+    name: 'tour',
+    component: () => import('@/views/TourExperienceView.vue')
+  },
+  {
+    path: '/my-tours',
+    name: 'my-tours',
+    component: () => import('@/views/MyToursView.vue')
+  }
+]
+
+export default createRouter({
+  history: createWebHistory(),
+  routes
+})
+```
+
+## Step 9: Apply Design Tokens
 
 If design tokens exist, apply them to the shell components:
 
@@ -199,9 +391,37 @@ If design tokens exist, apply them to the shell components:
 - Read `/product/design-system/typography.json`
 - Apply heading font to nav items and titles
 - Apply body font to other text
-- Include Google Fonts import in the preview
+- Include Google Fonts import in `index.html` or `style.css`
 
-## Step 9: Confirm Completion
+**Example CSS custom properties in `style.css`:**
+
+```css
+:root {
+  /* Colors from design tokens */
+  --color-primary: theme('colors.teal.500');
+  --color-primary-hover: theme('colors.teal.600');
+  --color-secondary: theme('colors.amber.500');
+  --color-neutral-50: theme('colors.slate.50');
+  --color-neutral-100: theme('colors.slate.100');
+  --color-neutral-500: theme('colors.slate.500');
+  --color-neutral-900: theme('colors.slate.900');
+
+  /* Typography */
+  --font-heading: 'DM Sans', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-neutral-50: theme('colors.slate.900');
+    --color-neutral-100: theme('colors.slate.800');
+    --color-neutral-500: theme('colors.slate.400');
+    --color-neutral-900: theme('colors.slate.50');
+  }
+}
+```
+
+## Step 10: Confirm Completion
 
 Let the user know:
 
@@ -209,18 +429,18 @@ Let the user know:
 
 **Created files:**
 - `/product/shell/spec.md` — Shell specification
-- `src/shell/components/AppShell.tsx` — Main shell wrapper
-- `src/shell/components/MainNav.tsx` — Navigation component
-- `src/shell/components/UserMenu.tsx` — User menu component
-- `src/shell/components/index.ts` — Component exports
-- `src/shell/ShellPreview.tsx` — Preview wrapper
+- `src/components/shell/AppShell.vue` — Main shell wrapper
+- `src/components/shell/MainNav.vue` — Navigation component
+- `src/components/shell/UserMenu.vue` — User menu component
+- `src/components/shell/index.js` — Component exports
+- `src/views/ShellPreview.vue` — Preview wrapper (optional)
 
 **Shell features:**
 - [Layout pattern] layout
-- Navigation for all [N] sections
+- Navigation for all [N] sections using Vue Router
 - User menu with avatar and logout
 - Mobile responsive design
-- Light/dark mode support
+- Light/dark mode support via CSS custom properties
 
 **Important:** Restart your dev server to see the changes.
 
@@ -230,9 +450,12 @@ Next: Run `/shape-section` to start designing your first section."
 
 ## Important Notes
 
-- The shell is a screen design — it demonstrates the navigation and layout design
-- Components are props-based and portable to the user's codebase
-- The preview wrapper is for Design OS only — not exported
-- Apply design tokens when available for consistent styling
+- The shell uses Vue 3 Composition API with `<script setup>` syntax
+- Components use slots for content injection (not children props)
+- Navigation uses Vue Router (`useRouter`, `useRoute`)
+- Events are emitted using `defineEmits`, not callback props
+- All styles are scoped to prevent CSS leakage
+- Design tokens are applied via CSS custom properties
+- The preview wrapper is for development only — not part of the final export
 - Keep the shell focused on navigation chrome — no authentication UI
-- Section screen designs will render inside the shell's content area
+- Section screen designs will render inside the shell's slot
