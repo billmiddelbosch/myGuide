@@ -45,7 +45,6 @@ const handleLogout = () => {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1.5rem;
 }
 
 @media (min-width: 768px) {

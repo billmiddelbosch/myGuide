@@ -17,7 +17,7 @@
     "id": "city-001",
     "name": "Amsterdam",
     "country": "Nederland",
-    "heroImageUrl": "/images/cities/amsterdam-hero.jpg",
+    "heroImageUrl": "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=1200&h=800&fit=crop",
     "tourCount": 1247,
     "averageRating": 4.7,
     "totalRatings": 892
@@ -27,7 +27,7 @@
       "id": "city-001",
       "name": "Amsterdam",
       "country": "Nederland",
-      "heroImageUrl": "/images/cities/amsterdam-hero.jpg",
+      "heroImageUrl": "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=1200&h=800&fit=crop",
       "tourCount": 1247,
       "averageRating": 4.7,
       "totalRatings": 892
@@ -36,7 +36,7 @@
       "id": "city-002",
       "name": "Rotterdam",
       "country": "Nederland",
-      "heroImageUrl": "/images/cities/rotterdam-hero.jpg",
+      "heroImageUrl": "https://images.unsplash.com/photo-1543489822-c49534f3271f?w=1200&h=800&fit=crop",
       "tourCount": 634,
       "averageRating": 4.5,
       "totalRatings": 421
@@ -45,7 +45,7 @@
       "id": "city-003",
       "name": "Utrecht",
       "country": "Nederland",
-      "heroImageUrl": "/images/cities/utrecht-hero.jpg",
+      "heroImageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=800&fit=crop",
       "tourCount": 412,
       "averageRating": 4.8,
       "totalRatings": 287
@@ -54,7 +54,7 @@
       "id": "city-004",
       "name": "Den Haag",
       "country": "Nederland",
-      "heroImageUrl": "/images/cities/denhaag-hero.jpg",
+      "heroImageUrl": "https://images.unsplash.com/photo-1581622558663-b2e33377dfb2?w=1200&h=800&fit=crop",
       "tourCount": 389,
       "averageRating": 4.6,
       "totalRatings": 256
@@ -63,7 +63,7 @@
       "id": "city-005",
       "name": "Maastricht",
       "country": "Nederland",
-      "heroImageUrl": "/images/cities/maastricht-hero.jpg",
+      "heroImageUrl": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&h=800&fit=crop",
       "tourCount": 278,
       "averageRating": 4.9,
       "totalRatings": 198

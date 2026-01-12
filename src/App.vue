@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { AppShell } from '@/components/shell'
-import HelloWorld from './components/HelloWorld.vue'
+import LandingPageView from '@/views/sections/LandingPageView.vue'
 
 // Mock user for testing (remove when auth is implemented)
 const user = ref({
@@ -26,7 +26,6 @@ const handleLogout = () => {
     @navigate="handleNavigate"
     @logout="handleLogout"
   >
-    <!-- Temporary content - will be replaced with Landing Page -->
-    <HelloWorld msg="Welcome to MyGuide" />
+    <LandingPageView />
   </AppShell>
 </template>
