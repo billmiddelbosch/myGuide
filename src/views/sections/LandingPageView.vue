@@ -1,7 +1,10 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import data from '@/../product/sections/landing-page/data.json'
 import LandingPage from '@/components/sections/landing-page/LandingPage.vue'
+
+const router = useRouter()
 
 // Import data
 const currentCity = ref(data.currentCity)
@@ -16,7 +19,7 @@ const user = ref(data.user)
 // Event handlers
 const handleStartTour = (cityId) => {
   console.log('Start tour for city:', cityId)
-  // TODO: Navigate to Tour Builder with city ID
+  router.push({ name: 'builder', query: { city: cityId } })
 }
 
 const handleSelectCity = () => {
@@ -26,7 +29,7 @@ const handleSelectCity = () => {
 
 const handleGoToMyTours = () => {
   console.log('Navigate to My Tours')
-  // TODO: Navigate to My Tours page
+  router.push({ name: 'my-tours' })
 }
 
 const handlePlayAudioPreview = (audioPreviewId) => {

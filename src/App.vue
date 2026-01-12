@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { AppShell } from '@/components/shell'
-import LandingPageView from '@/views/sections/LandingPageView.vue'
+
+const router = useRouter()
 
 // Mock user for testing (remove when auth is implemented)
 const user = ref({
@@ -10,8 +12,7 @@ const user = ref({
 })
 
 const handleNavigate = (to) => {
-  console.log('Navigate to:', to)
-  // TODO: Implement with Vue Router
+  router.push(to)
 }
 
 const handleLogout = () => {
@@ -26,6 +27,6 @@ const handleLogout = () => {
     @navigate="handleNavigate"
     @logout="handleLogout"
   >
-    <LandingPageView />
+    <router-view />
   </AppShell>
 </template>

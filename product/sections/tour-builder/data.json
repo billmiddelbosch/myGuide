@@ -1,0 +1,266 @@
+{
+  "_meta": {
+    "models": {
+      "city": "The city where the tour takes place, pre-selected based on the user's GPS location.",
+      "transportModes": "Available ways to travel during the tour: walking, biking, driving, or public transport.",
+      "poiCategories": "Interest categories users can select to personalize their tour content.",
+      "tour": "The generated tour proposal with selected preferences, route, and stops.",
+      "stops": "Points of interest included in the tour, each with location, description, and photo.",
+      "suggestedStops": "Additional POIs the user can add to their tour."
+    },
+    "relationships": [
+      "A Tour belongs to a City and contains multiple Stops",
+      "Each Stop belongs to one or more POI Categories",
+      "Suggested Stops can be added to the Tour"
+    ]
+  },
+  "city": {
+    "id": "city-001",
+    "name": "Amsterdam",
+    "country": "Nederland",
+    "center": {
+      "lat": 52.3676,
+      "lng": 4.9041
+    }
+  },
+  "transportModes": [
+    {
+      "id": "walk",
+      "label": "Lopen",
+      "icon": "walk",
+      "speedKmh": 5
+    },
+    {
+      "id": "bike",
+      "label": "Fiets",
+      "icon": "bike",
+      "speedKmh": 15
+    },
+    {
+      "id": "car",
+      "label": "Auto",
+      "icon": "car",
+      "speedKmh": 30
+    },
+    {
+      "id": "transit",
+      "label": "OV",
+      "icon": "transit",
+      "speedKmh": 20
+    }
+  ],
+  "poiCategories": [
+    {
+      "id": "history",
+      "label": "Geschiedenis",
+      "icon": "landmark",
+      "color": "#8B4513"
+    },
+    {
+      "id": "art",
+      "label": "Kunst",
+      "icon": "palette",
+      "color": "#9333EA"
+    },
+    {
+      "id": "architecture",
+      "label": "Architectuur",
+      "icon": "building",
+      "color": "#0891B2"
+    },
+    {
+      "id": "nature",
+      "label": "Natuur",
+      "icon": "leaf",
+      "color": "#16A34A"
+    },
+    {
+      "id": "food",
+      "label": "Eten & Drinken",
+      "icon": "utensils",
+      "color": "#EA580C"
+    },
+    {
+      "id": "culture",
+      "label": "Cultuur",
+      "icon": "theater",
+      "color": "#DC2626"
+    }
+  ],
+  "timeSlider": {
+    "min": 30,
+    "max": 240,
+    "step": 15,
+    "defaultValue": 90,
+    "unit": "minuten"
+  },
+  "preferences": {
+    "transportMode": "walk",
+    "duration": 90,
+    "selectedCategories": ["history", "art", "architecture"]
+  },
+  "proposedTour": {
+    "id": "tour-001",
+    "cityId": "city-001",
+    "status": "proposal",
+    "transportMode": "walk",
+    "totalDuration": 85,
+    "totalDistance": 3.2,
+    "distanceUnit": "km",
+    "stopCount": 6,
+    "routeCoordinates": [
+      { "lat": 52.3732, "lng": 4.8932 },
+      { "lat": 52.3728, "lng": 4.8936 },
+      { "lat": 52.3702, "lng": 4.8952 },
+      { "lat": 52.3680, "lng": 4.9012 },
+      { "lat": 52.3663, "lng": 4.8956 },
+      { "lat": 52.3601, "lng": 4.8852 }
+    ],
+    "stops": [
+      {
+        "id": "stop-001",
+        "name": "Anne Frank Huis",
+        "description": "Het voormalige schuiladres van Anne Frank en haar familie tijdens de Tweede Wereldoorlog. Nu een museum gewijd aan haar leven en dagboek, en een monument voor de slachtoffers van de Holocaust.",
+        "shortDescription": "Historisch schuiladres en museum",
+        "imageUrl": "https://images.unsplash.com/photo-1584003564911-a7db8c85bd6e?w=400&h=300&fit=crop",
+        "category": "history",
+        "duration": 20,
+        "coordinates": {
+          "lat": 52.3752,
+          "lng": 4.8840
+        },
+        "address": "Prinsengracht 263-267",
+        "audioStatus": "pending",
+        "order": 1
+      },
+      {
+        "id": "stop-002",
+        "name": "Westerkerk",
+        "description": "De grootste protestantse kerk van Amsterdam, gebouwd tussen 1620 en 1631 in renaissancestijl. De kerktoren biedt een prachtig uitzicht over de grachtengordel. Rembrandt van Rijn ligt hier begraven.",
+        "shortDescription": "Historische kerk met panoramisch uitzicht",
+        "imageUrl": "https://images.unsplash.com/photo-1605101100278-5d1deb2b6498?w=400&h=300&fit=crop",
+        "category": "architecture",
+        "duration": 15,
+        "coordinates": {
+          "lat": 52.3745,
+          "lng": 4.8839
+        },
+        "address": "Prinsengracht 281",
+        "audioStatus": "pending",
+        "order": 2
+      },
+      {
+        "id": "stop-003",
+        "name": "De Negen Straatjes",
+        "description": "Negen pittoreske dwarsstraatjes in de grachtengordel, vol met unieke boetiekjes, vintage winkels, en gezellige cafés. Een perfecte plek om de authentieke Amsterdamse sfeer te ervaren.",
+        "shortDescription": "Charmante winkelstraatjes",
+        "imageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+        "category": "culture",
+        "duration": 10,
+        "coordinates": {
+          "lat": 52.3702,
+          "lng": 4.8852
+        },
+        "address": "Negen Straatjes",
+        "audioStatus": "pending",
+        "order": 3
+      },
+      {
+        "id": "stop-004",
+        "name": "Rijksmuseum",
+        "description": "Het nationale museum van Nederland met een ongeëvenaarde collectie van Hollandse meesters, waaronder Rembrandts Nachtwacht en Vermeers Melkmeisje. Het gebouw zelf is een architectonisch meesterwerk uit 1885.",
+        "shortDescription": "Nationaal kunstmuseum met Hollandse meesters",
+        "imageUrl": "https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400&h=300&fit=crop",
+        "category": "art",
+        "duration": 15,
+        "coordinates": {
+          "lat": 52.3600,
+          "lng": 4.8852
+        },
+        "address": "Museumstraat 1",
+        "audioStatus": "pending",
+        "order": 4
+      },
+      {
+        "id": "stop-005",
+        "name": "Van Gogh Museum",
+        "description": "De grootste collectie werken van Vincent van Gogh ter wereld, met meer dan 200 schilderijen, 500 tekeningen en 700 brieven. Het museum vertelt het verhaal van zijn leven en artistieke ontwikkeling.",
+        "shortDescription": "Grootste Van Gogh collectie ter wereld",
+        "imageUrl": "https://images.unsplash.com/photo-1575223970966-76ae61ee7838?w=400&h=300&fit=crop",
+        "category": "art",
+        "duration": 15,
+        "coordinates": {
+          "lat": 52.3584,
+          "lng": 4.8811
+        },
+        "address": "Museumplein 6",
+        "audioStatus": "pending",
+        "order": 5
+      },
+      {
+        "id": "stop-006",
+        "name": "Concertgebouw",
+        "description": "Een van de meest prestigieuze concertzalen ter wereld, beroemd om zijn uitzonderlijke akoestiek. Gebouwd in 1888 in neorenaissance stijl, is het de thuisbasis van het Koninklijk Concertgebouworkest.",
+        "shortDescription": "Wereldberoemde concertzaal",
+        "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+        "category": "architecture",
+        "duration": 10,
+        "coordinates": {
+          "lat": 52.3563,
+          "lng": 4.8790
+        },
+        "address": "Concertgebouwplein 10",
+        "audioStatus": "pending",
+        "order": 6
+      }
+    ]
+  },
+  "suggestedStops": [
+    {
+      "id": "suggested-001",
+      "name": "Vondelpark",
+      "description": "Het grootste en bekendste stadspark van Amsterdam, met prachtige vijvers, open grasvelden en het openluchttheater. Een oase van rust midden in de stad.",
+      "shortDescription": "Iconisch stadspark",
+      "imageUrl": "https://images.unsplash.com/photo-1548783300-70b41bc84f56?w=400&h=300&fit=crop",
+      "category": "nature",
+      "duration": 15,
+      "coordinates": {
+        "lat": 52.3579,
+        "lng": 4.8686
+      },
+      "address": "Vondelpark"
+    },
+    {
+      "id": "suggested-002",
+      "name": "Albert Cuypmarkt",
+      "description": "De grootste en drukste dagmarkt van Nederland met meer dan 250 kramen. Proef lokale delicatessen, ontdek vintage schatten en ervaar de multiculturele sfeer van de Pijp.",
+      "shortDescription": "Grootste dagmarkt van Nederland",
+      "imageUrl": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop",
+      "category": "food",
+      "duration": 20,
+      "coordinates": {
+        "lat": 52.3557,
+        "lng": 4.8951
+      },
+      "address": "Albert Cuypstraat"
+    },
+    {
+      "id": "suggested-003",
+      "name": "Begijnhof",
+      "description": "Een verborgen middeleeuws hofje in het hart van Amsterdam, ooit bewoond door begijnen. Een van de oudste hofjes van de stad met een serene tuin en twee historische kerken.",
+      "shortDescription": "Verborgen middeleeuws hofje",
+      "imageUrl": "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=300&fit=crop",
+      "category": "history",
+      "duration": 10,
+      "coordinates": {
+        "lat": 52.3690,
+        "lng": 4.8895
+      },
+      "address": "Begijnhof 30"
+    }
+  ],
+  "loadingStates": {
+    "generatingTour": false,
+    "generatingAudio": false
+  }
+}

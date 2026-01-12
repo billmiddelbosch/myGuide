@@ -78,7 +78,7 @@ const formatNumber = (num) => {
                 <circle cx="12" cy="12" r="10" />
                 <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
               </svg>
-              <span>Start jouw tour</span>
+              <span>Maak jouw tour</span>
             </button>
             <button class="cta-secondary" @click="emit('selectCity')">
               <svg class="cta-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
