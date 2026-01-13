@@ -190,7 +190,7 @@ const sliderPercentage = computed(() => {
 .step-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-neutral-900);
+  color: var(--color-neutral-500);
   margin-bottom: 0.5rem;
 }
 
@@ -431,7 +431,7 @@ const sliderPercentage = computed(() => {
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   .step-title {
-    color: var(--color-neutral-900);
+    color: var(--color-neutral-500);
   }
 
   .step-subtitle,
