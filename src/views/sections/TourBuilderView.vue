@@ -1,17 +1,41 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import data from '@/../product/sections/tour-builder/data.json'
+import api from '@/services/api'
 import TourBuilder from '@/components/sections/tour-builder/TourBuilder.vue'
 
 // Import data
 const city = ref(data.city)
 const transportModes = ref(data.transportModes)
-const poiCategories = ref(data.poiCategories)
+const poiCategories = ref([])
+const tourTypesLoading = ref(true)
+const tourTypesError = ref(null)
 const timeSlider = ref(data.timeSlider)
-const preferences = reactive({ ...data.preferences })
+const preferences = reactive({ ...data.preferences, selectedCategories: [] })
 const proposedTour = ref(data.proposedTour)
 const suggestedStops = ref(data.suggestedStops)
 const loadingStates = reactive({ ...data.loadingStates })
+
+// Fetch tour types from API
+const fetchTourTypes = async () => {
+  tourTypesLoading.value = true
+  tourTypesError.value = null
+  try {
+    const response = await api.gettourTypes()
+    poiCategories.value = response.data.body
+  } catch (error) {
+    console.error('Error fetching tour types:', error)
+    tourTypesError.value = error.message
+    // Fallback to local data if API fails
+    poiCategories.value = data.poiCategories
+  } finally {
+    tourTypesLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchTourTypes()
+})
 
 // Event handlers
 const handleUpdateTransportMode = (mode) => {
@@ -86,7 +110,16 @@ const handleStartTour = () => {
 </script>
 
 <template>
+  <div v-if="tourTypesLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Tour types laden...</p>
+  </div>
+  <div v-else-if="tourTypesError && poiCategories.length === 0" class="error-container">
+    <p>Fout bij het laden van tour types: {{ tourTypesError }}</p>
+    <button @click="fetchTourTypes">Opnieuw proberen</button>
+  </div>
   <TourBuilder
+    v-else
     :city="city"
     :transport-modes="transportModes"
     :poi-categories="poiCategories"
@@ -106,3 +139,56 @@ const handleStartTour = () => {
     @start-tour="handleStartTour"
   />
 </template>
+
+<style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-neutral-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.error-container p {
+  color: var(--color-neutral-600);
+}
+
+.error-container button {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.error-container button:hover {
+  background: var(--color-primary-600);
+}
+</style>
