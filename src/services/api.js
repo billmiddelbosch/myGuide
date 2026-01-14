@@ -25,25 +25,45 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Map tour types to Google Places search queries
+const tourTypeQueries = {
+  history: 'historical sites monuments landmarks',
+  art: 'art museum gallery',
+  architecture: 'architecture buildings landmarks',
+  nature: 'park garden nature reserve',
+  food: 'restaurant cafe local food',
+  culture: 'cultural center theater museum'
+};
+
 export default {
-  // Example API methods
+  // Get tour types/categories
   gettourTypes() {
     return apiClient.get('/tourTypes');
   },
-  
-  // getItem(id) {
-  //   return apiClient.get(`/items/${id}`);
-  // },
-  
-  // createItem(data) {
-  //   return apiClient.post('/items', data);
-  // },
-  
-  // updateItem(id, data) {
-  //   return apiClient.put(`/items/${id}`, data);
-  // },
-  
-  // deleteItem(id) {
-  //   return apiClient.delete(`/items/${id}`);
-  // },
+
+  // Get suggested stops for a city based on tour type
+  // Returns stops that can be displayed on the map
+  getCityStops(stopCity, tourType) {
+    const query = tourTypeQueries[tourType] || tourType;
+    return apiClient.get('/cityStops', {
+      params: {
+        stopCity,
+        tourType,
+        query
+      }
+    });
+  },
+
+  // Create a tour with selected stops
+  // Calls POST /cityStops to save the tour and get routing
+  createCityTour({ locations, stopsArray, tourType, tourCity }) {
+    return apiClient.post('/cityStops', null, {
+      params: {
+        locations,        // Semicolon-separated coordinates: "lat,lng;lat,lng;..."
+        stopsArray,       // Comma-separated stop IDs: "stop1,stop2,stop3"
+        tourType,
+        tourCity
+      }
+    });
+  }
 };

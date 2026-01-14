@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 
 import PreferencesStep from './PreferencesStep.vue'
 import TourMap from './TourMap.vue'
@@ -52,7 +52,8 @@ const emit = defineEmits([
   'removeStop',
   'addStop',
   'approveTour',
-  'startTour'
+  'startTour',
+  'stopsReordered'
 ])
 
 // Local state
@@ -82,15 +83,22 @@ const getStopCategoryColor = (categoryId) => {
   return category?.color || '#14b8a6'
 }
 
+// Watch for when tour generation completes to transition to proposal
+watch(
+  () => props.loadingStates.generatingTour,
+  (isGenerating, wasGenerating) => {
+    console.log('generatingTour changed:', { wasGenerating, isGenerating, hasTour: !!props.proposedTour })
+    // Transition to proposal when generation finishes and we have a tour
+    if (wasGenerating && !isGenerating && props.proposedTour) {
+      console.log('Transitioning to proposal step, stops:', props.proposedTour.stops?.length)
+      currentStep.value = 'proposal'
+    }
+  }
+)
+
 // Handlers
 const handleGenerate = () => {
   emit('generateTour')
-  // Simulate transition to proposal view after generation
-  setTimeout(() => {
-    if (!props.loadingStates.generatingTour) {
-      currentStep.value = 'proposal'
-    }
-  }, 100)
 }
 
 const handleSelectStop = (stopId) => {
@@ -134,9 +142,6 @@ const handleBackToPreferences = () => {
   selectedStopId.value = null
   selectedStopData.value = null
 }
-
-// Watch for tour generation completion
-const hasProposedTour = computed(() => props.proposedTour !== null)
 </script>
 
 <template>
@@ -176,6 +181,7 @@ const hasProposedTour = computed(() => props.proposedTour !== null)
           :poi-categories="poiCategories"
           @select-stop="handleSelectStop"
           @select-suggested-stop="handleSelectStop"
+          @stops-reordered="emit('stopsReordered', $event)"
         />
       </div>
 

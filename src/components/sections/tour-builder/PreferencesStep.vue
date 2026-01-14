@@ -135,14 +135,14 @@ const sliderPercentage = computed(() => {
       <div class="category-chips">
         <button
           v-for="category in poiCategories"
-          :key="category.typeID"
+          :key="category.typeName"
           class="category-chip"
-          :class="{ selected: isCategorySelected(category.typeID) }"
+          :class="{ selected: isCategorySelected(category.typeName) }"
           :style="{
             '--category-color': category.color,
             '--category-color-light': category.color + '20'
           }"
-          @click="emit('toggleCategory', category.typeID)"
+          @click="emit('toggleCategory', category.typeName)"
         >
           <svg class="category-icon" viewBox="0 0 24 24" fill="currentColor">
             <path :d="getCategoryIcon(category.icon)" />
