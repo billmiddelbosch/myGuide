@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = 'https://trca8esu3j.execute-api.eu-west-2.amazonaws.com/production';
+const CITY_API_BASE_URL = 'https://0ovja4ep62.execute-api.eu-west-2.amazonaws.com/production';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -10,6 +11,17 @@ const apiClient = axios.create({
   },
   timeout: 10000,                    // Request timeout in ms
   responseType: 'json',            // Response type
+});
+
+// City API client for city search
+const cityApiClient = axios.create({
+  baseURL: CITY_API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': import.meta.env.VITE_API_KEY,
+  },
+  timeout: 10000,
+  responseType: 'json',
 });
 
 // Add request interceptor for auth tokens if needed
@@ -36,6 +48,13 @@ const tourTypeQueries = {
 };
 
 export default {
+  // Search for a city by name
+  getCityByName(cityName) {
+    return cityApiClient.get('/getCityByName', {
+      params: { cityName }
+    });
+  },
+
   // Get tour types/categories
   gettourTypes() {
     return apiClient.get('/tourTypes');

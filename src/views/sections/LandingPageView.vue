@@ -3,12 +3,16 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import data from '@/../product/sections/landing-page/data.json'
 import LandingPage from '@/components/sections/landing-page/LandingPage.vue'
+import CityPickerModal from '@/components/sections/landing-page/CityPickerModal.vue'
 
 const router = useRouter()
 
 // Import data
 const currentCity = ref(data.currentCity)
 const cities = ref(data.cities)
+
+// Modal state
+const isCityPickerOpen = ref(false)
 const features = ref(data.features)
 const howItWorksSteps = ref(data.howItWorksSteps)
 const testimonials = ref(data.testimonials)
@@ -17,14 +21,24 @@ const socialProof = ref(data.socialProof)
 const user = ref(data.user)
 
 // Event handlers
-const handleStartTour = (cityId) => {
-  console.log('Start tour for city:', cityId)
-  router.push({ name: 'builder', query: { city: cityId } })
+const handleStartTour = () => {
+  console.log('Start tour for city:', currentCity.value.name)
+  router.push({ name: 'builder', params: { city: currentCity.value.name } })
 }
 
 const handleSelectCity = () => {
-  console.log('Select another city')
-  // TODO: Open city picker modal
+  console.log('Opening city picker')
+  isCityPickerOpen.value = true
+}
+
+const handleCitySelected = (city) => {
+  console.log('City selected:', city.name)
+  currentCity.value = city
+}
+
+const handleAddCity = (city) => {
+  console.log('Adding new city:', city.name)
+  cities.value.push(city)
 }
 
 const handleGoToMyTours = () => {
@@ -58,5 +72,15 @@ const handlePlayFeatureAudio = (featureId) => {
     @go-to-my-tours="handleGoToMyTours"
     @play-audio-preview="handlePlayAudioPreview"
     @play-feature-audio="handlePlayFeatureAudio"
+  />
+
+  <!-- City Picker Modal -->
+  <CityPickerModal
+    :cities="cities"
+    :current-city-id="currentCity.id"
+    :is-open="isCityPickerOpen"
+    @close="isCityPickerOpen = false"
+    @select-city="handleCitySelected"
+    @add-city="handleAddCity"
   />
 </template>

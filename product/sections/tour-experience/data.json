@@ -1,0 +1,54 @@
+{
+  "_meta": {
+    "models": {
+      "experienceState": "De huidige status van de tour experience: welke mode actief is, welke stop, en de voortgang.",
+      "audioState": "De status van de audio player: afspeelstatus, huidige tijd, en totale duratie.",
+      "arrivalState": "Detectie status voor aankomst bij een stop: afstand, binnen bereik, en handmatige bevestiging.",
+      "feedback": "Gebruikersfeedback na voltooiing van de tour: rating en optionele review tekst."
+    },
+    "relationships": [
+      "ExperienceState houdt bij welke Stop uit de Tour actief is via currentStopIndex",
+      "AudioState is gekoppeld aan de huidige Stop voor het afspelen van de audio",
+      "ArrivalState bepaalt wanneer van navigatie-mode naar stop-mode gewisseld wordt",
+      "Feedback wordt verzameld aan het einde van de tour"
+    ]
+  },
+  "experienceState": {
+    "mode": "navigation",
+    "currentStopIndex": 0,
+    "completedStopIndices": [],
+    "isPaused": false,
+    "isCompleted": false,
+    "startedAt": "2024-01-15T10:30:00Z"
+  },
+  "audioState": {
+    "isPlaying": false,
+    "currentTime": 0,
+    "duration": 180,
+    "isLoading": false,
+    "hasError": false
+  },
+  "arrivalState": {
+    "distanceToStop": 245,
+    "isWithinRange": false,
+    "arrivalThresholdMeters": 50,
+    "hasManuallyConfirmed": false
+  },
+  "userLocation": {
+    "lat": 52.3740,
+    "lng": 4.8850,
+    "accuracy": 10,
+    "timestamp": "2024-01-15T10:35:00Z"
+  },
+  "feedback": {
+    "rating": null,
+    "review": "",
+    "submittedAt": null
+  },
+  "audioBaseUrl": "https://tours-audio.s3.eu-west-2.amazonaws.com",
+  "config": {
+    "arrivalThresholdMeters": 50,
+    "gpsUpdateIntervalMs": 5000,
+    "autoAdvanceDelay": 3000
+  }
+}

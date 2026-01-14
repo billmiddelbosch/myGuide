@@ -1,11 +1,20 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import data from '@/../product/sections/tour-builder/data.json'
 import api from '@/services/api'
 import TourBuilder from '@/components/sections/tour-builder/TourBuilder.vue'
 
-// Import data
-const city = ref(data.city)
+const router = useRouter()
+const route = useRoute()
+
+// Get city name from route parameter, fallback to data
+const cityName = route.params.city || data.city.name
+const city = ref({
+  id: `city-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
+  name: cityName,
+  country: data.city.country || 'Nederland'
+})
 const transportModes = ref(data.transportModes)
 const poiCategories = ref([])
 const tourTypesLoading = ref(true)
@@ -26,8 +35,8 @@ const transformStopData = (apiStop, category, order) => ({
   category: category,
   duration: apiStop.duration || 15,
   coordinates: {
-    lat: parseFloat(apiStop.placeLat) || apiStop.coordinates?.lat || 0,
-    lng: parseFloat(apiStop.placeLng) || apiStop.coordinates?.lng || 0
+    lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
+    lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
   },
   address: apiStop.address || '',
   audioStatus: 'pending',
@@ -101,6 +110,7 @@ const handleGenerateTour = async () => {
     for (const categoryId of preferences.selectedCategories) {
       try {
         console.log(`Fetching stops for category: ${categoryId}`)
+        console.log('Current city:', city.value)
         const response = await api.getCityStops(city.value.name, categoryId)
         const stopsData = response.data?.body || response.data || []
 
@@ -117,6 +127,7 @@ const handleGenerateTour = async () => {
           }
 
           // First few stops go to proposed tour, rest to suggestions
+          // TODO not max 6 stops hardcoded but based on duration preference
           if (allStops.length < 6) {
             allStops.push(transformedStop)
           } else if (allSuggestedStops.length < 3) {
@@ -290,8 +301,13 @@ const handleApproveTour = async () => {
 }
 
 const handleStartTour = () => {
-  console.log('Start tour')
-  // TODO: Navigate to Tour Experience
+  console.log('Start tour:', proposedTour.value?.id)
+  if (proposedTour.value) {
+    // Store the tour data for the experience view
+    sessionStorage.setItem('activeTour', JSON.stringify(proposedTour.value))
+    // Navigate to Tour Experience
+    router.push({ name: 'tour', params: { id: proposedTour.value.id } })
+  }
 }
 
 const handleStopsReordered = (reorderedStops) => {

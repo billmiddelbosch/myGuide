@@ -7,12 +7,16 @@ const routes = [
     component: () => import('@/views/sections/LandingPageView.vue')
   },
   {
-    path: '/builder',
+    path: '/builder/:city',
     name: 'builder',
     component: () => import('@/views/sections/TourBuilderView.vue')
+  },
+  {
+    path: '/tour/:id',
+    name: 'tour',
+    component: () => import('@/views/sections/TourExperienceView.vue')
   }
   // Future routes:
-  // { path: '/tour/:id', name: 'tour', component: () => import('@/views/sections/TourExperienceView.vue') },
   // { path: '/my-tours', name: 'my-tours', component: () => import('@/views/sections/MyToursView.vue') }
 ]
 
