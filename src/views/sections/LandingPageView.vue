@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import data from '@/../product/sections/landing-page/data.json'
 import LandingPage from '@/components/sections/landing-page/LandingPage.vue'
@@ -10,6 +10,79 @@ const router = useRouter()
 // Import data
 const currentCity = ref(data.currentCity)
 const cities = ref(data.cities)
+const isDetectingLocation = ref(false)
+
+// Detect user's current city using geolocation
+const detectUserCity = async () => {
+  if (!('geolocation' in navigator)) {
+    console.log('Geolocation not supported')
+    return
+  }
+
+  isDetectingLocation.value = true
+
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000 // Cache for 5 minutes
+      })
+    })
+
+    const { latitude, longitude } = position.coords
+    console.log('User location:', latitude, longitude)
+
+    // Use OpenStreetMap Nominatim for reverse geocoding (free, no API key needed)
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+      {
+        headers: {
+          'Accept-Language': 'nl,en'
+        }
+      }
+    )
+
+    if (response.ok) {
+      const locationData = await response.json()
+      const cityName = locationData.address?.city ||
+                       locationData.address?.town ||
+                       locationData.address?.village ||
+                       locationData.address?.municipality
+
+      if (cityName) {
+        console.log('Detected city:', cityName)
+
+        // Check if city is in our list
+        const existingCity = cities.value.find(
+          c => c.name.toLowerCase() === cityName.toLowerCase()
+        )
+
+        if (existingCity) {
+          currentCity.value = existingCity
+        } else {
+          // Create a new city entry for the detected location
+          currentCity.value = {
+            id: `city-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
+            name: cityName,
+            country: locationData.address?.country || 'Nederland',
+            imageUrl: data.currentCity.imageUrl // Use default image
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Could not detect location:', error.message)
+    // Keep default city from data
+  } finally {
+    isDetectingLocation.value = false
+  }
+}
+
+// Detect location on mount
+onMounted(() => {
+  detectUserCity()
+})
 
 // Modal state
 const isCityPickerOpen = ref(false)
