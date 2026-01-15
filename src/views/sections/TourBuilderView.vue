@@ -20,7 +20,7 @@ const poiCategories = ref([])
 const tourTypesLoading = ref(true)
 const tourTypesError = ref(null)
 const timeSlider = ref(data.timeSlider)
-const preferences = reactive({ ...data.preferences, selectedCategories: [] })
+const preferences = reactive({ ...data.preferences, selectedCategories: [], selectedPrompt: [] })
 const proposedTour = ref(null)
 const suggestedStops = ref([])
 const loadingStates = reactive({ ...data.loadingStates })
@@ -93,8 +93,14 @@ const handleToggleCategory = (categoryId) => {
   const index = preferences.selectedCategories.indexOf(categoryId)
   if (index > -1) {
     preferences.selectedCategories.splice(index, 1)
+    preferences.selectedPrompt.splice(index, 1)
   } else {
+    // Look up the category to get its prompt
+    console.log('POI list:', poiCategories.value)
+    console.log('Adding category prompt for:', categoryId)
+    const category = poiCategories.value.find(c => c.typeName === categoryId)
     preferences.selectedCategories.push(categoryId)
+    preferences.selectedPrompt.push(category?.typePrompt || categoryId)
   }
 }
 
@@ -107,11 +113,13 @@ const handleGenerateTour = async () => {
     const allStops = []
     const allSuggestedStops = []
 
-    for (const categoryId of preferences.selectedCategories) {
+    for (let i = 0; i < preferences.selectedCategories.length; i++) {
+      const categoryId = preferences.selectedCategories[i]
+      const prompt = preferences.selectedPrompt[i] || categoryId
       try {
-        console.log(`Fetching stops for category: ${categoryId}`)
+        console.log(`Fetching stops for category: ${categoryId} with prompt: ${prompt}`)
         console.log('Current city:', city.value)
-        const response = await api.getCityStops(city.value.name, categoryId)
+        const response = await api.getCityStops(city.value.name, categoryId, prompt)
         const stopsData = response.data?.body || response.data || []
 
         // Transform and categorize stops
@@ -191,12 +199,77 @@ const handleGenerateTour = async () => {
         // Continue without polyline - stops will still display
       }
     } else {
-      // Fallback to mock data if API returns nothing
-      console.log('No stops from API, using fallback data')
-      console.log('Fallback proposedTour:', data.proposedTour)
-      console.log('Fallback stops:', data.proposedTour?.stops)
-      proposedTour.value = { ...data.proposedTour }
-      suggestedStops.value = [...data.suggestedStops]
+      // No stops from GET, try generating stops via POST /cityStops
+      console.log('No stops from API, calling generateCityStops')
+      console.log('Category selected:', preferences.selectedPrompt)
+      try {
+        const prompt = preferences.selectedPrompt.join(', ')
+        const tourType = preferences.selectedCategories[0] || 'general'
+
+        const generateResponse = await api.generateCityStops({
+          stopCity: city.value.name,
+          prompt,
+          tourType
+        })
+
+        const generatedStops = generateResponse.data?.body || generateResponse.data || []
+        console.log('Generated stops from API:', generatedStops)
+
+        if (generatedStops.length > 0) {
+          const processedStops = []
+          const processedSuggested = []
+
+          generatedStops.forEach((stop) => {
+            const transformedStop = transformStopData(stop, tourType, processedStops.length + 1)
+
+            if (!transformedStop.coordinates.lat || !transformedStop.coordinates.lng) {
+              console.warn('Skipping generated stop without coordinates:', transformedStop.name)
+              return
+            }
+
+            if (processedStops.length < 6) {
+              processedStops.push(transformedStop)
+            } else if (processedSuggested.length < 3) {
+              processedSuggested.push({
+                ...transformedStop,
+                id: `suggested-${transformedStop.id}`
+              })
+            }
+          })
+
+          if (processedStops.length > 0) {
+            const stats = calculateTourStats(processedStops, preferences.transportMode)
+
+            proposedTour.value = {
+              id: `tour-${Date.now()}`,
+              cityId: city.value.id,
+              status: 'proposal',
+              transportMode: preferences.transportMode,
+              totalDuration: stats.totalDuration,
+              totalDistance: parseFloat(stats.totalDistance),
+              distanceUnit: 'km',
+              stopCount: processedStops.length,
+              routeCoordinates: processedStops.map(s => s.coordinates),
+              stops: processedStops
+            }
+
+            suggestedStops.value = processedSuggested
+          } else {
+            // Fall back to mock data if no valid stops generated
+            proposedTour.value = { ...data.proposedTour }
+            suggestedStops.value = [...data.suggestedStops]
+          }
+        } else {
+          // Fall back to mock data if generation returns empty
+          proposedTour.value = { ...data.proposedTour }
+          suggestedStops.value = [...data.suggestedStops]
+        }
+      } catch (generateError) {
+        console.error('Error generating stops:', generateError)
+        // Fall back to mock data on error
+        proposedTour.value = { ...data.proposedTour }
+        suggestedStops.value = [...data.suggestedStops]
+      }
     }
   } catch (error) {
     console.error('Error generating tour:', error)

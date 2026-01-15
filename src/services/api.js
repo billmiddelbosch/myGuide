@@ -62,13 +62,12 @@ export default {
 
   // Get suggested stops for a city based on tour type
   // Returns stops that can be displayed on the map
-  getCityStops(stopCity, tourType) {
-    const query = tourTypeQueries[tourType] || tourType;
+  getCityStops(stopCity, tourType, prompt) {
     return apiClient.get('/cityStops', {
       params: {
         stopCity,
         tourType,
-        query
+        prompt
       }
     });
   },
@@ -82,6 +81,18 @@ export default {
         stopsArray,       // Comma-separated stop IDs: "stop1,stop2,stop3"
         tourType,
         tourCity
+      }
+    });
+  },
+
+  // Generate city stops using AI when no stops are found
+  // Calls POST /cityStops with prompt to generate new stops
+  generateCityStops({ stopCity, prompt, tourType }) {
+    return apiClient.post('/cityStops', null, {
+      params: {
+        stopCity,
+        prompt,
+        tourType
       }
     });
   }
