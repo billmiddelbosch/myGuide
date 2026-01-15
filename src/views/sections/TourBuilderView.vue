@@ -160,6 +160,7 @@ const handleGenerateTour = async () => {
       proposedTour.value = {
         id: `tour-${Date.now()}`,
         cityId: city.value.id,
+        cityName: city.value.name,
         status: 'proposal',
         transportMode: preferences.transportMode,
         totalDuration: stats.totalDuration,
@@ -243,6 +244,7 @@ const handleGenerateTour = async () => {
             proposedTour.value = {
               id: `tour-${Date.now()}`,
               cityId: city.value.id,
+              cityName: city.value.name,
               status: 'proposal',
               transportMode: preferences.transportMode,
               totalDuration: stats.totalDuration,

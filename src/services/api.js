@@ -95,5 +95,18 @@ export default {
         tourType
       }
     });
+  },
+
+  // Generate audio for a stop
+  // Calls POST /stopAudio to create audio content for a stop
+  generateStopAudio({ stopID, stopCity, stopName, stopType }) {
+    return apiClient.post('/stopAudio', null, {
+      params: {
+        stopID,
+        stopCity,
+        stopName,
+        stopType
+      }
+    });
   }
 };

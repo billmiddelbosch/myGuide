@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import experienceData from '@/../product/sections/tour-experience/data.json'
 import tourData from '@/../product/sections/tour-builder/data.json'
 import TourExperience from '@/components/sections/tour-experience/TourExperience.vue'
+import api from '@/services/api'
 
 const router = useRouter()
 
@@ -21,6 +22,7 @@ const loadTour = () => {
 }
 
 const tour = ref(loadTour())
+console.log('Loaded tour:', tour.value)
 
 // Experience state
 const experienceState = ref({
@@ -55,11 +57,52 @@ const userLocation = ref(experienceData.userLocation)
 // Audio base URL
 const audioBaseUrl = ref(experienceData.audioBaseUrl)
 
+// Track which stops have audio generation in progress or completed
+const audioGenerationStatus = ref({})
+
+// Generate audio for a stop
+const generateAudioForStop = async (stopIndex) => {
+  const stop = tour.value.stops[stopIndex]
+  if (!stop) return
+
+  // Skip if already generating or generated
+  if (audioGenerationStatus.value[stop.id]) {
+    console.log(`Audio already ${audioGenerationStatus.value[stop.id]} for stop:`, stop.name)
+    return
+  }
+
+  audioGenerationStatus.value[stop.id] = 'generating'
+  console.log(`Generating audio for stop ${stopIndex}:`, stop.name)
+
+  try {
+    const response = await api.generateStopAudio({
+      stopID: stop.id,
+      stopCity: tour.value.cityName || tour.value.city?.name || 'Unknown',
+      stopName: stop.name,
+      stopType: stop.category || 'general'
+    })
+
+    audioGenerationStatus.value[stop.id] = 'completed'
+    console.log(`Audio generated for stop ${stopIndex}:`, response.data)
+
+    // Store the audio URL if returned
+    if (response.data?.body?.audioUrl || response.data?.audioUrl) {
+      stop.audioUrl = response.data?.body?.audioUrl || response.data?.audioUrl
+    }
+  } catch (error) {
+    console.error(`Failed to generate audio for stop ${stopIndex}:`, error)
+    audioGenerationStatus.value[stop.id] = 'failed'
+  }
+}
+
 // Geolocation watcher
 let watchId = null
 
 // Start watching user location
 onMounted(() => {
+  // Generate audio for the first stop when tour starts
+  generateAudioForStop(0)
+
   if ('geolocation' in navigator) {
     watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -136,6 +179,12 @@ const handleConfirmArrival = () => {
     duration: 180,
     isLoading: false,
     hasError: false
+  }
+
+  // Generate audio for the next stop (if there is one)
+  const nextStopIndex = experienceState.value.currentStopIndex + 1
+  if (nextStopIndex < tour.value.stops.length) {
+    generateAudioForStop(nextStopIndex)
   }
 }
 

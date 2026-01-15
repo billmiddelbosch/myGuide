@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   audioUrl: {
@@ -12,7 +12,10 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['play', 'pause', 'seek', 'ended', 'error'])
+const emit = defineEmits(['play', 'pause', 'seek', 'ended', 'error', 'update:audioState'])
+
+// Audio element ref
+const audioRef = ref(null)
 
 // Format time as mm:ss
 const formatTime = (seconds) => {
@@ -27,23 +30,134 @@ const progressPercent = computed(() => {
   return (props.audioState.currentTime / props.audioState.duration) * 100
 })
 
-// Handle seek
+// Handle seek from progress bar click
 const handleSeek = (event) => {
   const target = event.currentTarget
   const rect = target.getBoundingClientRect()
   const percent = (event.clientX - rect.left) / rect.width
   const newTime = percent * props.audioState.duration
+
+  if (audioRef.value) {
+    audioRef.value.currentTime = newTime
+  }
   emit('seek', newTime)
 }
+
+// Audio element event handlers
+const handleLoadedMetadata = () => {
+  if (audioRef.value) {
+    emit('update:audioState', {
+      ...props.audioState,
+      duration: audioRef.value.duration,
+      isLoading: false
+    })
+  }
+}
+
+const handleTimeUpdate = () => {
+  if (audioRef.value) {
+    emit('update:audioState', {
+      ...props.audioState,
+      currentTime: audioRef.value.currentTime
+    })
+  }
+}
+
+const handleEnded = () => {
+  emit('update:audioState', {
+    ...props.audioState,
+    isPlaying: false,
+    currentTime: 0
+  })
+  emit('ended')
+}
+
+const handleError = () => {
+  emit('update:audioState', {
+    ...props.audioState,
+    isLoading: false,
+    hasError: true
+  })
+  emit('error')
+}
+
+const handleCanPlay = () => {
+  emit('update:audioState', {
+    ...props.audioState,
+    isLoading: false
+  })
+}
+
+// Play/pause control
+const playAudio = async () => {
+  if (audioRef.value) {
+    try {
+      emit('update:audioState', { ...props.audioState, isLoading: true })
+      await audioRef.value.play()
+      emit('play')
+    } catch (error) {
+      console.error('Failed to play audio:', error)
+      emit('update:audioState', {
+        ...props.audioState,
+        isLoading: false,
+        hasError: true
+      })
+    }
+  }
+}
+
+const pauseAudio = () => {
+  if (audioRef.value) {
+    audioRef.value.pause()
+    emit('pause')
+  }
+}
+
+// Watch for external play/pause state changes
+watch(() => props.audioState.isPlaying, (isPlaying) => {
+  if (audioRef.value) {
+    if (isPlaying && audioRef.value.paused) {
+      playAudio()
+    } else if (!isPlaying && !audioRef.value.paused) {
+      pauseAudio()
+    }
+  }
+})
+
+// Watch for URL changes to reset audio
+watch(() => props.audioUrl, () => {
+  if (audioRef.value) {
+    audioRef.value.load()
+    emit('update:audioState', {
+      ...props.audioState,
+      currentTime: 0,
+      isPlaying: false,
+      isLoading: true,
+      hasError: false
+    })
+  }
+})
 </script>
 
 <template>
   <div class="audio-player" :class="{ playing: audioState.isPlaying }">
+    <!-- Hidden audio element -->
+    <audio
+      ref="audioRef"
+      :src="audioUrl"
+      preload="metadata"
+      @loadedmetadata="handleLoadedMetadata"
+      @timeupdate="handleTimeUpdate"
+      @ended="handleEnded"
+      @error="handleError"
+      @canplay="handleCanPlay"
+    />
+
     <!-- Play/Pause Button -->
     <button
       class="play-button"
       :disabled="audioState.isLoading"
-      @click="audioState.isPlaying ? emit('pause') : emit('play')"
+      @click="audioState.isPlaying ? pauseAudio() : playAudio()"
     >
       <span v-if="audioState.isLoading" class="loading-spinner" />
       <svg v-else-if="audioState.isPlaying" viewBox="0 0 24 24" fill="currentColor">

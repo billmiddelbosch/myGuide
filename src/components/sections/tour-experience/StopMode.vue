@@ -27,15 +27,19 @@ const audioState = defineModel('audioState', { type: Object, required: true })
 
 // Audio event handlers
 const handlePlay = () => {
-  audioState.value.isPlaying = true
+  audioState.value = { ...audioState.value, isPlaying: true }
 }
 
 const handlePause = () => {
-  audioState.value.isPlaying = false
+  audioState.value = { ...audioState.value, isPlaying: false }
 }
 
 const handleSeek = (time) => {
-  audioState.value.currentTime = time
+  audioState.value = { ...audioState.value, currentTime: time }
+}
+
+const handleAudioStateUpdate = (newState) => {
+  audioState.value = newState
 }
 </script>
 
@@ -99,6 +103,7 @@ const handleSeek = (time) => {
           @play="handlePlay"
           @pause="handlePause"
           @seek="handleSeek"
+          @update:audio-state="handleAudioStateUpdate"
         />
       </div>
 
