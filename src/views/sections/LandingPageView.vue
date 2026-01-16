@@ -107,12 +107,14 @@ const fetchTestimonials = async () => {
       // Transform API data to match expected format
       testimonials.value = apiTestimonials.map((t, index) => ({
         feedbackId: t.feedbackId || `testimonial-api-${index}`,
-        userName: t.userName,
-        // userAvatar: null, // API doesn't provide avatars
-        review: t.review,
-        rating: t.rating,
-        userEmail: t.userEmail || null,
         userName: t.userName || null,
+        // userAvatar: null, // API doesn't provide avatars
+        rating: t.rating,
+        review: t.review,
+        tourCity: t.tourCity,
+        tourDuration: t.tourDuration,
+        tourDuration: t.tourDuration,
+        tourStopCount: t.tourStopCount || null,
         date: t.submittedAt ? t.submittedAt.split('T')[0] : null
       }))
       console.log('Loaded testimonials from API:', testimonials.value.length)

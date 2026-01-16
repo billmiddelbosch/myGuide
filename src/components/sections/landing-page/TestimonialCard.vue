@@ -45,7 +45,7 @@ const getInitials = (name) => {
 
     <!-- Quote -->
     <blockquote class="testimonial-quote">
-      {{ testimonial.quote }}
+      {{ testimonial.review }}
     </blockquote>
 
     <!-- Rating -->
@@ -73,7 +73,7 @@ const getInitials = (name) => {
       <div class="author-info">
         <span class="author-name">{{ testimonial.userName }}</span>
         <span class="author-meta">
-          {{ testimonial.cityName }} &middot; {{ testimonial.tourDuration }}
+          {{ testimonial.tourCity }} &middot; {{ testimonial.tourDuration }} &middot; {{ testimonial.tourStopCount }} stops
         </span>
       </div>
     </div>
