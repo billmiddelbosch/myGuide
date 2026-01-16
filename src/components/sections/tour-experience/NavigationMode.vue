@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { useNavigationSteps } from '@/composables/useNavigationSteps'
+import NavigationBanner from './NavigationBanner.vue'
 
 const props = defineProps({
   currentStop: {
@@ -26,10 +28,29 @@ const props = defineProps({
 
 const emit = defineEmits(['confirmArrival', 'pause', 'resume', 'stop'])
 
+// Navigation steps composable
+const {
+  currentStep,
+  nextStep,
+  totalDurationText,
+  isOffRoute,
+  parseDirectionsResult,
+  updateCurrentStep,
+  getDistanceToManeuver,
+  checkOffRoute
+} = useNavigationSteps()
+
 // Map state
 const gMapRef = ref(null)
 const mapRef = ref(null)
 const directionsRenderer = ref(null)
+const isRerouting = ref(false)
+const rerouteTimeout = ref(null)
+
+// Distance to next maneuver (reactive)
+const distanceToManeuver = computed(() => {
+  return getDistanceToManeuver(props.userLocation)
+})
 
 // Map center - show stop or user location
 const mapCenter = computed(() => {
@@ -74,6 +95,11 @@ const formattedDistance = computed(() => {
   return `${(props.distanceToStop / 1000).toFixed(1)} km`
 })
 
+// Format duration for display
+const formattedDuration = computed(() => {
+  return totalDurationText.value || '--'
+})
+
 // Get travel mode for directions API
 const getTravelMode = () => {
   if (!window.google) return null
@@ -98,9 +124,11 @@ const transportIcon = computed(() => {
 })
 
 // Draw route from user location to stop
-const drawRoute = async (map) => {
+const drawRoute = async (map, isReroute = false) => {
   if (!props.userLocation || !props.currentStop?.coordinates) return
   if (!window.google) return
+
+  console.log('Drawing route to stop:', props.currentStop.name, props.currentStop.coordinates)
 
   const origin = new google.maps.LatLng(
     props.userLocation.lat,
@@ -130,19 +158,46 @@ const drawRoute = async (map) => {
     const result = await directionsService.route({
       origin,
       destination,
-      travelMode: getTravelMode()
+      travelMode: getTravelMode(),
+      language: 'nl' // Dutch instructions
     })
 
     directionsRenderer.value.setDirections(result)
 
-    // Fit bounds to show both points
+    // Parse navigation steps from result
+    parseDirectionsResult(result)
+
+    // Fit bounds to show both points (give more room for navigation banner)
     const bounds = new google.maps.LatLngBounds()
     bounds.extend(origin)
     bounds.extend(destination)
-    map.fitBounds(bounds, { top: 120, bottom: 200, left: 20, right: 20 })
+    map.fitBounds(bounds, { top: 140, bottom: 200, left: 20, right: 20 })
+
+    // Clear rerouting state
+    if (isReroute) {
+      isRerouting.value = false
+    }
   } catch (error) {
     console.warn('Failed to draw route:', error)
+    if (isReroute) {
+      isRerouting.value = false
+    }
   }
+}
+
+// Handle re-routing when user goes off-path
+const handleReroute = () => {
+  if (rerouteTimeout.value) {
+    clearTimeout(rerouteTimeout.value)
+  }
+
+  // Debounce re-routing (wait 3 seconds)
+  rerouteTimeout.value = setTimeout(async () => {
+    if (isOffRoute.value && mapRef.value && !isRerouting.value) {
+      isRerouting.value = true
+      await drawRoute(mapRef.value, true)
+    }
+  }, 3000)
 }
 
 // User location marker icon
@@ -178,7 +233,7 @@ const onMapReady = (mapInstance) => {
   }
 }
 
-// Watch for location changes to update route
+// Watch for location changes to update route and navigation state
 watch(
   () => [props.userLocation, props.currentStop],
   async () => {
@@ -188,6 +243,24 @@ watch(
     }
     if (mapRef.value && props.userLocation && props.currentStop) {
       drawRoute(mapRef.value)
+    }
+  },
+  { deep: true }
+)
+
+// Watch user location to update current step and check off-route
+watch(
+  () => props.userLocation,
+  (newLocation) => {
+    if (newLocation) {
+      // Update which step the user is on
+      updateCurrentStep(newLocation)
+
+      // Check if user has gone off-route
+      const offRoute = checkOffRoute(newLocation, 50)
+      if (offRoute && !isRerouting.value) {
+        handleReroute()
+      }
     }
   },
   { deep: true }
@@ -209,8 +282,17 @@ onMounted(() => {
 
 <template>
   <div class="navigation-mode">
+    <!-- Navigation Banner -->
+    <NavigationBanner
+      v-if="currentStep"
+      :current-step="currentStep"
+      :next-step="nextStep"
+      :distance-to-maneuver="distanceToManeuver"
+      :is-rerouting="isRerouting"
+    />
+
     <!-- Google Map -->
-    <div class="map-container">
+    <div class="map-container" :class="{ 'has-banner': currentStep }">
       <GMapMap
         ref="gMapRef"
         :center="mapCenter"
@@ -250,12 +332,21 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Distance Badge -->
-      <div class="distance-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor" class="transport-icon">
-          <path :d="transportIcon" />
-        </svg>
-        <span class="distance-text">{{ formattedDistance }}</span>
+      <!-- Distance/Time Badge -->
+      <div class="distance-time-badge">
+        <div class="badge-item">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="badge-icon">
+            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+          </svg>
+          <span class="badge-value">{{ formattedDuration }}</span>
+        </div>
+        <div class="badge-divider"></div>
+        <div class="badge-item">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="transport-icon">
+            <path :d="transportIcon" />
+          </svg>
+          <span class="badge-value">{{ formattedDistance }}</span>
+        </div>
       </div>
     </div>
 
@@ -400,14 +491,19 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* Distance Badge */
-.distance-badge {
+/* Map container with banner adjustment */
+.map-container.has-banner {
+  padding-top: 5rem;
+}
+
+/* Distance/Time Badge */
+.distance-time-badge {
   position: absolute;
   top: 1rem;
   right: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   padding: 0.625rem 1rem;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
@@ -416,17 +512,39 @@ onMounted(() => {
   z-index: 10;
 }
 
-.transport-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.has-banner .distance-time-badge {
+  top: 5.5rem;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.badge-icon {
+  width: 1rem;
+  height: 1rem;
   color: var(--color-primary);
 }
 
-.distance-text {
-  font-size: 0.9375rem;
+.transport-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-primary);
+}
+
+.badge-value {
+  font-size: 0.875rem;
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--color-neutral-800);
+}
+
+.badge-divider {
+  width: 1px;
+  height: 1.25rem;
+  background: var(--color-neutral-200);
 }
 
 /* Controls Panel */
@@ -575,12 +693,16 @@ onMounted(() => {
     color: var(--color-neutral-100);
   }
 
-  .distance-badge {
+  .distance-time-badge {
     background: rgba(30, 41, 59, 0.98);
   }
 
-  .distance-text {
+  .badge-value {
     color: var(--color-neutral-100);
+  }
+
+  .badge-divider {
+    background: var(--color-neutral-600);
   }
 
   .controls-panel {

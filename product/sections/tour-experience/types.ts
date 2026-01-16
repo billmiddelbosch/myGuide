@@ -107,6 +107,79 @@ export interface ExperienceConfig {
 }
 
 // =============================================================================
+// Navigation Guidance Types
+// =============================================================================
+
+/** Types of maneuvers supported by Google Directions API */
+export type ManeuverType =
+  | 'straight'
+  | 'turn-left'
+  | 'turn-right'
+  | 'turn-slight-left'
+  | 'turn-slight-right'
+  | 'turn-sharp-left'
+  | 'turn-sharp-right'
+  | 'uturn-left'
+  | 'uturn-right'
+  | 'merge'
+  | 'merge-left'
+  | 'merge-right'
+  | 'fork-left'
+  | 'fork-right'
+  | 'ramp-left'
+  | 'ramp-right'
+  | 'keep-left'
+  | 'keep-right'
+  | 'roundabout-left'
+  | 'roundabout-right'
+  | 'ferry'
+  | 'arrive'
+
+/** A single navigation step from the route */
+export interface NavigationStep {
+  /** Step index in the route */
+  index: number
+  /** Cleaned instruction text (HTML stripped) */
+  instruction: string
+  /** Original HTML instruction from Google */
+  instructionHtml: string
+  /** Distance of this step in meters */
+  distance: number
+  /** Formatted distance text (e.g., "120 m") */
+  distanceText: string
+  /** Duration of this step in seconds */
+  duration: number
+  /** Formatted duration text (e.g., "2 min") */
+  durationText: string
+  /** Type of maneuver (turn-left, straight, etc.) */
+  maneuver: ManeuverType
+  /** Start location of this step */
+  startLocation: Coordinates
+  /** End location of this step */
+  endLocation: Coordinates
+}
+
+/** State of turn-by-turn navigation */
+export interface NavigationState {
+  /** All steps in the current route */
+  steps: NavigationStep[]
+  /** Index of the current step */
+  currentStepIndex: number
+  /** Total route duration in seconds */
+  totalDuration: number
+  /** Formatted total duration (e.g., "5 min") */
+  totalDurationText: string
+  /** Total route distance in meters */
+  totalDistance: number
+  /** Formatted total distance (e.g., "450 m") */
+  totalDistanceText: string
+  /** Whether user is off the planned route */
+  isOffRoute: boolean
+  /** Timestamp of last route calculation */
+  lastRouteUpdate: string
+}
+
+// =============================================================================
 // Component Props
 // =============================================================================
 

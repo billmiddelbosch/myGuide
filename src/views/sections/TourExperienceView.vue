@@ -11,18 +11,22 @@ const router = useRouter()
 // Load tour from sessionStorage (passed from TourBuilder) or fall back to mock data
 const loadTour = () => {
   const storedTour = sessionStorage.getItem('activeTour')
+  console.log('sessionStorage activeTour:', storedTour ? 'found' : 'not found')
   if (storedTour) {
     try {
-      return JSON.parse(storedTour)
+      const parsed = JSON.parse(storedTour)
+      console.log('Using tour from sessionStorage:', parsed.id, 'with', parsed.stops?.length, 'stops')
+      return parsed
     } catch (e) {
       console.error('Failed to parse stored tour:', e)
     }
   }
+  console.warn('Falling back to mock tour data')
   return tourData.proposedTour
 }
 
 const tour = ref(loadTour())
-console.log('Loaded tour:', tour.value)
+console.log('Loaded tour:', tour.value.id, 'stops:', tour.value.stops?.map(s => s.name))
 
 // Experience state
 const experienceState = ref({
