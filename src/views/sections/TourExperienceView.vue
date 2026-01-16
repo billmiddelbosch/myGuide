@@ -64,6 +64,10 @@ const audioBaseUrl = ref(experienceData.audioBaseUrl)
 // Track which stops have audio generation in progress or completed
 const audioGenerationStatus = ref({})
 
+// Feedback submission state
+const feedbackSubmitting = ref(false)
+const feedbackSubmitted = ref(false)
+
 // Generate audio for a stop
 const generateAudioForStop = async (stopIndex) => {
   const stop = tour.value.stops[stopIndex]
@@ -229,9 +233,39 @@ const handleStop = () => {
   router.push({ name: 'builder' })
 }
 
-const handleSubmitFeedback = (feedback) => {
+const handleSubmitFeedback = async (feedback) => {
   console.log('Feedback submitted:', feedback)
-  // In a real app, this would send feedback to the API
+
+  feedbackSubmitting.value = true
+
+  try {
+    // Prepare feedback data with tour context
+    const feedbackData = {
+      userName: feedback.userName,
+      userEmail: feedback.userEmail || null,
+      rating: feedback.rating,
+      review: feedback.review || '',
+      tourId: tour.value.id,
+      tourCity: tour.value.cityName || tour.value.city?.name || 'Unknown',
+      tourDuration: tour.value.totalDuration ? `${tour.value.totalDuration} min` : null,
+      tourStopCount: tour.value.stops?.length || 0,
+      submittedAt: feedback.submittedAt || new Date().toISOString()
+    }
+
+    await api.submitFeedback(feedbackData)
+    console.log('Feedback sent to API successfully')
+    console.log('Feedback data:', feedbackData)
+    feedbackSubmitted.value = true
+  } catch (error) {
+    console.error('Failed to submit feedback:', error)
+    // Still show thank you screen even if API fails
+    feedbackSubmitted.value = true
+  } finally {
+    feedbackSubmitting.value = false
+  }
+}
+
+const handleGoHome = () => {
   // Clear the stored tour and navigate back to home
   sessionStorage.removeItem('activeTour')
   router.push({ name: 'home' })
@@ -246,6 +280,8 @@ const handleSubmitFeedback = (feedback) => {
     :arrival-state="arrivalState"
     :user-location="userLocation"
     :audio-base-url="audioBaseUrl"
+    :feedback-submitting="feedbackSubmitting"
+    :feedback-submitted="feedbackSubmitted"
     v-model:audio-state="audioState"
     @confirm-arrival="handleConfirmArrival"
     @next-stop="handleNextStop"
@@ -253,5 +289,6 @@ const handleSubmitFeedback = (feedback) => {
     @resume="handleResume"
     @stop="handleStop"
     @submit-feedback="handleSubmitFeedback"
+    @go-home="handleGoHome"
   />
 </template>

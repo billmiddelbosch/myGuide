@@ -108,5 +108,17 @@ export default {
         stopType
       }
     });
+  },
+
+  // Submit user feedback for a completed tour
+  submitFeedback(feedbackData) {
+    return apiClient.post('/feedback', feedbackData);
+  },
+
+  // Get testimonials for the landing page
+  getTestimonials(limit = 10) {
+    return apiClient.get('/feedback', {
+      params: { limit }
+    });
   }
 };

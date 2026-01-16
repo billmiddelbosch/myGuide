@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { getAudioUrl } from '@/../product/sections/tour-experience/types'
 
 import ProgressBar from './ProgressBar.vue'
@@ -31,6 +31,14 @@ const props = defineProps({
   audioBaseUrl: {
     type: String,
     required: true
+  },
+  feedbackSubmitting: {
+    type: Boolean,
+    default: false
+  },
+  feedbackSubmitted: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -41,6 +49,7 @@ const emit = defineEmits([
   'resume',
   'stop',
   'submitFeedback',
+  'goHome',
   'update:audioState'
 ])
 
@@ -60,11 +69,39 @@ const isLastStop = computed(() => {
 })
 
 // Feedback state for the feedback screen
-const feedbackState = computed(() => ({
+const feedbackState = ref({
   rating: null,
   review: '',
+  userName: '',
+  userEmail: '',
   submittedAt: null
-}))
+})
+
+// Feedback handlers
+const handleUpdateRating = (rating) => {
+  feedbackState.value.rating = rating
+}
+
+const handleUpdateReview = (review) => {
+  feedbackState.value.review = review
+}
+
+const handleUpdateUserName = (userName) => {
+  feedbackState.value.userName = userName
+}
+
+const handleUpdateUserEmail = (userEmail) => {
+  feedbackState.value.userEmail = userEmail
+}
+
+const handleSubmitFeedback = () => {
+  feedbackState.value.submittedAt = new Date().toISOString()
+  emit('submitFeedback', feedbackState.value)
+}
+
+const handleGoHome = () => {
+  emit('goHome')
+}
 </script>
 
 <template>
@@ -112,10 +149,14 @@ const feedbackState = computed(() => ({
       v-else-if="experienceState.isCompleted"
       :tour="tour"
       :feedback="feedbackState"
-      @update-rating="(rating) => feedbackState.rating = rating"
-      @update-review="(review) => feedbackState.review = review"
-      @submit="emit('submitFeedback', feedbackState)"
-      @skip="emit('submitFeedback', { rating: null, review: '', submittedAt: null })"
+      :is-submitting="feedbackSubmitting"
+      :is-submitted="feedbackSubmitted"
+      @update-rating="handleUpdateRating"
+      @update-review="handleUpdateReview"
+      @update-user-name="handleUpdateUserName"
+      @update-user-email="handleUpdateUserEmail"
+      @submit="handleSubmitFeedback"
+      @go-home="handleGoHome"
     />
 
     <!-- Arrival Indicator -->

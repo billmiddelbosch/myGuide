@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import data from '@/../product/sections/landing-page/data.json'
 import LandingPage from '@/components/sections/landing-page/LandingPage.vue'
 import CityPickerModal from '@/components/sections/landing-page/CityPickerModal.vue'
+import api from '@/services/api'
 
 const router = useRouter()
 
@@ -79,19 +80,52 @@ const detectUserCity = async () => {
   }
 }
 
-// Detect location on mount
+// Detect location and fetch testimonials on mount
 onMounted(() => {
   detectUserCity()
+  fetchTestimonials()
 })
 
 // Modal state
 const isCityPickerOpen = ref(false)
 const features = ref(data.features)
 const howItWorksSteps = ref(data.howItWorksSteps)
-const testimonials = ref(data.testimonials)
+const testimonials = ref(data.testimonials) // Default to dummy data
+const testimonialsLoading = ref(false)
 const audioPreview = ref(data.audioPreview)
 const socialProof = ref(data.socialProof)
 const user = ref(data.user)
+
+// Fetch real testimonials from API
+const fetchTestimonials = async () => {
+  testimonialsLoading.value = true
+  try {
+    const response = await api.getTestimonials(10)
+    const apiTestimonials = response.data?.body || response.data || []
+
+    if (apiTestimonials.length > 0) {
+      // Transform API data to match expected format
+      testimonials.value = apiTestimonials.map((t, index) => ({
+        feedbackId: t.feedbackId || `testimonial-api-${index}`,
+        userName: t.userName,
+        // userAvatar: null, // API doesn't provide avatars
+        review: t.review,
+        rating: t.rating,
+        userEmail: t.userEmail || null,
+        userName: t.userName || null,
+        date: t.submittedAt ? t.submittedAt.split('T')[0] : null
+      }))
+      console.log('Loaded testimonials from API:', testimonials.value.length)
+    } else {
+      console.log('No testimonials from API, using defaults')
+    }
+  } catch (error) {
+    console.log('Could not fetch testimonials, using defaults:', error.message)
+    // Keep default data.testimonials
+  } finally {
+    testimonialsLoading.value = false
+  }
+}
 
 // Event handlers
 const handleStartTour = () => {
