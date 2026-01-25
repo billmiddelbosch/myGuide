@@ -9,7 +9,7 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
     'x-api-key': import.meta.env.VITE_API_KEY,  // Use environment variable for API key
   },
-  timeout: 10000,                    // Request timeout in ms
+  timeout: 100000,                    // Request timeout in ms
   responseType: 'json',            // Response type
 });
 
@@ -20,7 +20,7 @@ const cityApiClient = axios.create({
     'Content-Type': 'application/json',
     'x-api-key': import.meta.env.VITE_API_KEY,
   },
-  timeout: 100000,
+  timeout: 10000,
   responseType: 'json',
 });
 
@@ -77,7 +77,6 @@ export default {
   createCityTour({ tourType, prompt, stopCity }) {
     return apiClient.post('/cityStops', null, {
       params: {
-        // locations,        // Semicolon-separated coordinates: "lat,lng;lat,lng;..."
         tourType,       // Comma-separated stop IDs: "stop1,stop2,stop3"
         prompt,
         stopCity

@@ -26,22 +26,28 @@ const suggestedStops = ref([])
 const loadingStates = reactive({ ...data.loadingStates })
 
 // Helper to transform API stop data to our stop format
-const transformStopData = (apiStop, category, order) => ({
-  id: apiStop.stopID || `stop-${Date.now()}-${order}`,
-  name: apiStop.stopName || apiStop.name || 'Onbekende locatie',
-  description: apiStop.stopDescription || apiStop.description || '',
-  shortDescription: apiStop.shortDescription || '',
-  imageUrl: apiStop.imageUrl || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
-  category: category,
-  duration: apiStop.duration || 15,
-  coordinates: {
-    lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
-    lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
-  },
-  address: apiStop.address || '',
-  audioStatus: 'pending',
-  order: order
-})
+const transformStopData = (apiStop, category, order) => {
+  // Extract stop ID - check multiple possible field names from API
+  const stopId = apiStop.stopID || apiStop.stopId || apiStop.id || apiStop.stop_id || `stop-${Date.now()}-${order}`
+  console.log('transformStopData - API stop:', apiStop, '-> using ID:', stopId)
+
+  return {
+    id: stopId,
+    name: apiStop.stopName || apiStop.name || 'Onbekende locatie',
+    description: apiStop.stopDescription || apiStop.description || '',
+    shortDescription: apiStop.shortDescription || '',
+    imageUrl: apiStop.imageUrl || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
+    category: category,
+    duration: apiStop.duration || 15,
+    coordinates: {
+      lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
+      lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
+    },
+    address: apiStop.address || '',
+    audioStatus: 'pending',
+    order: order
+  }
+}
 
 // Helper to calculate tour stats based on stops
 const calculateTourStats = (stops, transportMode) => {
@@ -341,16 +347,6 @@ const handleApproveTour = async () => {
   loadingStates.generatingAudio = true
 
   try {
-    // Build location string from stop coordinates (semicolon-separated)
-    const locations = proposedTour.value.stops
-      .map(stop => `${stop.coordinates.lat},${stop.coordinates.lng}`)
-      .join(';')
-
-    // Build stop IDs string (comma-separated)
-    const stopsArray = proposedTour.value.stops
-      .map(stop => stop.id)
-      .join(',')
-
     // Get the primary tour type (first selected category)
     const tourType = preferences.selectedCategories[0] || 'general'
 
@@ -361,17 +357,39 @@ const handleApproveTour = async () => {
       stopCity: city.value.name
     })
 
-    // The API returns the encoded polyline as tourID
-    const tourPolyline = response.data?.body || response.data
-    console.log('Tour saved with polyline:', tourPolyline)
+    console.log('createCityTour response:', response.data)
 
-    // Update tour with the polyline from API
-    if (tourPolyline) {
-      proposedTour.value.polyline = tourPolyline
-      proposedTour.value.status = 'approved'
+    // Extract response data
+    const responseData = response.data?.body || response.data
+
+    // Update stops with IDs from the API response
+    if (responseData?.stops && Array.isArray(responseData.stops)) {
+      // Map the returned stop IDs to our existing stops by order/index
+      proposedTour.value.stops = proposedTour.value.stops.map((stop, index) => {
+        const apiStop = responseData.stops[index]
+        if (apiStop?.stopID) {
+          console.log(`Updating stop ${index} ID from ${stop.id} to ${apiStop.stopID}`)
+          return {
+            ...stop,
+            id: apiStop.stopID
+          }
+        }
+        return stop
+      })
     }
 
-    console.log('Tour approved and saved')
+    // Update tour with the polyline from API if available
+    if (responseData?.polyline || typeof responseData === 'string') {
+      proposedTour.value.polyline = responseData?.polyline || responseData
+    }
+
+    // Update tour ID if returned
+    if (responseData?.tourId) {
+      proposedTour.value.id = responseData.tourId
+    }
+
+    proposedTour.value.status = 'approved'
+    console.log('Tour approved and saved with updated stop IDs:', proposedTour.value.stops.map(s => s.id))
   } catch (error) {
     console.error('Error saving tour:', error)
     // Continue even if save fails - user can still start tour

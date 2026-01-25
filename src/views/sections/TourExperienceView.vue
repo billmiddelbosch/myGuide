@@ -68,6 +68,34 @@ const audioGenerationStatus = ref({})
 const feedbackSubmitting = ref(false)
 const feedbackSubmitted = ref(false)
 
+// Check if audio file already exists on S3
+const checkAudioExists = (stopId) => {
+  return new Promise((resolve) => {
+    const audioUrl = `${audioBaseUrl.value}/${stopId}.mp3`
+    const audio = new Audio()
+    audio.preload = 'metadata'
+
+    const cleanup = () => {
+      audio.onloadedmetadata = null
+      audio.onerror = null
+      audio.src = ''
+    }
+
+    audio.onloadedmetadata = () => {
+      cleanup()
+      resolve(true)
+    }
+
+    audio.onerror = () => {
+      cleanup()
+      resolve(false)
+    }
+
+    // Add cache-busting to force fresh check
+    audio.src = `${audioUrl}?t=${Date.now()}`
+  })
+}
+
 // Generate audio for a stop
 const generateAudioForStop = async (stopIndex) => {
   const stop = tour.value.stops[stopIndex]
@@ -79,8 +107,18 @@ const generateAudioForStop = async (stopIndex) => {
     return
   }
 
+  // First check if audio already exists
+  console.log(`Checking if audio exists for stop ${stopIndex}:`, stop.name, stop.id)
+  const audioExists = await checkAudioExists(stop.id)
+
+  if (audioExists) {
+    console.log(`Audio already exists for stop ${stopIndex}:`, stop.name)
+    audioGenerationStatus.value[stop.id] = 'completed'
+    return
+  }
+
   audioGenerationStatus.value[stop.id] = 'generating'
-  console.log(`Generating audio for stop ${stopIndex}:`, stop.name)
+  console.log(`Generating audio for stop ${stopIndex}:`, stop.name, stop.id)
 
   try {
     const response = await api.generateStopAudio({

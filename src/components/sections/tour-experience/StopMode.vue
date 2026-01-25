@@ -1,4 +1,5 @@
 <script setup>
+import { ref, watch, onUnmounted } from 'vue'
 import AudioPlayer from './AudioPlayer.vue'
 import PlaceImage from '@/components/PlaceImage.vue'
 
@@ -25,6 +26,87 @@ const emit = defineEmits(['nextStop', 'stop'])
 
 // Audio state management
 const audioState = defineModel('audioState', { type: Object, required: true })
+
+// Audio availability checking
+const isAudioAvailable = ref(false)
+const isCheckingAudio = ref(true)
+const audioCheckAttempts = ref(0)
+const maxAudioCheckAttempts = 30 // Max 30 attempts (about 2 minutes with 4s intervals)
+let audioCheckInterval = null
+
+// Check if audio URL is accessible using Audio element (avoids CORS issues)
+const checkAudioAvailability = () => {
+  if (!props.audioUrl) {
+    isCheckingAudio.value = false
+    return
+  }
+
+  const audio = new Audio()
+  audio.preload = 'metadata'
+
+  const cleanup = () => {
+    audio.oncanplaythrough = null
+    audio.onerror = null
+    audio.onloadedmetadata = null
+    audio.src = ''
+  }
+
+  audio.onloadedmetadata = () => {
+    isAudioAvailable.value = true
+    isCheckingAudio.value = false
+    if (audioCheckInterval) {
+      clearInterval(audioCheckInterval)
+      audioCheckInterval = null
+    }
+    cleanup()
+  }
+
+  audio.onerror = () => {
+    audioCheckAttempts.value++
+    if (audioCheckAttempts.value >= maxAudioCheckAttempts) {
+      isCheckingAudio.value = false
+      if (audioCheckInterval) {
+        clearInterval(audioCheckInterval)
+        audioCheckInterval = null
+      }
+    }
+    cleanup()
+  }
+
+  // Add cache-busting to force fresh check
+  const cacheBuster = `?t=${Date.now()}`
+  audio.src = props.audioUrl + cacheBuster
+}
+
+// Start checking audio availability when stop changes
+const startAudioCheck = () => {
+  isAudioAvailable.value = false
+  isCheckingAudio.value = true
+  audioCheckAttempts.value = 0
+
+  // Clear any existing interval
+  if (audioCheckInterval) {
+    clearInterval(audioCheckInterval)
+  }
+
+  // Check immediately
+  checkAudioAvailability()
+
+  // Then check every 4 seconds
+  audioCheckInterval = setInterval(checkAudioAvailability, 4000)
+}
+
+// Watch for stop changes to restart audio check
+watch(() => props.stop?.id, () => {
+  startAudioCheck()
+}, { immediate: true })
+
+// Cleanup on unmount
+onUnmounted(() => {
+  if (audioCheckInterval) {
+    clearInterval(audioCheckInterval)
+  }
+})
 
 // Audio event handlers
 const handlePlay = () => {
@@ -101,7 +183,23 @@ const handleAudioStateUpdate = (newState) => {
           </svg>
           Luister naar het verhaal
         </h2>
+
+        <!-- Audio Preparing State -->
+        <div v-if="isCheckingAudio && !isAudioAvailable" class="audio-preparing">
+          <div class="preparing-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="spinner">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
+            </svg>
+          </div>
+          <div class="preparing-text">
+            <p class="preparing-title">Audio wordt voorbereid...</p>
+            <p class="preparing-subtitle">Nog even geduld, het verhaal wordt voor je klaargezet</p>
+          </div>
+        </div>
+
+        <!-- Audio Player (shown when available) -->
         <AudioPlayer
+          v-else-if="isAudioAvailable"
           :audio-url="audioUrl"
           :audio-state="audioState"
           @play="handlePlay"
@@ -109,6 +207,19 @@ const handleAudioStateUpdate = (newState) => {
           @seek="handleSeek"
           @update:audio-state="handleAudioStateUpdate"
         />
+
+        <!-- Audio Unavailable State -->
+        <div v-else class="audio-unavailable">
+          <div class="unavailable-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.27 3L2 4.27 9.73 12H4v8h4l5 5v-7.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 23 21 21.73 3.27 3zM12 4L9.91 6.09 12 8.18V4zm7 8c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71z" />
+            </svg>
+          </div>
+          <div class="unavailable-text">
+            <p class="unavailable-title">Audio niet beschikbaar</p>
+            <p class="unavailable-subtitle">Het verhaal kon helaas niet worden geladen. Je kunt de beschrijving hierboven lezen.</p>
+          </div>
+        </div>
       </div>
 
       <!-- Actions -->
@@ -305,6 +416,107 @@ const handleAudioStateUpdate = (newState) => {
   color: var(--color-primary);
 }
 
+/* Audio Preparing State */
+.audio-preparing {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  border-radius: 1rem;
+}
+
+.preparing-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: var(--color-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.preparing-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+}
+
+.preparing-icon .spinner {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.preparing-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.preparing-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-700);
+}
+
+.preparing-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-neutral-500);
+  line-height: 1.4;
+}
+
+/* Audio Unavailable State */
+.audio-unavailable {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.04) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 1rem;
+}
+
+.unavailable-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.unavailable-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ef4444;
+}
+
+.unavailable-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.unavailable-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.unavailable-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-neutral-500);
+  line-height: 1.4;
+}
+
 .stop-actions {
   display: flex;
   flex-direction: column;
@@ -421,6 +633,36 @@ const handleAudioStateUpdate = (newState) => {
     background: var(--color-neutral-800);
     color: var(--color-neutral-200);
     border-color: var(--color-neutral-600);
+  }
+
+  .audio-preparing {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.08) 100%);
+    border-color: rgba(20, 184, 166, 0.3);
+  }
+
+  .preparing-title {
+    color: var(--color-primary-400);
+  }
+
+  .preparing-subtitle {
+    color: var(--color-neutral-400);
+  }
+
+  .audio-unavailable {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .unavailable-icon {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+  .unavailable-title {
+    color: #f87171;
+  }
+
+  .unavailable-subtitle {
+    color: var(--color-neutral-400);
   }
 }
 </style>
