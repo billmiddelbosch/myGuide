@@ -20,7 +20,7 @@ const cityApiClient = axios.create({
     'Content-Type': 'application/json',
     'x-api-key': import.meta.env.VITE_API_KEY,
   },
-  timeout: 10000,
+  timeout: 100000,
   responseType: 'json',
 });
 
@@ -74,13 +74,13 @@ export default {
 
   // Create a tour with selected stops
   // Calls POST /cityStops to save the tour and get routing
-  createCityTour({ locations, stopsArray, tourType, tourCity }) {
+  createCityTour({ tourType, prompt, stopCity }) {
     return apiClient.post('/cityStops', null, {
       params: {
-        locations,        // Semicolon-separated coordinates: "lat,lng;lat,lng;..."
-        stopsArray,       // Comma-separated stop IDs: "stop1,stop2,stop3"
-        tourType,
-        tourCity
+        // locations,        // Semicolon-separated coordinates: "lat,lng;lat,lng;..."
+        tourType,       // Comma-separated stop IDs: "stop1,stop2,stop3"
+        prompt,
+        stopCity
       }
     });
   },

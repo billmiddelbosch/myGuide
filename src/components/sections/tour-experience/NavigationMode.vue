@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useNavigationSteps } from '@/composables/useNavigationSteps'
 import NavigationBanner from './NavigationBanner.vue'
+import PlaceImage from '@/components/PlaceImage.vue'
 
 const props = defineProps({
   currentStop: {
@@ -321,10 +322,12 @@ onMounted(() => {
 
       <!-- Stop Preview Card -->
       <div class="stop-preview">
-        <img
-          :src="currentStop.imageUrl"
+        <PlaceImage
+          :stop="currentStop"
+          :fallback-url="currentStop.imageUrl"
           :alt="currentStop.name"
-          class="preview-image"
+          :max-width="200"
+          class="preview-image-wrapper"
         />
         <div class="preview-content">
           <h3 class="preview-name">{{ currentStop.name }}</h3>
@@ -454,12 +457,18 @@ onMounted(() => {
   z-index: 10;
 }
 
-.preview-image {
+.preview-image-wrapper {
   width: 4.5rem;
   height: 4.5rem;
-  object-fit: cover;
-  border-radius: 0.75rem;
   flex-shrink: 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.preview-image-wrapper :deep(.place-image) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .preview-content {

@@ -1,4 +1,7 @@
 <script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { usePlacePhoto } from '@/composables/usePlacePhoto'
+
 // Props
 const props = defineProps({
   city: {
@@ -22,6 +25,25 @@ const props = defineProps({
 // Events
 const emit = defineEmits(['startTour', 'selectCity', 'goToMyTours'])
 
+// Use the place photo composable
+const { photoUrl, isLoading, getPhotoForCity } = usePlacePhoto()
+
+// The actual hero image URL to display
+const heroImageUrl = computed(() => {
+  return photoUrl.value || props.city.heroImageUrl
+})
+
+// Fetch Google Places photo for the city
+async function fetchCityPhoto() {
+  if (props.city?.name) {
+    await getPhotoForCity(props.city.name, { maxWidth: 1920 })
+  }
+}
+
+// Fetch on mount and when city changes
+onMounted(fetchCityPhoto)
+watch(() => props.city?.name, fetchCityPhoto)
+
 // Format number with k suffix
 const formatNumber = (num) => {
   if (num >= 1000) {
@@ -36,7 +58,8 @@ const formatNumber = (num) => {
     <!-- Background Image -->
     <div
       class="hero-background"
-      :style="{ backgroundImage: `url(${city.heroImageUrl})` }"
+      :class="{ 'is-loading': isLoading }"
+      :style="{ backgroundImage: `url(${heroImageUrl})` }"
     >
       <div class="hero-overlay" />
     </div>
@@ -130,6 +153,10 @@ const formatNumber = (num) => {
 @keyframes subtle-zoom {
   0% { transform: scale(1.05); }
   100% { transform: scale(1.1); }
+}
+
+.hero-background.is-loading {
+  background-color: var(--color-neutral-700);
 }
 
 .hero-overlay {

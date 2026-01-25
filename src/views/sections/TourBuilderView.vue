@@ -173,32 +173,38 @@ const handleGenerateTour = async () => {
 
       suggestedStops.value = allSuggestedStops
 
-      // Also call createCityTour to get the route polyline
-      try {
-        const locations = allStops
-          .map(stop => `${stop.coordinates.lat},${stop.coordinates.lng}`)
-          .join(';')
-        const stopsArray = allStops.map(stop => stop.id).join(',')
-        const tourType = preferences.selectedCategories[0] || 'general'
-
-        console.log('Calling createCityTour with:', { locations, stopsArray, tourType, tourCity: city.value.name })
-
-        const routeResponse = await api.createCityTour({
-          locations,
-          stopsArray,
-          tourType,
-          tourCity: city.value.name
-        })
-
-        const tourPolyline = routeResponse.data?.body || routeResponse.data
+      const tourPolyline = suggestedStops
         if (tourPolyline) {
           proposedTour.value.polyline = tourPolyline
           console.log('Route polyline received:', tourPolyline)
         }
-      } catch (routeError) {
-        console.warn('Failed to get route polyline:', routeError)
-        // Continue without polyline - stops will still display
-      }
+
+      // Also call createCityTour to get the route polyline
+      // try {
+      //   const locations = allStops
+      //     .map(stop => `${stop.coordinates.lat},${stop.coordinates.lng}`)
+      //     .join(';')
+      //   const stopsArray = allStops.map(stop => stop.id).join(',')
+      //   const tourType = preferences.selectedCategories[0] || 'general'
+
+      //   console.log('Calling createCityTour with:', { locations, stopsArray, tourType, tourCity: city.value.name })
+
+      //   const routeResponse = await api.createCityTour({
+      //     locations,
+      //     stopsArray,
+      //     tourType,
+      //     tourCity: city.value.name
+      //   })
+
+      //   const tourPolyline = routeResponse.data?.body || routeResponse.data
+      //   if (tourPolyline) {
+      //     proposedTour.value.polyline = tourPolyline
+      //     console.log('Route polyline received:', tourPolyline)
+      //   }
+      // } catch (routeError) {
+      //   console.warn('Failed to get route polyline:', routeError)
+      //   // Continue without polyline - stops will still display
+      // }
     } else {
       // No stops from GET, try generating stops via POST /cityStops
       console.log('No stops from API, calling generateCityStops')
@@ -350,10 +356,9 @@ const handleApproveTour = async () => {
 
     // Call API to save the tour and get routing
     const response = await api.createCityTour({
-      locations,
-      stopsArray,
       tourType,
-      tourCity: city.value.name
+      prompt: preferences.prompt,
+      stopCity: city.value.name
     })
 
     // The API returns the encoded polyline as tourID

@@ -1,4 +1,6 @@
 <script setup>
+import PlaceImage from '@/components/PlaceImage.vue'
+
 // Props
 const props = defineProps({
   stop: {
@@ -44,7 +46,12 @@ const formatDuration = (minutes) => {
 
     <!-- Image -->
     <div class="stop-image">
-      <img :src="stop.imageUrl" :alt="stop.name" />
+      <PlaceImage
+        :stop="stop"
+        :fallback-url="stop.imageUrl"
+        :alt="stop.name"
+        :max-width="600"
+      />
       <div class="image-overlay" />
       <span class="duration-badge">
         <svg viewBox="0 0 24 24" fill="currentColor" class="clock-icon">
@@ -155,7 +162,12 @@ const formatDuration = (minutes) => {
   overflow: hidden;
 }
 
-.stop-image img {
+.stop-image :deep(.place-image-container) {
+  width: 100%;
+  height: 100%;
+}
+
+.stop-image :deep(.place-image) {
   width: 100%;
   height: 100%;
   object-fit: cover;

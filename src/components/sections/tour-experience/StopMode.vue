@@ -1,5 +1,6 @@
 <script setup>
 import AudioPlayer from './AudioPlayer.vue'
+import PlaceImage from '@/components/PlaceImage.vue'
 
 const props = defineProps({
   stop: {
@@ -47,10 +48,13 @@ const handleAudioStateUpdate = (newState) => {
   <div class="stop-mode">
     <!-- Hero Image -->
     <div class="stop-hero">
-      <img
-        :src="stop.imageUrl"
+      <PlaceImage
+        :stop="stop"
+        :fallback-url="stop.imageUrl"
         :alt="stop.name"
-        class="hero-image"
+        :max-width="1200"
+        :lazy="false"
+        class="hero-image-wrapper"
       />
       <div class="hero-overlay" />
 
@@ -158,7 +162,12 @@ const handleAudioStateUpdate = (newState) => {
   overflow: hidden;
 }
 
-.hero-image {
+.hero-image-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-image-wrapper :deep(.place-image) {
   width: 100%;
   height: 100%;
   object-fit: cover;

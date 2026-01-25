@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
+import PlaceImage from '@/components/PlaceImage.vue'
 
 // TODO: Replace static cities list with API call to getCityByName endpoint
 // API: arn:aws:execute-api:eu-west-2:344050431068:0ovja4ep62/*/GET/getCityByName
@@ -148,10 +149,13 @@ const clearSearch = () => {
               :class="{ 'is-current': city.id === currentCityId }"
               @click="handleSelectCity(city)"
             >
-              <div
-                class="city-image"
-                :style="{ backgroundImage: `url(${city.heroImageUrl})` }"
-              >
+              <div class="city-image">
+                <PlaceImage
+                  :city="city.name"
+                  :fallback-url="city.heroImageUrl"
+                  :alt="city.name"
+                  :max-width="200"
+                />
                 <div class="city-image-overlay" />
               </div>
               <div class="city-info">
@@ -406,9 +410,18 @@ const clearSearch = () => {
   height: 4.5rem;
   flex-shrink: 0;
   border-radius: 0.75rem;
-  background-size: cover;
-  background-position: center;
   overflow: hidden;
+}
+
+.city-image :deep(.place-image-container) {
+  width: 100%;
+  height: 100%;
+}
+
+.city-image :deep(.place-image) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .city-image-overlay {
