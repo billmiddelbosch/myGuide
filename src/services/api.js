@@ -20,7 +20,7 @@ const cityApiClient = axios.create({
     'Content-Type': 'application/json',
     'x-api-key': import.meta.env.VITE_API_KEY,
   },
-  timeout: 10000,
+  timeout: 100000,
   responseType: 'json',
 });
 
