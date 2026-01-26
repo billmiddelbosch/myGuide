@@ -303,8 +303,11 @@ const handleBackToPreferences = () => {
 
 .map-wrapper {
   flex: 1;
+  height: 0;
   padding: 0 1rem;
   min-height: 20rem;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Stop Card Overlay */

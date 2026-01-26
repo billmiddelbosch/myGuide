@@ -101,7 +101,7 @@ const sortStopsByProximity = (stops, userLoc) => {
 }
 
 // Get user's current location
-const getUserLocation = () => {
+const getUserLocation = (highAccuracy = true) => {
   if (!navigator.geolocation) {
     locationError.value = 'Geolocation is not supported'
     return
@@ -113,6 +113,7 @@ const getUserLocation = () => {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       }
+      locationError.value = null
       console.log('User location:', userLocation.value)
 
       // Reorder stops based on proximity if we have a tour
@@ -123,11 +124,17 @@ const getUserLocation = () => {
     },
     (error) => {
       console.warn('Geolocation error:', error.message)
-      locationError.value = error.message
+      // If high accuracy failed, retry with low accuracy
+      if (highAccuracy) {
+        console.log('Retrying with low accuracy...')
+        getUserLocation(false)
+      } else {
+        locationError.value = error.message
+      }
     },
     {
-      enableHighAccuracy: true,
-      timeout: 10000,
+      enableHighAccuracy: highAccuracy,
+      timeout: highAccuracy ? 10000 : 15000,
       maximumAge: 300000 // Cache location for 5 minutes
     }
   )
@@ -207,7 +214,7 @@ const drawSimplePolyline = (map) => {
     strokeOpacity: 0.8,
     strokeWeight: 4,
     map
-  })
+  })``
 }
 
 // Reference to the GMapMap component
@@ -424,23 +431,23 @@ const userLocationIcon = {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  height: 0;
   min-height: 24rem;
 }
 
 .map-container {
   position: relative;
   flex: 1;
+  height: 0;
   border-radius: 1rem;
   overflow: hidden;
   min-height: 400px;
-  height: 400px;
 }
 
 .google-map {
   width: 100%;
   height: 100%;
-  min-height: 400px;
 }
 
 .google-map :deep(.vue-map-container) {

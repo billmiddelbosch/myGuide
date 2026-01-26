@@ -64,10 +64,10 @@ const getInitials = (name) => {
 
     <!-- Author -->
     <div class="testimonial-author">
-      <div class="author-avatar" v-if="testimonial.userAvatar">
+      <!-- <div class="author-avatar" v-if="testimonial.userAvatar">
         <img :src="testimonial.userAvatar" :alt="testimonial.userName" />
-      </div>
-      <div class="author-avatar author-initials" v-else>
+      </div> -->
+      <div class="author-avatar author-initials">
         {{ getInitials(testimonial.userName) }}
       </div>
       <div class="author-info">
