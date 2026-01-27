@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch, onUnmounted } from 'vue'
 import AudioPlayer from './AudioPlayer.vue'
-import PlaceImage from '@/components/PlaceImage.vue'
 
 const props = defineProps({
   stop: {
@@ -128,27 +127,6 @@ const handleAudioStateUpdate = (newState) => {
 
 <template>
   <div class="stop-mode">
-    <!-- Hero Image -->
-    <div class="stop-hero">
-      <PlaceImage
-        :stop="stop"
-        :fallback-url="stop.imageUrl"
-        :alt="stop.name"
-        :max-width="1200"
-        :lazy="false"
-        class="hero-image-wrapper"
-      />
-      <div class="hero-overlay" />
-
-      <!-- Category Badge -->
-      <div class="category-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-        </svg>
-        <span>{{ stop.category }}</span>
-      </div>
-    </div>
-
     <!-- Content Area -->
     <div class="stop-content">
       <!-- Stop Info -->
@@ -265,70 +243,13 @@ const handleAudioStateUpdate = (newState) => {
   background: var(--color-neutral-50);
 }
 
-.stop-hero {
-  position: relative;
-  height: 45vh;
-  min-height: 280px;
-  max-height: 400px;
-  overflow: hidden;
-}
-
-.hero-image-wrapper {
-  width: 100%;
-  height: 100%;
-}
-
-.hero-image-wrapper :deep(.place-image) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.1) 0%,
-    rgba(0, 0, 0, 0) 30%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-}
-
-.category-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border-radius: 2rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-neutral-700);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-}
-
-.category-badge svg {
-  width: 1rem;
-  height: 1rem;
-  color: var(--color-primary);
-}
-
 .stop-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.5rem;
-  margin-top: -2rem;
   background: var(--color-neutral-50);
-  border-radius: 1.5rem 1.5rem 0 0;
-  position: relative;
-  z-index: 10;
 }
 
 .stop-info {
@@ -596,11 +517,6 @@ const handleAudioStateUpdate = (newState) => {
 
   .stop-content {
     background: var(--color-neutral-900);
-  }
-
-  .category-badge {
-    background: rgba(30, 41, 59, 0.95);
-    color: var(--color-neutral-200);
   }
 
   .stop-title {

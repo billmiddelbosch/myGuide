@@ -2,7 +2,6 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useNavigationSteps } from '@/composables/useNavigationSteps'
 import NavigationBanner from './NavigationBanner.vue'
-import PlaceImage from '@/components/PlaceImage.vue'
 
 const props = defineProps({
   currentStop: {
@@ -322,13 +321,6 @@ onMounted(() => {
 
       <!-- Stop Preview Card -->
       <div class="stop-preview">
-        <PlaceImage
-          :stop="currentStop"
-          :fallback-url="currentStop.imageUrl"
-          :alt="currentStop.name"
-          :max-width="200"
-          class="preview-image-wrapper"
-        />
         <div class="preview-content">
           <h3 class="preview-name">{{ currentStop.name }}</h3>
           <p class="preview-description">{{ currentStop.shortDescription }}</p>
@@ -695,11 +687,16 @@ onMounted(() => {
   }
 
   .stop-preview {
-    background: rgba(30, 41, 59, 0.98);
+    background: transparent;
+    backdrop-filter: blur(24px);
   }
 
   .preview-name {
     color: var(--color-neutral-100);
+  }
+
+  .preview-description {
+    color: var(--color-neutral-400);
   }
 
   .distance-time-badge {
@@ -707,7 +704,7 @@ onMounted(() => {
   }
 
   .badge-value {
-    color: var(--color-neutral-100);
+    color: var(--color-neutral-400);  
   }
 
   .badge-divider {
