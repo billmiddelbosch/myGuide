@@ -49,6 +49,24 @@ const transformStopData = (apiStop, category, order) => {
   }
 }
 
+// Helper to calculate max stops that fit within the user's duration preference
+const calculateMaxStops = (stops, transportMode, maxDuration) => {
+  const speedKmh = transportModes.value.find(m => m.id === transportMode)?.speedKmh || 5
+  const travelTimeBetweenStops = (0.5 / speedKmh) * 60 // minutes per ~500m between stops
+  let totalTime = 0
+  let count = 0
+
+  for (const stop of stops) {
+    const stopDuration = stop.duration || 15
+    const travelTime = count > 0 ? travelTimeBetweenStops : 0
+    if (totalTime + stopDuration + travelTime > maxDuration) break
+    totalTime += stopDuration + travelTime
+    count++
+  }
+
+  return Math.max(count, 1)
+}
+
 // Helper to calculate tour stats based on stops
 const calculateTourStats = (stops, transportMode) => {
   const speedKmh = transportModes.value.find(m => m.id === transportMode)?.speedKmh || 5
@@ -130,19 +148,27 @@ const handleGenerateTour = async () => {
 
         // Transform and categorize stops
         console.log('Raw stops data from API:', stopsData)
-        stopsData.forEach((stop) => {
-          const transformedStop = transformStopData(stop, categoryId, allStops.length + 1)
+        const validStops = stopsData
+          .map((stop) => transformStopData(stop, categoryId, allStops.length + 1))
+          .filter((stop) => {
+            if (!stop.coordinates.lat || !stop.coordinates.lng) {
+              console.warn('Skipping stop without coordinates:', stop.name)
+              return false
+            }
+            return true
+          })
+
+        const maxStops = calculateMaxStops(
+          [...allStops, ...validStops],
+          preferences.transportMode,
+          preferences.duration
+        )
+
+        validStops.forEach((transformedStop) => {
           console.log('Transformed stop:', transformedStop)
 
-          // Skip stops without valid coordinates
-          if (!transformedStop.coordinates.lat || !transformedStop.coordinates.lng) {
-            console.warn('Skipping stop without coordinates:', transformedStop.name)
-            return
-          }
-
-          // First few stops go to proposed tour, rest to suggestions
-          // TODO not max 6 stops hardcoded but based on duration preference
-          if (allStops.length < 6) {
+          // First stops go to proposed tour (based on duration), rest to suggestions
+          if (allStops.length < maxStops) {
             allStops.push(transformedStop)
           } else if (allSuggestedStops.length < 3) {
             allSuggestedStops.push({
@@ -232,15 +258,24 @@ const handleGenerateTour = async () => {
           const processedStops = []
           const processedSuggested = []
 
-          generatedStops.forEach((stop) => {
-            const transformedStop = transformStopData(stop, tourType, processedStops.length + 1)
+          const validGenStops = generatedStops
+            .map((stop) => transformStopData(stop, tourType, processedStops.length + 1))
+            .filter((stop) => {
+              if (!stop.coordinates.lat || !stop.coordinates.lng) {
+                console.warn('Skipping generated stop without coordinates:', stop.name)
+                return false
+              }
+              return true
+            })
 
-            if (!transformedStop.coordinates.lat || !transformedStop.coordinates.lng) {
-              console.warn('Skipping generated stop without coordinates:', transformedStop.name)
-              return
-            }
+          const maxGenStops = calculateMaxStops(
+            validGenStops,
+            preferences.transportMode,
+            preferences.duration
+          )
 
-            if (processedStops.length < 6) {
+          validGenStops.forEach((transformedStop) => {
+            if (processedStops.length < maxGenStops) {
               processedStops.push(transformedStop)
             } else if (processedSuggested.length < 3) {
               processedSuggested.push({

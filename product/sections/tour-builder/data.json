@@ -41,12 +41,6 @@
       "label": "Auto",
       "icon": "car",
       "speedKmh": 30
-    },
-    {
-      "id": "transit",
-      "label": "OV",
-      "icon": "transit",
-      "speedKmh": 20
     }
   ],
   "poiCategories": [
