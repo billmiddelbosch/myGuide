@@ -5,6 +5,7 @@ import data from '@/../product/sections/landing-page/data.json'
 import LandingPage from '@/components/sections/landing-page/LandingPage.vue'
 import CityPickerModal from '@/components/sections/landing-page/CityPickerModal.vue'
 import api from '@/services/api'
+import experienceData from '@/../product/sections/tour-experience/data.json'
 
 const router = useRouter()
 
@@ -86,10 +87,57 @@ const detectUserCity = async () => {
   }
 }
 
-// Detect location and fetch testimonials on mount
-onMounted(() => {
-  detectUserCity()
+const audioBaseUrl = experienceData.audioBaseUrl
+
+// Fetch 3 random stops for detected city, compose S3 audio URLs,
+// and assign them to the 2 feature audio buttons + 1 player card
+const fetchAudioPreviews = async (cityName) => {
+  try {
+    const response = await api.getCityStops(cityName, 'Cultuur')
+    const stops = response.data?.body || response.data || []
+    if (stops.length === 0) return
+
+    // Pick 3 random stops
+    const shuffled = [...stops].sort(() => Math.random() - 0.5)
+    const picked = shuffled.slice(0, 3)
+
+    // Compose S3 audio URLs
+    const audioUrls = picked.map(s => `${audioBaseUrl}/${s.id}.mp3`)
+
+    // Assign first 2 audio URLs to the feature cards that have audio buttons
+    features.value = features.value.map(f => {
+      if (f.id === 'feature-001' && picked[0]) {
+        return { ...f, audioClipUrl: audioUrls[0] }
+      }
+      if (f.id === 'feature-002' && picked[1]) {
+        return { ...f, audioClipUrl: audioUrls[1] }
+      }
+      return f
+    })
+
+    // Assign 3rd stop to the audio player card
+    if (picked[2]) {
+      audioPreview.value = {
+        ...audioPreview.value,
+        cityName: cityName,
+        stopName: picked[2].stopName || picked[2].name || audioPreview.value.stopName,
+        audioUrl: audioUrls[2],
+        transcript: picked[2].description || audioPreview.value.transcript
+      }
+    }
+    console.log('audio URLs:', audioUrls[0], audioUrls[1], audioUrls[2])
+    console.log('Audio previews loaded for', cityName)
+
+  } catch (error) {
+    console.log('Could not fetch audio previews, using defaults:', error.message)
+  }
+}
+
+// Detect location, fetch testimonials and audio previews on mount
+onMounted(async () => {
   fetchTestimonials()
+  await detectUserCity()
+  fetchAudioPreviews(currentCity.value.name)
 })
 
 // Modal state
@@ -110,19 +158,21 @@ const fetchTestimonials = async () => {
     const apiTestimonials = response.data?.body || response.data || []
 
     if (apiTestimonials.length > 0) {
-      // Transform API data to match expected format
+      // Transform API data to match expected format, sort most recent first
       testimonials.value = apiTestimonials.map((t, index) => ({
         feedbackId: t.feedbackId || `testimonial-api-${index}`,
         userName: t.userName || null,
-        // userAvatar: null, // API doesn't provide avatars
         rating: t.rating,
         review: t.review,
         tourCity: t.tourCity,
         tourDuration: t.tourDuration,
-        tourDuration: t.tourDuration,
         tourStopCount: t.tourStopCount || null,
         date: t.submittedAt ? t.submittedAt.split('T')[0] : null
-      }))
+      })).sort((a, b) => {
+        if (!a.date) return 1
+        if (!b.date) return -1
+        return new Date(b.date) - new Date(a.date)
+      })
       console.log('Loaded testimonials from API:', testimonials.value.length)
     } else {
       console.log('No testimonials from API, using defaults')
@@ -161,14 +211,42 @@ const handleGoToMyTours = () => {
   router.push({ name: 'my-tours' })
 }
 
-const handlePlayAudioPreview = (audioPreviewId) => {
-  console.log('Play audio preview:', audioPreviewId)
-  // TODO: Play audio file
+const handlePlayAudioPreview = () => {
+  // Stop any feature audio when the main player starts
+  stopFeatureAudio()
+}
+
+// Shared audio element for feature clip buttons
+let featureAudio = null
+let currentFeatureId = null
+
+const stopFeatureAudio = () => {
+  if (featureAudio) {
+    featureAudio.pause()
+    featureAudio = null
+    currentFeatureId = null
+  }
 }
 
 const handlePlayFeatureAudio = (featureId) => {
-  console.log('Play feature audio:', featureId)
-  // TODO: Play feature audio clip
+  const feature = features.value.find(f => f.id === featureId)
+  if (!feature?.audioClipUrl) return
+
+  // Toggle off if same feature
+  if (featureAudio && currentFeatureId === featureId) {
+    stopFeatureAudio()
+    return
+  }
+
+  stopFeatureAudio()
+
+  featureAudio = new Audio(feature.audioClipUrl)
+  currentFeatureId = featureId
+  featureAudio.play().catch(err => console.log('Could not play feature audio:', err.message))
+  featureAudio.addEventListener('ended', () => {
+    featureAudio = null
+    currentFeatureId = null
+  })
 }
 </script>
 
