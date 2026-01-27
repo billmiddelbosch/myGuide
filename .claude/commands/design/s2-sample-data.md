@@ -1,12 +1,15 @@
 # Sample Data
 
-You are helping the user create realistic sample data for a section of their product. This data will be used to populate screen designs. You will also generate TypeScript types based on the data structure.
+You are helping the user create realistic sample data for a section of their product. This data will be used to populate Vue.js screen designs. You will also generate TypeScript types based on the data structure.
+
+**Important:** This project uses Vue 3 with Composition API. All types must be compatible with Vue's `defineProps()` and `defineEmits()` patterns as defined in `CLAUDE.md`.
 
 ## Step 1: Check Prerequisites
 
 First, identify the target section and verify that `spec.md` exists for it.
 
 Read `/product/product-roadmap.md` to get the list of available sections.
+Read `CLAUDE.md` to understand the Vue.js patterns used in this project.
 
 If there's only one section, auto-select it. If there are multiple sections, use the AskUserQuestion tool to ask which section the user wants to generate data for.
 
@@ -37,7 +40,7 @@ Read and analyze `product/sections/[section-id]/spec.md` to understand:
 - What data entities are implied by the user flows?
 - What fields/properties would each entity need?
 - What sample values would be realistic and helpful for design?
-- What actions can be taken on each entity? (These become callback props)
+- What actions can be taken on each entity? (These become emitted events in Vue)
 
 **If a global data model exists:** Cross-reference the spec with the data model. Use the same entity names and ensure consistency.
 
@@ -103,7 +106,7 @@ Once the user approves the structure, create `product/sections/[section-id]/data
 - **Realistic sample data** - Use believable names, dates, descriptions, etc.
 - **Varied content** - Mix short and long text, different statuses, etc.
 - **Edge cases** - Include at least one empty array, one long description, etc.
-- **TypeScript-friendly structure** - Use consistent field names and types
+- **Vue-friendly structure** - Use consistent field names and types compatible with Vue's reactivity
 
 ### Required `_meta` Structure
 
@@ -151,7 +154,7 @@ The `_meta` descriptions should:
 
 The data should directly support the user flows and UI requirements in the spec.
 
-## Step 6: Generate TypeScript Types
+## Step 6: Generate TypeScript Types for Vue
 
 After creating data.json, generate `product/sections/[section-id]/types.ts` based on the data structure.
 
@@ -165,22 +168,23 @@ After creating data.json, generate `product/sections/[section-id]/types.ts` base
    - Objects → Create a named interface
 
 2. **Use union types for status/enum fields:**
-
    - If a field like `status` has known values, use a union: `'draft' | 'sent' | 'paid' | 'overdue'`
-
    - Base this on the spec and the variety in sample data
 
-3. **Create a Props interface for the main component:**
-   - Include the data as a prop (e.g., `invoices: Invoice[]`)
-   - Include optional callback props for each action (e.g., `onDelete?: (id: string) => void`)
+3. **Create Vue-compatible prop type definitions:**
+   - Props are defined for use with Vue's `defineProps()`
+   - Use `PropType` from Vue for complex types
+   - Events are listed separately for use with `defineEmits()`
 
 4. **Use consistent entity names:**
    - If a global data model exists, use the same entity names
    - This ensures consistency across sections
 
-Example types.ts:
+Example types.ts for Vue:
 
 ```typescript
+import type { PropType } from 'vue'
+
 // =============================================================================
 // Data Types
 // =============================================================================
@@ -203,35 +207,131 @@ export interface Invoice {
 }
 
 // =============================================================================
-// Component Props
+// Component Props (for use with defineProps)
 // =============================================================================
 
+/**
+ * Props for InvoiceList.vue
+ *
+ * Usage in component:
+ * ```vue
+ * <script setup>
+ * import type { Invoice } from '@/../product/sections/invoices/types'
+ *
+ * const props = defineProps<{
+ *   invoices: Invoice[]
+ * }>()
+ *
+ * const emit = defineEmits<{
+ *   view: [id: string]
+ *   edit: [id: string]
+ *   delete: [id: string]
+ *   create: []
+ * }>()
+ * </script>
+ * ```
+ */
 export interface InvoiceListProps {
   /** The list of invoices to display */
   invoices: Invoice[]
-  /** Called when user wants to view an invoice's details */
-  onView?: (id: string) => void
-  /** Called when user wants to edit an invoice */
-  onEdit?: (id: string) => void
-  /** Called when user wants to delete an invoice */
-  onDelete?: (id: string) => void
-  /** Called when user wants to archive an invoice */
-  onArchive?: (id: string) => void
-  /** Called when user wants to create a new invoice */
-  onCreate?: () => void
 }
+
+// =============================================================================
+// Component Events (for use with defineEmits)
+// =============================================================================
+
+/**
+ * Events emitted by InvoiceList.vue
+ *
+ * Usage:
+ * ```vue
+ * const emit = defineEmits<InvoiceListEmits>()
+ * emit('view', invoice.id)
+ * ```
+ */
+export interface InvoiceListEmits {
+  /** Emitted when user wants to view an invoice's details */
+  (e: 'view', id: string): void
+  /** Emitted when user wants to edit an invoice */
+  (e: 'edit', id: string): void
+  /** Emitted when user wants to delete an invoice */
+  (e: 'delete', id: string): void
+  /** Emitted when user wants to archive an invoice */
+  (e: 'archive', id: string): void
+  /** Emitted when user wants to create a new invoice */
+  (e: 'create'): void
+}
+
+// =============================================================================
+// Prop Definitions (for runtime validation)
+// =============================================================================
+
+/**
+ * Runtime prop definitions for use with defineProps()
+ *
+ * Usage:
+ * ```vue
+ * <script setup>
+ * import { invoiceListPropDefs } from '@/../product/sections/invoices/types'
+ * const props = defineProps(invoiceListPropDefs)
+ * </script>
+ * ```
+ */
+export const invoiceListPropDefs = {
+  invoices: {
+    type: Array as PropType<Invoice[]>,
+    required: true
+  }
+} as const
+```
+
+### Vue Component Usage Pattern
+
+Show how the types are used in a Vue component:
+
+```vue
+<script setup lang="ts">
+import type { Invoice, InvoiceListEmits } from '@/../product/sections/invoices/types'
+
+// Props with TypeScript
+const props = defineProps<{
+  invoices: Invoice[]
+}>()
+
+// Events with TypeScript
+const emit = defineEmits<InvoiceListEmits>()
+
+// Using emit
+const handleView = (id: string) => {
+  emit('view', id)
+}
+
+const handleCreate = () => {
+  emit('create')
+}
+</script>
+
+<template>
+  <div>
+    <button @click="handleCreate">Create Invoice</button>
+    <div v-for="invoice in invoices" :key="invoice.id">
+      <span>{{ invoice.clientName }}</span>
+      <button @click="emit('view', invoice.id)">View</button>
+      <button @click="emit('edit', invoice.id)">Edit</button>
+      <button @click="emit('delete', invoice.id)">Delete</button>
+    </div>
+  </div>
+</template>
 ```
 
 ### Naming Conventions
 
 - Use PascalCase for interface names: `Invoice`, `LineItem`, `InvoiceListProps`
-
 - Use camelCase for property names: `clientName`, `dueDate`, `lineItems`
-
-- Props interface should be named `[SectionName]Props` (e.g., `InvoiceListProps`)
-
-- Add JSDoc comments for callback props to explain when they're called
-
+- Props interface should be named `[ComponentName]Props` (e.g., `InvoiceListProps`)
+- Emits interface should be named `[ComponentName]Emits` (e.g., `InvoiceListEmits`)
+- Event names use kebab-case in templates but camelCase in TypeScript: `@start-tour` → `'startTour'`
+- Add JSDoc comments for props and events to explain their purpose
 - **Match entity names from the global data model if one exists**
 
 ## Step 7: Confirm and Next Steps
@@ -242,22 +342,25 @@ Let the user know:
 
 1. `product/sections/[section-id]/data.json` - Sample data with [X] records
 
-2. `product/sections/[section-id]/types.ts` - TypeScript interfaces for type safety
+2. `product/sections/[section-id]/types.ts` - TypeScript types for Vue components
 
 The types include:
 
 - `[Entity]` - The main data type
-- `[SectionName]Props` - Props interface for the component (includes callbacks for [list actions])
+- `[SectionName]Props` - Props interface for use with `defineProps<>()`
+- `[SectionName]Emits` - Events interface for use with `defineEmits<>()`
 
-When you're ready, run `/design-screen` to create the screen design for this section."
+When you're ready, run `/design-screen` to create the Vue screen design for this section."
 
 ## Important Notes
 
 - Generate realistic, believable sample data - not "Lorem ipsum" or "Test 123"
 - Include 5-10 sample records for main entities (enough to show a realistic list)
 - Include edge cases: empty arrays, long text, different statuses
-- Keep field names clear and TypeScript-friendly (camelCase)
+- Keep field names clear and Vue/TypeScript-friendly (camelCase)
 - The data structure should directly map to the spec's user flows
 - Always generate types.ts alongside data.json
-- Callback props should cover all actions mentioned in the spec
+- Use Vue's `defineEmits` pattern instead of callback props
+- Event names should be descriptive: `'view'`, `'edit'`, `'delete'`, `'startTour'`
 - **Use entity names from the global data model for consistency across sections**
+- **Follow Vue 3 Composition API patterns as defined in CLAUDE.md**

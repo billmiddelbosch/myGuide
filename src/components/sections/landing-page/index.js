@@ -1,0 +1,6 @@
+export { default as LandingPage } from './LandingPage.vue'
+export { default as HeroSection } from './HeroSection.vue'
+export { default as FeatureCard } from './FeatureCard.vue'
+export { default as HowItWorksStep } from './HowItWorksStep.vue'
+export { default as TestimonialCard } from './TestimonialCard.vue'
+export { default as AudioPlayerCard } from './AudioPlayerCard.vue'

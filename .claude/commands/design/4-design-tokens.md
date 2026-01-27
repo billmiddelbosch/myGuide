@@ -163,4 +163,3 @@ Available colors (each has shades 50-950):
 - Fonts should be exact Google Fonts names
 - Keep suggestions contextual to the product type
 - The mono font is optional but recommended for any product with code/technical content
-- Design tokens apply to screen designs only — the Design OS app keeps its own aesthetic
