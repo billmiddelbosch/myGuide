@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 
 // Props
 const props = defineProps({
@@ -16,20 +16,43 @@ const props = defineProps({
 // Events
 const emit = defineEmits(['play', 'pause'])
 
-// Local state for progress simulation
-const progress = ref(0)
+// Audio element ref
+const audioEl = ref(null)
+
+// Playback state
+const currentTime = ref(0)
+const duration = ref(props.audioPreview.duration || 0)
+const isLoading = ref(false)
 
 // Format duration in seconds to mm:ss
 const formatDuration = (seconds) => {
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  return `${mins}:${secs.toString().padStart(2, '0')}`
+  const secs = Math.floor(seconds)
+  const mins = Math.floor(secs / 60)
+  const rem = secs % 60
+  return `${mins}:${rem.toString().padStart(2, '0')}`
 }
 
 // Calculate progress percentage
 const progressPercentage = computed(() => {
-  return `${(progress.value / props.audioPreview.duration) * 100}%`
+  if (duration.value === 0) return '0%'
+  return `${(currentTime.value / duration.value) * 100}%`
 })
+
+// Audio event handlers
+const onTimeUpdate = () => {
+  if (audioEl.value) currentTime.value = audioEl.value.currentTime
+}
+const onLoadedMetadata = () => {
+  if (audioEl.value && isFinite(audioEl.value.duration)) {
+    duration.value = audioEl.value.duration
+  }
+  isLoading.value = false
+}
+const onEnded = () => {
+  currentTime.value = 0
+  emit('pause')
+}
+const onCanPlay = () => { isLoading.value = false }
 
 // Handle play/pause toggle
 const handlePlayPause = () => {
@@ -39,10 +62,50 @@ const handlePlayPause = () => {
     emit('play')
   }
 }
+
+// Seek on progress bar click
+const handleSeek = (event) => {
+  if (!audioEl.value || !duration.value) return
+  const rect = event.currentTarget.getBoundingClientRect()
+  audioEl.value.currentTime = ((event.clientX - rect.left) / rect.width) * duration.value
+}
+
+// Control audio element when isPlaying changes
+watch(() => props.isPlaying, (playing) => {
+  if (!audioEl.value) return
+  if (playing) {
+    isLoading.value = true
+    audioEl.value.play().catch(() => {
+      isLoading.value = false
+      emit('pause')
+    })
+  } else {
+    audioEl.value.pause()
+    isLoading.value = false
+  }
+})
+
+onBeforeUnmount(() => {
+  if (audioEl.value) {
+    audioEl.value.pause()
+    audioEl.value.src = ''
+  }
+})
 </script>
 
 <template>
   <div class="audio-player-card" :class="{ 'is-playing': isPlaying }">
+    <!-- Hidden audio element -->
+    <audio
+      ref="audioEl"
+      :src="audioPreview.audioUrl"
+      preload="none"
+      @timeupdate="onTimeUpdate"
+      @loadedmetadata="onLoadedMetadata"
+      @ended="onEnded"
+      @canplay="onCanPlay"
+    />
+
     <!-- Waveform background decoration -->
     <div class="waveform-bg">
       <svg viewBox="0 0 200 40" preserveAspectRatio="none">
@@ -79,7 +142,11 @@ const handlePlayPause = () => {
       <!-- Player controls -->
       <div class="player-controls">
         <button class="play-button" @click="handlePlayPause">
-          <svg v-if="!isPlaying" class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+          <svg v-if="isLoading" class="loading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" opacity="0.25" />
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round" />
+          </svg>
+          <svg v-else-if="!isPlaying" class="play-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M8 5v14l11-7z" />
           </svg>
           <svg v-else class="pause-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -88,12 +155,12 @@ const handlePlayPause = () => {
         </button>
 
         <div class="progress-container">
-          <div class="progress-bar">
+          <div class="progress-bar" @click="handleSeek">
             <div class="progress-fill" :style="{ width: progressPercentage }" />
           </div>
           <div class="time-display">
-            <span class="current-time">{{ formatDuration(progress) }}</span>
-            <span class="duration">{{ formatDuration(audioPreview.duration) }}</span>
+            <span class="current-time">{{ formatDuration(currentTime) }}</span>
+            <span class="duration">{{ formatDuration(duration) }}</span>
           </div>
         </div>
       </div>
@@ -233,6 +300,17 @@ const handlePlayPause = () => {
   margin-left: 0.125rem;
 }
 
+.loading-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .progress-container {
   flex: 1;
 }
@@ -243,6 +321,7 @@ const handlePlayPause = () => {
   border-radius: 0.25rem;
   overflow: hidden;
   margin-bottom: 0.5rem;
+  cursor: pointer;
 }
 
 .progress-fill {
