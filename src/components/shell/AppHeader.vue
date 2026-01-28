@@ -38,8 +38,9 @@ const handleLogout = () => {
       </a>
 
       <!-- Right side: My Tours link + User Menu -->
+      <!-- Removed because this is not MVP-->
       <div class="header-actions">
-        <a
+        <!-- <a
           v-if="user"
           href="/my-tours"
           class="my-tours-link"
@@ -49,24 +50,24 @@ const handleLogout = () => {
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
           </svg>
           <span class="link-text">My Tours</span>
-        </a>
+        </a> -->
 
-        <UserMenu
+        <!-- <UserMenu
           v-if="user"
           :user="user"
           @logout="handleLogout"
           @navigate="(to) => emit('navigate', to)"
-        />
+        /> -->
 
         <!-- Login button for non-authenticated users -->
-        <a
+        <!-- <a
           v-else
           href="/login"
           class="login-link"
           @click.prevent="emit('navigate', '/login')"
         >
           Sign In
-        </a>
+        </a> -->
       </div>
     </div>
   </header>
