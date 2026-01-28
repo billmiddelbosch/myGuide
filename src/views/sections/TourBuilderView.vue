@@ -143,7 +143,7 @@ const handleGenerateTour = async () => {
       try {
         console.log(`Fetching stops for category: ${categoryId} with prompt: ${prompt}`)
         console.log('Current city:', city.value)
-        const response = await api.getCityStops(city.value.name, categoryId, prompt)
+        const response = await api.getCityStops(city.value.name, categoryId)
         const stopsData = response.data?.body || response.data || []
 
         // Transform and categorize stops

@@ -1,6 +1,4 @@
 <script setup>
-import PlaceImage from '@/components/PlaceImage.vue'
-
 // Props
 const props = defineProps({
   stop: {
@@ -43,23 +41,6 @@ const formatDuration = (minutes) => {
         <path d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
-
-    <!-- Image -->
-    <div class="stop-image">
-      <PlaceImage
-        :stop="stop"
-        :fallback-url="stop.imageUrl"
-        :alt="stop.name"
-        :max-width="600"
-      />
-      <div class="image-overlay" />
-      <span class="duration-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor" class="clock-icon">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
-        </svg>
-        {{ formatDuration(stop.duration) }}
-      </span>
-    </div>
 
     <!-- Content -->
     <div class="stop-content">
@@ -153,52 +134,6 @@ const formatDuration = (minutes) => {
 .close-button svg {
   width: 1rem;
   height: 1rem;
-}
-
-/* Image */
-.stop-image {
-  position: relative;
-  height: 12rem;
-  overflow: hidden;
-}
-
-.stop-image :deep(.place-image-container) {
-  width: 100%;
-  height: 100%;
-}
-
-.stop-image :deep(.place-image) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 50%);
-}
-
-.duration-badge {
-  position: absolute;
-  bottom: 0.75rem;
-  left: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(4px);
-  border-radius: 2rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--color-neutral-700);
-}
-
-.clock-icon {
-  width: 0.875rem;
-  height: 0.875rem;
-  color: var(--color-neutral-500);
 }
 
 /* Content */
@@ -316,15 +251,6 @@ const formatDuration = (minutes) => {
 
   .stop-description {
     color: var(--color-neutral-500);
-  }
-
-  .duration-badge {
-    background: rgba(30, 41, 59, 0.95);
-    color: var(--color-neutral-200);
-  }
-
-  .clock-icon {
-    color: var(--color-neutral-400);
   }
 
   .action-button.remove {

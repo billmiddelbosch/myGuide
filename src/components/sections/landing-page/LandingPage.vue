@@ -48,6 +48,7 @@ const emit = defineEmits(['startTour', 'selectCity', 'goToMyTours', 'playAudioPr
 
 // Local state
 const isAudioPlaying = ref(false)
+const testimonialsVisible = ref(3)
 
 // Computed
 const isLoggedIn = computed(() => props.user?.isLoggedIn ?? false)
@@ -77,6 +78,13 @@ const handlePauseAudioPreview = () => {
 
 const handlePlayFeatureAudio = (featureId) => {
   emit('playFeatureAudio', featureId)
+}
+
+const visibleTestimonials = computed(() => props.testimonials.slice(0, testimonialsVisible.value))
+const hasMoreTestimonials = computed(() => testimonialsVisible.value < props.testimonials.length)
+
+const showMoreTestimonials = () => {
+  testimonialsVisible.value += 3
 }
 </script>
 
@@ -166,10 +174,16 @@ const handlePlayFeatureAudio = (featureId) => {
 
         <div class="testimonials-grid">
           <TestimonialCard
-            v-for="testimonial in testimonials"
-            :key="testimonial.id"
+            v-for="testimonial in visibleTestimonials"
+            :key="testimonial.feedbackId || testimonial.id"
             :testimonial="testimonial"
           />
+        </div>
+
+        <div v-if="hasMoreTestimonials" class="show-more-container">
+          <button class="show-more-button" @click="showMoreTestimonials">
+            Bekijk meer
+          </button>
         </div>
       </div>
     </section>
@@ -270,6 +284,29 @@ const handlePlayFeatureAudio = (featureId) => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.show-more-button {
+  padding: 0.625rem 1.5rem;
+  background: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-neutral-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-more-button:hover {
+  background: var(--color-neutral-100);
+  border-color: var(--color-neutral-300);
 }
 
 /* CTA Section */

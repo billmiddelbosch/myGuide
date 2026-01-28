@@ -62,12 +62,11 @@ export default {
 
   // Get suggested stops for a city based on tour type
   // Returns stops that can be displayed on the map
-  getCityStops(stopCity, tourType, prompt) {
+  getCityStops(stopCity, tourType) {
     return apiClient.get('/cityStops', {
       params: {
         stopCity,
-        tourType,
-        prompt
+        tourType
       }
     });
   },
