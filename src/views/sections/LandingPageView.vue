@@ -12,11 +12,13 @@ const router = useRouter()
 const currentCity = ref(data.currentCity)
 const cities = ref(data.cities)
 const isDetectingLocation = ref(false)
+const locationDenied = ref(false)
 
 // Detect user's current city using geolocation
 const detectUserCity = async () => {
   if (!('geolocation' in navigator)) {
     console.log('Geolocation not supported')
+    locationDenied.value = true
     return
   }
 
@@ -74,6 +76,10 @@ const detectUserCity = async () => {
     }
   } catch (error) {
     console.log('Could not detect location:', error.message)
+    // Check if permission was denied
+    if (error.code === 1) { // GeolocationPositionError.PERMISSION_DENIED
+      locationDenied.value = true
+    }
     // Keep default city from data
   } finally {
     isDetectingLocation.value = false
@@ -176,6 +182,7 @@ const handlePlayFeatureAudio = (featureId) => {
     :audio-preview="audioPreview"
     :social-proof="socialProof"
     :user="user"
+    :location-denied="locationDenied"
     @start-tour="handleStartTour"
     @select-city="handleSelectCity"
     @go-to-my-tours="handleGoToMyTours"

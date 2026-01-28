@@ -40,6 +40,10 @@ const props = defineProps({
   user: {
     type: Object,
     default: null
+  },
+  locationDenied: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -82,6 +86,41 @@ const handlePlayFeatureAudio = (featureId) => {
 
 <template>
   <div class="landing-page">
+    <!-- Location Warning Banner -->
+    <div v-if="locationDenied" class="location-warning">
+      <div class="location-warning-content">
+        <svg class="location-warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+          <line x1="2" y1="2" x2="22" y2="22" stroke-width="2.5" />
+        </svg>
+        <div class="location-warning-text">
+          <strong>Locatietoegang vereist</strong>
+          <p>
+            MyGuide heeft je locatie nodig om je tour te kunnen begeleiden.
+            Zonder locatie kunnen we niet bepalen wanneer je bij een stop bent.
+          </p>
+          <details class="location-help">
+            <summary>Hoe schakel ik locatie in?</summary>
+            <div class="location-help-content">
+              <p><strong>iPhone (Safari):</strong></p>
+              <ol>
+                <li>Ga naar Instellingen &gt; Privacy en beveiliging &gt; Locatievoorzieningen</li>
+                <li>Zorg dat Locatievoorzieningen aan staat</li>
+                <li>Scroll naar Safari en kies 'Tijdens gebruik van app'</li>
+              </ol>
+              <p><strong>Android (Chrome):</strong></p>
+              <ol>
+                <li>Tik op het slotje links in de adresbalk</li>
+                <li>Tik op 'Machtigingen' of 'Site-instellingen'</li>
+                <li>Zet Locatie op 'Toestaan'</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
     <!-- Hero Section -->
     <HeroSection
       :city="currentCity"
@@ -206,6 +245,96 @@ const handlePlayFeatureAudio = (featureId) => {
 .landing-page {
   width: 100%;
   overflow-x: hidden;
+}
+
+/* Location Warning Banner */
+.location-warning {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-bottom: 1px solid #f59e0b;
+  padding: 1rem 1.5rem;
+}
+
+.location-warning-content {
+  max-width: 48rem;
+  margin: 0 auto;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.location-warning-icon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  color: #b45309;
+  margin-top: 0.125rem;
+}
+
+.location-warning-text {
+  flex: 1;
+}
+
+.location-warning-text strong {
+  display: block;
+  color: #92400e;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.location-warning-text > p {
+  color: #a16207;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.location-help {
+  margin-top: 0.75rem;
+}
+
+.location-help summary {
+  color: #92400e;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.location-help summary:hover {
+  text-decoration: underline;
+}
+
+.location-help-content {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  color: #78350f;
+}
+
+.location-help-content p {
+  margin: 0 0 0.5rem 0;
+}
+
+.location-help-content p strong {
+  display: inline;
+  color: #78350f;
+  font-size: 0.8125rem;
+}
+
+.location-help-content ol {
+  margin: 0 0 1rem 0;
+  padding-left: 1.25rem;
+}
+
+.location-help-content ol:last-child {
+  margin-bottom: 0;
+}
+
+.location-help-content li {
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
 }
 
 /* Sections */
