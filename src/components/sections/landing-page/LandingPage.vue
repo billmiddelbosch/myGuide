@@ -85,7 +85,7 @@ const handlePlayFeatureAudio = (featureId) => {
 </script>
 
 <template>
-  <div class="landing-page">
+  <main class="landing-page" role="main">
     <!-- Location Warning Banner -->
     <div v-if="locationDenied" class="location-warning">
       <div class="location-warning-content">
@@ -97,7 +97,7 @@ const handlePlayFeatureAudio = (featureId) => {
         <div class="location-warning-text">
           <strong>Locatietoegang vereist</strong>
           <p>
-            MyGuide heeft je locatie nodig om je tour te kunnen begeleiden.
+            cityCast heeft je locatie nodig om je tour te kunnen begeleiden.
             Zonder locatie kunnen we niet bepalen wanneer je bij een stop bent.
           </p>
           <details class="location-help">
@@ -133,10 +133,10 @@ const handlePlayFeatureAudio = (featureId) => {
     />
 
     <!-- Features Section -->
-    <section class="section features-section">
+    <section class="section features-section" aria-labelledby="features-title">
       <div class="section-container">
         <div class="section-header">
-          <h2 class="section-title">Waarom MyGuide?</h2>
+          <h2 id="features-title" class="section-title">Waarom cityCast?</h2>
           <p class="section-subtitle">
             Ontdek wat onze audio tours zo bijzonder maakt
           </p>
@@ -154,10 +154,10 @@ const handlePlayFeatureAudio = (featureId) => {
     </section>
 
     <!-- How It Works Section -->
-    <section class="section how-it-works-section">
+    <section class="section how-it-works-section" aria-labelledby="how-it-works-title">
       <div class="section-container">
         <div class="section-header">
-          <h2 class="section-title">Zo werkt het</h2>
+          <h2 id="how-it-works-title" class="section-title">Zo werkt het</h2>
           <p class="section-subtitle">
             In 3 stappen je eigen audio tour
           </p>
@@ -175,10 +175,10 @@ const handlePlayFeatureAudio = (featureId) => {
     </section>
 
     <!-- Audio Preview Section -->
-    <section class="section audio-preview-section">
+    <section class="section audio-preview-section" aria-labelledby="audio-preview-title">
       <div class="section-container">
         <div class="section-header">
-          <h2 class="section-title">Luister even mee</h2>
+          <h2 id="audio-preview-title" class="section-title">Luister even mee</h2>
           <p class="section-subtitle">
             Zo klinkt een stop op je tour
           </p>
@@ -194,10 +194,10 @@ const handlePlayFeatureAudio = (featureId) => {
     </section>
 
     <!-- Testimonials Section -->
-    <section class="section testimonials-section">
+    <section class="section testimonials-section" aria-labelledby="testimonials-title">
       <div class="section-container">
         <div class="section-header">
-          <h2 class="section-title">Wat anderen zeggen</h2>
+          <h2 id="testimonials-title" class="section-title">Wat anderen zeggen</h2>
           <p class="section-subtitle">
             Ervaringen van andere ontdekkers
           </p>
@@ -214,11 +214,11 @@ const handlePlayFeatureAudio = (featureId) => {
     </section>
 
     <!-- Final CTA Section -->
-    <section class="section cta-section">
+    <section class="section cta-section" aria-labelledby="cta-title">
       <div class="section-container">
         <div class="cta-card">
           <div class="cta-content">
-            <h2 class="cta-title">Klaar om te ontdekken?</h2>
+            <h2 id="cta-title" class="cta-title">Klaar om te ontdekken?</h2>
             <p class="cta-description">
               Start je eigen tour in {{ currentCity.name }} en ontdek de mooiste plekken
             </p>
@@ -238,7 +238,7 @@ const handlePlayFeatureAudio = (featureId) => {
         </div>
       </div>
     </section>
-  </div>
+  </main>
 </template>
 
 <style scoped>

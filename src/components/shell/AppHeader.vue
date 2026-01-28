@@ -34,7 +34,7 @@ const handleLogout = () => {
             <path d="M12 2a8 8 0 0 0-8 8c0 1.892.402 3.13 1.5 4.5L12 22l6.5-7.5c1.098-1.37 1.5-2.608 1.5-4.5a8 8 0 0 0-8-8z"/>
           </svg>
         </span>
-        <span class="logo-text">MyGuide</span>
+        <span class="logo-text">cityCast</span>
       </a>
 
       <!-- Right side: My Tours link + User Menu -->

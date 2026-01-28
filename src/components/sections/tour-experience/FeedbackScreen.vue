@@ -122,7 +122,7 @@ const ratingLabels = ['Slecht', 'Matig', 'Oké', 'Goed', 'Geweldig!']
         </div>
         <h1 class="thank-you-title">Bedankt voor je feedback!</h1>
         <p class="thank-you-subtitle">
-          Je feedback helpt ons om MyGuide te verbeteren.
+          Je feedback helpt ons om cityCast te verbeteren.
         </p>
 
         <!-- Trustpilot prompt for 4+ star ratings -->
