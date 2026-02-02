@@ -322,15 +322,15 @@ const handleDonate = async (amount) => {
     const tourId = tour.value.id
     const tourCity = tour.value.cityName || tour.value.city?.name || 'Unknown'
     const redirectUrl = `${window.location.origin}/tour/${tourId}?payment=success`
-
     const response = await api.createPayment({
       amount,
       tourId,
       tourCity,
       redirectUrl
     })
-
-    const checkoutUrl = response.data?.checkoutUrl || response.data?.body?.checkoutUrl
+    const lambdaResponse = response.data['body-json']
+    const body = JSON.parse(lambdaResponse.body)
+    const checkoutUrl = body.checkoutUrl
     if (checkoutUrl) {
       window.location.href = checkoutUrl
     }
