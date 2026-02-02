@@ -1,7 +1,7 @@
 {
-  "name": "myguide-feedback-lambda",
+  "name": "citycast-feedback-lambda",
   "version": "1.0.0",
-  "description": "Lambda handler for MyGuide feedback endpoints",
+  "description": "Lambda handler for cityCast feedback endpoints",
   "main": "index.js",
   "scripts": {
     "zip": "zip -r function.zip index.js node_modules"

@@ -1,0 +1,12 @@
+{
+  "name": "citycast-payments-lambda",
+  "version": "1.0.0",
+  "description": "Lambda handler for cityCast Mollie donation payments",
+  "main": "index.js",
+  "scripts": {
+    "zip": "zip -r function.zip index.js node_modules"
+  },
+  "dependencies": {
+    "@mollie/api-client": "^4.0.0"
+  }
+}

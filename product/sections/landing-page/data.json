@@ -2,7 +2,7 @@
   "_meta": {
     "models": {
       "cities": "Cities where users can create audio tours. Each city has a hero image and sample audio narration.",
-      "features": "Key features of MyGuide displayed as highlight cards with icons and optional audio clips.",
+      "features": "Key features of cityCast displayed as highlight cards with icons and optional audio clips.",
       "howItWorksSteps": "Sequential steps explaining how to create a tour, shown as a visual guide.",
       "testimonials": "User reviews and quotes providing social proof for new visitors.",
       "audioPreview": "Sample audio narration clips tied to specific cities for the inline player."
@@ -163,7 +163,7 @@
       "userAvatar": null,
       "cityName": "Maastricht",
       "rating": 5,
-      "quote": "Als toerist wilde ik meer dan de standaard bezienswaardigheden. MyGuide bracht me naar verborgen parels die ik anders nooit had gevonden.",
+      "quote": "Als toerist wilde ik meer dan de standaard bezienswaardigheden. cityCast bracht me naar verborgen parels die ik anders nooit had gevonden.",
       "tourDuration": "3 uur",
       "date": "2024-01-03"
     }

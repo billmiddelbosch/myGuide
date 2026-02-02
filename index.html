@@ -1,13 +1,87 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-vue-app</title>
+
+    <!-- Primary Meta Tags -->
+    <title>cityCast - Persoonlijke Audio Tours | Ontdek steden op jouw manier</title>
+    <meta name="title" content="cityCast - Persoonlijke Audio Tours | Ontdek steden op jouw manier" />
+    <meta name="description" content="Ontdek steden met gepersonaliseerde audio tours. cityCast past zich aan jouw interesses, tempo en locatie aan. Start vandaag nog je eigen unieke stadswandeling." />
+    <meta name="keywords" content="audio tour, stadswandeling, persoonlijke tour, Nederland, gids, wandelen, cultuur, geschiedenis, bezienswaardigheden" />
+    <meta name="author" content="cityCast" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://stadtour.nl/" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <!-- Theme & Icons -->
+    <meta name="theme-color" content="#0d9488" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://stadtour.nl/" />
+    <meta property="og:title" content="cityCast - Persoonlijke Audio Tours" />
+    <meta property="og:description" content="Ontdek steden met gepersonaliseerde audio tours die zich aanpassen aan jouw interesses en tempo." />
+    <meta property="og:image" content="https://stadtour.nl/og-image.jpg" />
+    <meta property="og:locale" content="nl_NL" />
+    <meta property="og:site_name" content="cityCast" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://stadtour.nl/" />
+    <meta name="twitter:title" content="cityCast - Persoonlijke Audio Tours" />
+    <meta name="twitter:description" content="Ontdek steden met gepersonaliseerde audio tours die zich aanpassen aan jouw interesses en tempo." />
+    <meta name="twitter:image" content="https://stadtour.nl/og-image.jpg" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "cityCast",
+      "description": "Persoonlijke audio tours die zich aanpassen aan jouw interesses, tempo en locatie.",
+      "url": "https://stadtour.nl",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1250"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "cityCast",
+        "url": "https://stadtour.nl"
+      }
+    }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D49SWV842N"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-D49SWV842N');
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <noscript>
+      <div style="padding:2rem;text-align:center;font-family:sans-serif;">
+        <h1>cityCast - Persoonlijke Audio Tours</h1>
+        <p>Ontdek steden met gepersonaliseerde audio tours die zich aanpassen aan jouw interesses en tempo.</p>
+        <p>Schakel JavaScript in om cityCast te gebruiken.</p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
