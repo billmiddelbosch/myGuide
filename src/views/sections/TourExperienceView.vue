@@ -322,7 +322,6 @@ const handleDonate = async (amount) => {
     const tourId = tour.value.id
     const tourCity = tour.value.cityName || tour.value.city?.name || 'Unknown'
     const redirectUrl = `${window.location.origin}/tour/${tourId}?payment=success`
-    console.log('Creating payment for donation:', { amount, tourId, tourCity, redirectUrl })
     const response = await api.createPayment({
       amount,
       tourId,
@@ -330,13 +329,8 @@ const handleDonate = async (amount) => {
       redirectUrl
     })
     console.log('Payment creation response:', response.data)
-    // const checkoutUrl = typeof response.data.body === 'string' 
-    //   ? JSON.parse(response.data.body) 
-    //   : response.data.body
-    // const checkoutUrl = response.data?.checkoutUrl || parsed?.checkoutUrl
     const lambdaResponse = response.data['body-json']
     const body = JSON.parse(lambdaResponse.body)
-    console.log('Payment creation response body:', body)
     const checkoutUrl = body.checkoutUrl
 
     console.log('Checkout URL:', checkoutUrl)
