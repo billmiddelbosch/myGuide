@@ -118,5 +118,16 @@ export default {
     return apiClient.get('/feedback', {
       params: { limit }
     });
+  },
+
+  // Create a Mollie payment for a donation
+  createPayment({ amount, tourId, tourCity, redirectUrl }) {
+    return apiClient.post('/payment', {
+      amount: amount.toFixed(2),
+      currency: 'EUR',
+      tourId,
+      tourCity,
+      redirectUrl
+    });
   }
 };

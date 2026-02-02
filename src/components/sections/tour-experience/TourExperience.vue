@@ -5,6 +5,7 @@ import { getAudioUrl } from '@/../product/sections/tour-experience/types'
 import ProgressBar from './ProgressBar.vue'
 import NavigationMode from './NavigationMode.vue'
 import StopMode from './StopMode.vue'
+import DonationScreen from './DonationScreen.vue'
 import FeedbackScreen from './FeedbackScreen.vue'
 
 const props = defineProps({
@@ -39,6 +40,18 @@ const props = defineProps({
   feedbackSubmitted: {
     type: Boolean,
     default: false
+  },
+  donationHandled: {
+    type: Boolean,
+    default: false
+  },
+  donationLoading: {
+    type: Boolean,
+    default: false
+  },
+  paymentReturned: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -50,6 +63,9 @@ const emit = defineEmits([
   'stop',
   'submitFeedback',
   'goHome',
+  'donate',
+  'skipDonation',
+  'skipFeedback',
   'update:audioState'
 ])
 
@@ -144,9 +160,18 @@ const handleGoHome = () => {
       @stop="emit('stop')"
     />
 
+    <!-- Donation Screen -->
+    <DonationScreen
+      v-else-if="experienceState.isCompleted && !donationHandled"
+      :is-loading="donationLoading"
+      :payment-returned="paymentReturned"
+      @donate="(amount) => emit('donate', amount)"
+      @skip="emit('skipDonation')"
+    />
+
     <!-- Feedback Screen -->
     <FeedbackScreen
-      v-else-if="experienceState.isCompleted"
+      v-else-if="experienceState.isCompleted && donationHandled"
       :tour="tour"
       :feedback="feedbackState"
       :is-submitting="feedbackSubmitting"
@@ -156,6 +181,7 @@ const handleGoHome = () => {
       @update-user-name="handleUpdateUserName"
       @update-user-email="handleUpdateUserEmail"
       @submit="handleSubmitFeedback"
+      @skip="emit('skipFeedback')"
       @go-home="handleGoHome"
     />
 
