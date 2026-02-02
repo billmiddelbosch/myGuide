@@ -209,6 +209,7 @@ const handleGoHome = () => {
 .tour-experience {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-neutral-50);
 }
 
