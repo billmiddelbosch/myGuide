@@ -1,12 +1,12 @@
-# MyGuide
+# cityCast
 
 ## Description
-MyGuide is a clean, easy-to-use webapp that lets travelers create personalized audio tours tailored to their available time and interests. Using AI-generated narration and smart route planning, users can explore any city on their own terms - at a fraction of the cost of traditional guided tours.
+cityCast is a clean, easy-to-use webapp that lets travelers create personalized audio tours tailored to their available time and interests. Using AI-generated narration and smart route planning, users can explore any city on their own terms - at a fraction of the cost of traditional guided tours.
 
 ## Problems & Solutions
 
 ### Problem 1: Existing tours aren't personal
-MyGuide lets you build a tour around your interests and curiosities, not a generic script.
+cityCast lets you build a tour around your interests and curiosities, not a generic script.
 
 ### Problem 2: Audio tours are too expensive
 Affordable pricing makes personalized audio tours accessible to every traveler.

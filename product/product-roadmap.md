@@ -3,7 +3,7 @@
 ## Sections
 
 ### 1. Landing Page
-Marketing page explaining MyGuide's features and value proposition to convert visitors into users.
+Marketing page explaining cityCast's features and value proposition to convert visitors into users.
 
 ### 2. Tour Builder
 Create personalized tours by selecting location, available time, and POI types of interest.

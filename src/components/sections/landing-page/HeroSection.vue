@@ -54,7 +54,7 @@ const formatNumber = (num) => {
 </script>
 
 <template>
-  <section class="hero">
+  <section class="hero" aria-label="Hero">
     <!-- Background Image -->
     <div
       class="hero-background"

@@ -1,7 +1,7 @@
 # Application Shell Specification
 
 ## Overview
-MyGuide uses a minimal header design that keeps focus on the content while providing essential navigation. The header contains the logo, a quick link to My Tours, and a user menu. Navigation between sections happens primarily through in-content CTAs and buttons.
+cityCast uses a minimal header design that keeps focus on the content while providing essential navigation. The header contains the logo, a quick link to My Tours, and a user menu. Navigation between sections happens primarily through in-content CTAs and buttons.
 
 ## Navigation Structure
 - **Logo** → Landing Page (home)

@@ -3,7 +3,7 @@
  * Implements LRU eviction when cache is full
  */
 
-const CACHE_KEY = 'myguide_place_photos'
+const CACHE_KEY = 'citycast_place_photos'
 const MAX_ENTRIES = 500
 const PHOTO_TTL = 24 * 60 * 60 * 1000 // 24 hours for photo URLs
 const PLACE_TTL = 7 * 24 * 60 * 60 * 1000 // 7 days for place lookups
