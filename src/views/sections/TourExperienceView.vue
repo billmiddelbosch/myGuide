@@ -328,12 +328,9 @@ const handleDonate = async (amount) => {
       tourCity,
       redirectUrl
     })
-    console.log('Payment creation response:', response.data)
     const lambdaResponse = response.data['body-json']
     const body = JSON.parse(lambdaResponse.body)
     const checkoutUrl = body.checkoutUrl
-
-    console.log('Checkout URL:', checkoutUrl)
     if (checkoutUrl) {
       window.location.href = checkoutUrl
     }
