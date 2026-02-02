@@ -122,9 +122,9 @@ const handleGoHome = () => {
 
 <template>
   <div class="tour-experience">
-    <!-- Progress Bar (always visible except on feedback screen) -->
+    <!-- Progress Bar (only in stop mode) -->
     <div
-      v-if="!experienceState.isCompleted"
+      v-if="experienceState.mode === 'stop' && !experienceState.isCompleted"
       class="progress-container"
     >
       <ProgressBar

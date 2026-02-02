@@ -241,6 +241,7 @@ const handleAudioStateUpdate = (newState) => {
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
+  padding-top: 6.5rem;
   background: var(--color-neutral-50);
 }
 
