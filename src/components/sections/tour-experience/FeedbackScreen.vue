@@ -20,7 +20,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['updateRating', 'updateReview', 'updateUserName', 'updateUserEmail', 'submit', 'goHome'])
+const emit = defineEmits(['updateRating', 'updateReview', 'updateUserName', 'updateUserEmail', 'submit', 'skip', 'goHome'])
 
 // Local state
 const hoveredRating = ref(null)
@@ -282,6 +282,10 @@ const ratingLabels = ['Slecht', 'Matig', 'Oké', 'Goed', 'Geweldig!']
             </svg>
             Feedback versturen
           </template>
+        </button>
+
+        <button class="btn-skip" @click="emit('skip')">
+          Overslaan
         </button>
       </div>
 
@@ -605,6 +609,21 @@ const ratingLabels = ['Slecht', 'Matig', 'Oké', 'Goed', 'Geweldig!']
   height: 1.25rem;
 }
 
+.btn-skip {
+  background: none;
+  border: none;
+  color: var(--color-neutral-400);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: color 0.2s ease;
+}
+
+.btn-skip:hover {
+  color: var(--color-neutral-600);
+}
+
 .spinner {
   animation: spin 1s linear infinite;
 }
@@ -826,6 +845,14 @@ const ratingLabels = ['Slecht', 'Matig', 'Oké', 'Goed', 'Geweldig!']
   }
 
   .trustpilot-text {
+    color: var(--color-neutral-300);
+  }
+
+  .btn-skip {
+    color: var(--color-neutral-500);
+  }
+
+  .btn-skip:hover {
     color: var(--color-neutral-300);
   }
 }
