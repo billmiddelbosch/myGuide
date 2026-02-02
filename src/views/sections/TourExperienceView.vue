@@ -1,12 +1,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import experienceData from '@/../product/sections/tour-experience/data.json'
 import tourData from '@/../product/sections/tour-builder/data.json'
 import TourExperience from '@/components/sections/tour-experience/TourExperience.vue'
 import api from '@/services/api'
 
 const router = useRouter()
+const route = useRoute()
 
 // Load tour from sessionStorage (passed from TourBuilder) or fall back to mock data
 const loadTour = () => {
@@ -67,6 +68,11 @@ const audioGenerationStatus = ref({})
 // Feedback submission state
 const feedbackSubmitting = ref(false)
 const feedbackSubmitted = ref(false)
+
+// Donation state
+const donationHandled = ref(false)
+const donationLoading = ref(false)
+const paymentReturned = ref(false)
 
 // Check if audio file already exists on S3
 const checkAudioExists = (stopId) => {
@@ -146,6 +152,13 @@ let watchId = null
 
 // Start watching user location
 onMounted(() => {
+  // Check for Mollie payment redirect
+  if (route.query.payment) {
+    paymentReturned.value = true
+    // Mark tour as completed since we're returning from payment
+    experienceState.value.isCompleted = true
+  }
+
   // Generate audio for the first stop when tour starts
   generateAudioForStop(0)
 
@@ -303,6 +316,38 @@ const handleSubmitFeedback = async (feedback) => {
   }
 }
 
+const handleDonate = async (amount) => {
+  donationLoading.value = true
+  try {
+    const tourId = tour.value.id
+    const tourCity = tour.value.cityName || tour.value.city?.name || 'Unknown'
+    const redirectUrl = `${window.location.origin}/tour/${tourId}?payment=success`
+    const response = await api.createPayment({
+      amount,
+      tourId,
+      tourCity,
+      redirectUrl
+    })
+    const lambdaResponse = response.data['body-json']
+    const body = JSON.parse(lambdaResponse.body)
+    const checkoutUrl = body.checkoutUrl
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl
+    }
+  } catch (error) {
+    console.error('Failed to create payment:', error)
+    donationLoading.value = false
+  }
+}
+
+const handleSkipDonation = () => {
+  donationHandled.value = true
+}
+
+const handleSkipFeedback = () => {
+  feedbackSubmitted.value = true
+}
+
 const handleGoHome = () => {
   // Clear the stored tour and navigate back to home
   sessionStorage.removeItem('activeTour')
@@ -320,6 +365,9 @@ const handleGoHome = () => {
     :audio-base-url="audioBaseUrl"
     :feedback-submitting="feedbackSubmitting"
     :feedback-submitted="feedbackSubmitted"
+    :donation-handled="donationHandled"
+    :donation-loading="donationLoading"
+    :payment-returned="paymentReturned"
     v-model:audio-state="audioState"
     @confirm-arrival="handleConfirmArrival"
     @next-stop="handleNextStop"
@@ -327,6 +375,9 @@ const handleGoHome = () => {
     @resume="handleResume"
     @stop="handleStop"
     @submit-feedback="handleSubmitFeedback"
+    @donate="handleDonate"
+    @skip-donation="handleSkipDonation"
+    @skip-feedback="handleSkipFeedback"
     @go-home="handleGoHome"
   />
 </template>

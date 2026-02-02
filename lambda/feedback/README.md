@@ -1,4 +1,4 @@
-# MyGuide Feedback Lambda
+# cityCast Feedback Lambda
 
 Lambda function for handling user feedback submission and retrieval.
 

@@ -1,6 +1,6 @@
-# MyGuide Development Guidelines
+# cityCast Development Guidelines
 
-This document defines the architecture patterns and conventions for the MyGuide project. All development should follow these guidelines.
+This document defines the architecture patterns and conventions for the cityCast project. All development should follow these guidelines.
 
 ## Tech Stack
 
@@ -296,7 +296,7 @@ All environment variables must be prefixed with `VITE_`:
 ```
 VITE_API_BASE_URL=https://api.example.com
 VITE_AWS_REGION=eu-west-2
-VITE_APP_NAME=MyGuide
+VITE_APP_NAME=cityCast
 ```
 
 Access in code: `import.meta.env.VITE_API_BASE_URL`

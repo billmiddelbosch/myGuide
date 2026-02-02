@@ -8,7 +8,7 @@ const router = useRouter()
 // Mock user for testing (remove when auth is implemented)
 const user = ref({
   name: 'Test User',
-  email: 'test@myguide.app'
+  email: 'info@stadtour.nl'
 })
 
 const handleNavigate = (to) => {
