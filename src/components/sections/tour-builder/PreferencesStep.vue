@@ -167,8 +167,12 @@ const sliderPercentage = computed(() => {
         </svg>
         <span>{{ isGenerating ? 'Tour wordt gemaakt...' : 'Genereer mijn tour' }}</span>
       </button>
-      <p v-if="preferences.selectedCategories.length === 0" class="hint-text">
+      <!-- NON MVP -->
+      <!-- <p v-if="preferences.selectedCategories.length === 0" class="hint-text">
         Selecteer minimaal één categorie
+      </p> -->
+      <p v-if="preferences.selectedCategories.length === 0" class="hint-text">
+        Selecteer één categorie
       </p>
     </div>
   </div>

@@ -357,7 +357,8 @@ onMounted(() => {
       </button>
 
       <!-- Pause/Stop Controls -->
-      <div class="secondary-controls">
+      <!-- NON MVP -->
+      <!-- <div class="secondary-controls">
         <button
           v-if="isPaused"
           class="control-button resume"
@@ -383,7 +384,7 @@ onMounted(() => {
             <rect x="6" y="6" width="12" height="12" rx="1" />
           </svg>
         </button>
-      </div>
+      </div> -->
     </div>
 
     <!-- Paused Overlay -->
@@ -407,6 +408,7 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   min-height: 90vh;
+  min-height: 90dvh;
   padding-top: 4.5rem;
   background: var(--color-neutral-100);
 }
@@ -416,13 +418,15 @@ onMounted(() => {
   flex: 1;
   min-height: 400px;
   height: calc(100vh - 12rem);
+  height: calc(100dvh - 12rem);
   overflow: hidden;
 }
 
 .google-map {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 400px;
 }
 
 .google-map :deep(.vue-map-container) {
@@ -437,8 +441,8 @@ onMounted(() => {
 .stop-preview {
   position: absolute;
   bottom: 1rem;
-  left: 1rem;
-  right: 1rem;
+  left: 4rem;
+  right: 4rem;
   display: flex;
   gap: 0.875rem;
   padding: 0.875rem;
