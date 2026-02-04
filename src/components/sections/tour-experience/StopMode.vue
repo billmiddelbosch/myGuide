@@ -224,12 +224,13 @@ const handleAudioStateUpdate = (newState) => {
           </svg>
         </button>
 
-        <button
+        <!-- NON MVP -->
+        <!-- <button
           class="btn-secondary"
           @click="emit('stop')"
         >
           Tour stoppen
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
