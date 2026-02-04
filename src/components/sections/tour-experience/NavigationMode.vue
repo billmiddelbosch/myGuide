@@ -357,7 +357,8 @@ onMounted(() => {
       </button>
 
       <!-- Pause/Stop Controls -->
-      <div class="secondary-controls">
+      <!-- NON MVP -->
+      <!-- <div class="secondary-controls">
         <button
           v-if="isPaused"
           class="control-button resume"
@@ -383,7 +384,7 @@ onMounted(() => {
             <rect x="6" y="6" width="12" height="12" rx="1" />
           </svg>
         </button>
-      </div>
+      </div> -->
     </div>
 
     <!-- Paused Overlay -->
@@ -439,7 +440,7 @@ onMounted(() => {
 /* Stop Preview Card */
 .stop-preview {
   position: absolute;
-  bottom: 1rem;
+  top: 10rem;
   left: 1rem;
   right: 1rem;
   display: flex;
