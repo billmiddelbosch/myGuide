@@ -114,17 +114,15 @@ const handleUpdateDuration = (minutes) => {
 
 const handleToggleCategory = (categoryId) => {
   console.log('Toggle category:', categoryId)
-  const index = preferences.selectedCategories.indexOf(categoryId)
-  if (index > -1) {
-    preferences.selectedCategories.splice(index, 1)
-    preferences.selectedPrompt.splice(index, 1)
+  if (preferences.selectedCategories[0] === categoryId) {
+    // Deselect if already selected
+    preferences.selectedCategories.splice(0)
+    preferences.selectedPrompt.splice(0)
   } else {
-    // Look up the category to get its prompt
-    console.log('POI list:', poiCategories.value)
-    console.log('Adding category prompt for:', categoryId)
+    // Replace with single selection
     const category = poiCategories.value.find(c => c.typeName === categoryId)
-    preferences.selectedCategories.push(categoryId)
-    preferences.selectedPrompt.push(category?.typePrompt || categoryId)
+    preferences.selectedCategories.splice(0, preferences.selectedCategories.length, categoryId)
+    preferences.selectedPrompt.splice(0, preferences.selectedPrompt.length, category?.typePrompt || categoryId)
   }
 }
 
