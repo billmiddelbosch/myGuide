@@ -152,7 +152,8 @@ const getTransportIcon = (mode) => {
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-      <button
+      <!-- NON MVP -->
+      <!-- <button
         class="action-button save"
         :disabled="isGeneratingAudio"
         @click="emit('approve')"
@@ -163,7 +164,7 @@ const getTransportIcon = (mode) => {
           <polyline points="7,3 7,8 15,8" />
         </svg>
         <span>Opslaan</span>
-      </button>
+      </button> -->
 
       <button
         class="action-button start"
@@ -406,7 +407,8 @@ const getTransportIcon = (mode) => {
 /* Action Buttons */
 .action-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr; */ /* NON MVP */
+  grid-template-columns: 1fr;
   gap: 0.75rem;
 }
 
