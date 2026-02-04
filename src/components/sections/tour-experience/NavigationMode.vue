@@ -440,9 +440,9 @@ onMounted(() => {
 /* Stop Preview Card */
 .stop-preview {
   position: absolute;
-  top: 10rem;
-  left: 1rem;
-  right: 1rem;
+  bottom: 1rem;
+  left: 4rem;
+  right: 4rem;
   display: flex;
   gap: 0.875rem;
   padding: 0.875rem;
