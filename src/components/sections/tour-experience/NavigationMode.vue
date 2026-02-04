@@ -407,6 +407,7 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   min-height: 90vh;
+  min-height: 90dvh;
   padding-top: 4.5rem;
   background: var(--color-neutral-100);
 }
@@ -416,13 +417,15 @@ onMounted(() => {
   flex: 1;
   min-height: 400px;
   height: calc(100vh - 12rem);
+  height: calc(100dvh - 12rem);
   overflow: hidden;
 }
 
 .google-map {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 400px;
 }
 
 .google-map :deep(.vue-map-container) {
