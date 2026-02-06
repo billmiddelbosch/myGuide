@@ -15,7 +15,12 @@ const routes = [
     path: '/tour/:id',
     name: 'tour',
     component: () => import('@/views/sections/TourExperienceView.vue')
-  }
+  },
+  {
+    path: '/:stad/:straat/:huisnummer',
+    name: 'adresLanding',
+    component: () => import('@/views/sections/LandingPageView.vue')
+  },
   // Future routes:
   // { path: '/my-tours', name: 'my-tours', component: () => import('@/views/sections/MyToursView.vue') }
 ]
