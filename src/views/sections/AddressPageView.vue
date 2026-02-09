@@ -84,7 +84,7 @@ const contentSections = computed(() => {
     })
   }
 
-  return sections.length > 0 ? sections : data.contentSections
+  return sections
 })
 
 const nearbyPOIs = ref([])

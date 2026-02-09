@@ -164,7 +164,7 @@ const handleViewTourStop = (tourStopId) => {
     <!-- Content body -->
     <div class="page-body">
       <!-- Collapsible content sections -->
-      <section class="section details-section" aria-labelledby="details-title">
+      <section v-if="contentSections.length" class="section details-section" aria-labelledby="details-title">
         <div class="section-header">
           <h2 id="details-title" class="section-title">Meer informatie over {{ street.naam }} {{ address.huisnummer }}</h2>
           <p class="section-subtitle">
