@@ -1,0 +1,284 @@
+{
+  "_meta": {
+    "models": {
+      "address": "A specific address that serves as the SEO landing page. Contains house number, postal code, and coordinates for the map.",
+      "street": "The street this address belongs to, with a description of the street's character, history, and neighborhood context.",
+      "city": "The city containing this address, with a description, population, and area information.",
+      "province": "The geographic region (province) this city belongs to, providing regional context.",
+      "nearbyPOIs": "Points of interest near the address — restaurants, museums, parks, transit stops, and cityCast tour stops shown on the map.",
+      "contentSections": "Collapsible content blocks on the page (neighborhood description, street history, area characteristics) that users can expand for more detail.",
+      "affiliateLinks": "Placeholder spots for external partner links. Partners are to be determined."
+    },
+    "relationships": [
+      "An Address belongs to a Street",
+      "A Street belongs to a City",
+      "A City belongs to a Province",
+      "Nearby POIs are located around the Address and shown on the interactive map",
+      "Content Sections provide expandable detail about the Address, Street, and City",
+      "Affiliate Links are displayed as secondary CTAs on the page"
+    ]
+  },
+  "address": {
+    "id": "addr-001",
+    "huisnummer": "263",
+    "huisnummerToevoeging": null,
+    "postcode": "1016 DV",
+    "coordinates": {
+      "lat": 52.3752,
+      "lng": 4.8840
+    },
+    "bouwjaar": 1635,
+    "oppervlakte": 120,
+    "gebruiksdoel": "woonfunctie",
+    "woningType": "Grachtenpand"
+  },
+  "street": {
+    "id": "street-001",
+    "naam": "Prinsengracht",
+    "description": "De Prinsengracht is de langste en buitenste van de drie hoofdgrachten van Amsterdam. Aangelegd in de 17e eeuw als onderdeel van de grachtengordel, is de gracht vernoemd naar Willem de Zwijger, Prins van Oranje. De Prinsengracht staat bekend om zijn schilderachtige pakhuizen, woonboten en historische panden. Het is een van de meest gefotografeerde locaties van Amsterdam.",
+    "neighborhood": "Jordaan",
+    "neighborhoodDescription": "De Jordaan is een van de meest sfeervolle en gewilde wijken van Amsterdam. Oorspronkelijk een arbeiderswijk, is het nu een levendige buurt vol met galerijen, boetiekjes, bruine kroegen en gezellige terrassen. De smalle straatjes en grachten geven de wijk een intiem dorps karakter midden in de stad.",
+    "cityId": "city-001"
+  },
+  "city": {
+    "id": "city-001",
+    "naam": "Amsterdam",
+    "description": "Amsterdam is de hoofdstad van Nederland en staat wereldwijd bekend om zijn grachtengordel, rijke historie en culturele diversiteit. De stad trekt jaarlijks miljoenen bezoekers die genieten van de musea, architectuur en het bruisende stadsleven.",
+    "provincie": "Noord-Holland",
+    "gemeente": "Amsterdam",
+    "inwoners": 921402,
+    "oppervlakte": 219.32,
+    "center": {
+      "lat": 52.3676,
+      "lng": 4.9041
+    }
+  },
+  "province": {
+    "id": "prov-001",
+    "naam": "Noord-Holland",
+    "description": "Noord-Holland is een provincie in het noordwesten van Nederland. Het omvat de hoofdstad Amsterdam, de historische steden Haarlem en Alkmaar, en uitgestrekte polders en duingebieden.",
+    "hoofdstad": "Haarlem"
+  },
+  "nearbyPOIs": [
+    {
+      "id": "poi-001",
+      "name": "Anne Frank Huis",
+      "type": "museum",
+      "icon": "landmark",
+      "description": "Het voormalige schuiladres van Anne Frank, nu een indrukwekkend museum gewijd aan haar leven en dagboek.",
+      "address": "Prinsengracht 263-267",
+      "distance": 0.05,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3753,
+        "lng": 4.8842
+      },
+      "isTourStop": true,
+      "tourStopId": "stop-001"
+    },
+    {
+      "id": "poi-002",
+      "name": "Westerkerk",
+      "type": "monument",
+      "icon": "building",
+      "description": "De grootste protestantse kerk van Amsterdam met de beroemde Westertoren. Rembrandt ligt hier begraven.",
+      "address": "Prinsengracht 281",
+      "distance": 0.12,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3745,
+        "lng": 4.8839
+      },
+      "isTourStop": true,
+      "tourStopId": "stop-002"
+    },
+    {
+      "id": "poi-003",
+      "name": "Café 't Smalle",
+      "type": "restaurant",
+      "icon": "utensils",
+      "description": "Historisch bruin café uit 1786 aan de Egelantiersgracht. Bekend om het schilderachtige terras aan het water.",
+      "address": "Egelantiersgracht 12",
+      "distance": 0.25,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3760,
+        "lng": 4.8810
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    },
+    {
+      "id": "poi-004",
+      "name": "Noordermarkt",
+      "type": "markt",
+      "icon": "shopping-bag",
+      "description": "Wekelijkse boerenmarkt op maandag en vlooienmarkt op zaterdag rondom de Noorderkerk.",
+      "address": "Noordermarkt 48",
+      "distance": 0.35,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3790,
+        "lng": 4.8840
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    },
+    {
+      "id": "poi-005",
+      "name": "Huis Marseille",
+      "type": "museum",
+      "icon": "camera",
+      "description": "Museum voor fotografie gevestigd in een monumentaal grachtenpand uit 1665 aan de Keizersgracht.",
+      "address": "Keizersgracht 401",
+      "distance": 0.40,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3705,
+        "lng": 4.8855
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    },
+    {
+      "id": "poi-006",
+      "name": "Halte Prinsengracht (tram 13/17)",
+      "type": "transit",
+      "icon": "train",
+      "description": "Tramhalte voor lijn 13 en 17, richting Centraal Station en Slotermeer.",
+      "address": "Prinsengracht / Elandsgracht",
+      "distance": 0.30,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3710,
+        "lng": 4.8825
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    },
+    {
+      "id": "poi-007",
+      "name": "Westerpark",
+      "type": "park",
+      "icon": "leaf",
+      "description": "Ruim stadspark met culturele hotspot Westergasfabriek, speeltuinen en uitgestrekte grasvelden.",
+      "address": "Westerpark",
+      "distance": 0.80,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3865,
+        "lng": 4.8760
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    },
+    {
+      "id": "poi-008",
+      "name": "De Negen Straatjes",
+      "type": "winkelen",
+      "icon": "shopping-bag",
+      "description": "Negen pittoreske dwarsstraatjes vol unieke boetiekjes, vintage winkels en gezellige cafés.",
+      "address": "Negen Straatjes",
+      "distance": 0.50,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3702,
+        "lng": 4.8852
+      },
+      "isTourStop": true,
+      "tourStopId": "stop-003"
+    },
+    {
+      "id": "poi-009",
+      "name": "Johnny Jordaanplein",
+      "type": "monument",
+      "icon": "music",
+      "description": "Klein plein met standbeelden van Johnny Jordaan en andere volkszangers. Het hart van de oude Jordaan.",
+      "address": "Elandsgracht / Prinsengracht",
+      "distance": 0.20,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3720,
+        "lng": 4.8815
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    },
+    {
+      "id": "poi-010",
+      "name": "Foodhallen",
+      "type": "restaurant",
+      "icon": "utensils",
+      "description": "Indoor foodmarket met meer dan 20 eetkramen in de gerenoveerde Tramremise, van sushi tot bitterballen.",
+      "address": "Bellamyplein 51",
+      "distance": 1.10,
+      "distanceUnit": "km",
+      "coordinates": {
+        "lat": 52.3630,
+        "lng": 4.8695
+      },
+      "isTourStop": false,
+      "tourStopId": null
+    }
+  ],
+  "contentSections": [
+    {
+      "id": "section-buurt",
+      "title": "Over de buurt",
+      "subtitle": "Jordaan, Amsterdam",
+      "content": "De Jordaan is een van de meest sfeervolle en gewilde wijken van Amsterdam. Oorspronkelijk gebouwd in de 17e eeuw als wijk voor arbeiders en immigranten, is de Jordaan uitgegroeid tot een trendy buurt met een uniek karakter. De smalle straatjes, verborgen hofjes en gezellige grachten maken het een populaire bestemming voor zowel bewoners als bezoekers.\n\nDe wijk staat bekend om zijn vele galerijen, vintage winkels, bruine kroegen en restaurants. Elke maandag vindt de biologische boerenmarkt plaats op de Noordermarkt, en op zaterdag de populaire vlooienmarkt. De Jordaan heeft een sterke muzikale traditie — het was de thuisbasis van volkszanger Johnny Jordaan en de levensliedcultuur.",
+      "collapsed": true
+    },
+    {
+      "id": "section-straat",
+      "title": "Over de Prinsengracht",
+      "subtitle": "Geschiedenis en karakter",
+      "content": "De Prinsengracht is de langste en buitenste van de drie hoofdgrachten in de Amsterdamse grachtengordel. De gracht werd aangelegd tussen 1612 en 1625 als onderdeel van het ambitieuze stadsuitbreidingsplan en is vernoemd naar Willem de Zwijger, Prins van Oranje.\n\nMet een lengte van ruim 3 kilometer strekt de gracht zich uit van het IJ tot aan de Amstel. De Prinsengracht staat bekend om zijn mix van monumentale grachtenpanden, voormalige pakhuizen die zijn omgebouwd tot appartementen, en de vele woonboten die langs de kades liggen. Bekende bezienswaardigheden aan de gracht zijn het Anne Frank Huis, de Westerkerk en de Noordermarkt.\n\nDe gracht is sinds 2010 onderdeel van het UNESCO Werelderfgoed 'Grachtengordel van Amsterdam'.",
+      "collapsed": true
+    },
+    {
+      "id": "section-stad",
+      "title": "Over Amsterdam",
+      "subtitle": "Hoofdstad van Nederland",
+      "content": "Amsterdam is de hoofdstad en grootste stad van Nederland met ruim 920.000 inwoners. De stad ligt in de provincie Noord-Holland en is gebouwd op een netwerk van grachten dat in de 17e eeuw — de Gouden Eeuw — werd aangelegd.\n\nAmsterdam staat wereldwijd bekend om zijn culturele rijkdom, met musea als het Rijksmuseum, het Van Gogh Museum en het Stedelijk Museum. De grachtengordel, de diverse buurten en het bruisende nachtleven maken de stad tot een van de populairste bestemmingen van Europa.",
+      "collapsed": true
+    }
+  ],
+  "affiliateLinks": [
+    {
+      "id": "aff-001",
+      "label": "Bekijk woningwaarde",
+      "description": "Ontdek de geschatte waarde van dit adres",
+      "url": "#",
+      "icon": "home",
+      "partner": "placeholder"
+    },
+    {
+      "id": "aff-002",
+      "label": "Verhuizen naar dit adres?",
+      "description": "Vergelijk verhuisbedrijven in Amsterdam",
+      "url": "#",
+      "icon": "truck",
+      "partner": "placeholder"
+    },
+    {
+      "id": "aff-003",
+      "label": "Energie vergelijken",
+      "description": "Bekijk energietarieven voor deze postcode",
+      "url": "#",
+      "icon": "zap",
+      "partner": "placeholder"
+    }
+  ],
+  "primaryCTA": {
+    "label": "Ontdek deze buurt met cityCast",
+    "description": "Maak een gratis audiotour door de Jordaan",
+    "targetUrl": "/",
+    "citySlug": "amsterdam"
+  },
+  "seo": {
+    "title": "Prinsengracht 263, Amsterdam — Adresgegevens, buurt & omgeving",
+    "description": "Alles over Prinsengracht 263 in Amsterdam: woninggegevens, buurtinformatie, nabije bezienswaardigheden en een interactieve kaart van de Jordaan.",
+    "canonicalPath": "/amsterdam/prinsengracht/263"
+  }
+}

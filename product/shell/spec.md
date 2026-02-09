@@ -14,6 +14,8 @@ cityCast uses a minimal header design that keeps focus on the content while prov
 - Tour Builder → "Save Tour" button → My Tours
 - Tour Experience → "Save Tour" button → My Tours
 - My Tours → "Start Tour" on saved tour → Tour Experience
+- Address Page (`/:stad/:straat/:huisnummer`) → "Explore this neighborhood" CTA → Tour Builder (pre-filled with city)
+- Address Page → Nearby tour stop links → Tour Experience (future)
 
 ## User Menu
 Location: Top right corner of header
@@ -36,6 +38,7 @@ Minimal header with in-content navigation:
 - **Mobile:** Compact header, same elements with optimized touch targets
 
 ## Design Notes
+- Address Pages use the same shell — consistent branding for SEO visitors entering via search engines. No new header navigation items needed since these pages are entry points, not user-initiated navigation.
 - Header uses teal (primary) for the logo accent and active states
 - User avatar shows first initial if no image is provided
 - My Tours link uses amber (secondary) on hover
