@@ -121,6 +121,7 @@ const handleClick = () => {
   font-size: 0.75rem;
   color: var(--color-neutral-400);
   font-weight: 500;
+  margin-left: 1rem;
 }
 
 .poi-name {

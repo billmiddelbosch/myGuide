@@ -28,6 +28,10 @@ const props = defineProps({
     type: Array,
     required: true
   },
+  loadingPOIs: {
+    type: Boolean,
+    default: false
+  },
   contentSections: {
     type: Array,
     required: true
@@ -241,8 +245,8 @@ const handleViewTourStop = (tourStopId) => {
         />
       </section>
 
-      <!-- Tour stop POIs (if any) -->
-      <section v-if="tourStopPOIs.length" class="section tour-stops-section" aria-labelledby="tour-stops-title">
+      <!-- Tour stop POIs -->
+      <section v-if="tourStopPOIs.length || loadingPOIs" class="section tour-stops-section" aria-labelledby="tour-stops-title">
         <div class="section-header">
           <div class="section-title-row">
             <h2 id="tour-stops-title" class="section-title">
@@ -267,9 +271,15 @@ const handleViewTourStop = (tourStopId) => {
             @view-tour-stop="handleViewTourStop"
           />
         </div>
+
+        <div v-if="loadingPOIs" class="loading-indicator">
+          <div class="spinner" />
+          <span>Tour stops laden...</span>
+        </div>
       </section>
 
       <!-- Nearby POIs -->
+      <!-- NON MVP
       <section class="section nearby-section" aria-labelledby="nearby-title">
         <div class="section-header">
           <h2 id="nearby-title" class="section-title">Omgeving verkennen</h2>
@@ -287,7 +297,7 @@ const handleViewTourStop = (tourStopId) => {
             @view-tour-stop="handleViewTourStop"
           />
         </div>
-      </section>
+      </section> -->
 
       <!-- Bottom CTA -->
       <section class="section bottom-cta-section" aria-label="cityCast">
@@ -579,6 +589,30 @@ const handleViewTourStop = (tourStopId) => {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+/* Loading indicator */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 1.25rem;
+  color: var(--color-neutral-400);
+  font-size: 0.8125rem;
+}
+
+.spinner {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--color-neutral-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Collapsibles */

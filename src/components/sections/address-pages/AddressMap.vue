@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 
 const props = defineProps({
   coordinates: {
@@ -14,69 +14,156 @@ const props = defineProps({
 
 const emit = defineEmits(['selectPOI'])
 
+const gMapRef = ref(null)
+const mapRef = ref(null)
 const selectedPOI = ref(null)
 
-const tourStops = computed(() => props.nearbyPOIs.filter(p => p.isTourStop))
-const otherPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
+const mapCenter = computed(() => ({
+  lat: Number(props.coordinates.lat) || 52.3676,
+  lng: Number(props.coordinates.lng) || 4.9041
+}))
+
+const mapOptions = {
+  zoomControl: true,
+  mapTypeControl: false,
+  scaleControl: true,
+  streetViewControl: false,
+  rotateControl: false,
+  fullscreenControl: true,
+  disableDefaultUI: false,
+  styles: [
+    {
+      featureType: 'poi',
+      elementType: 'labels',
+      stylers: [{ visibility: 'off' }]
+    }
+  ]
+}
+
+// Address marker icon (teal)
+const addressIcon = {
+  url: 'data:image/svg+xml,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="14" fill="#14b8a6" stroke="white" stroke-width="3"/>
+      <circle cx="18" cy="18" r="5" fill="white"/>
+    </svg>
+  `),
+  scaledSize: { width: 36, height: 36 },
+  anchor: { x: 18, y: 18 }
+}
+
+// POI marker icon
+const getPOIIcon = (poi) => {
+  const isSelected = selectedPOI.value === poi.id
+  const size = isSelected ? 40 : 32
+  const color = poi.isTourStop ? '#14b8a6' : '#64748b'
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      <circle cx="${size/2}" cy="${size/2}" r="${size/2 - 3}" fill="${color}" stroke="white" stroke-width="3"/>
+    </svg>
+  `
+
+  return {
+    url: 'data:image/svg+xml,' + encodeURIComponent(svg),
+    scaledSize: { width: size, height: size },
+    anchor: { x: size / 2, y: size / 2 }
+  }
+}
 
 const handlePOIClick = (poiId) => {
   selectedPOI.value = selectedPOI.value === poiId ? null : poiId
   emit('selectPOI', poiId)
 }
 
-const typeColors = {
-  museum: '#7c3aed',
-  monument: '#b45309',
-  restaurant: '#e11d48',
-  markt: '#0284c7',
-  transit: '#16a34a',
-  park: '#059669',
-  winkelen: '#db2777'
+// Fit bounds to show all markers
+const fitBounds = async () => {
+  await nextTick()
+
+  if (!mapRef.value && gMapRef.value?.$mapObject) {
+    mapRef.value = gMapRef.value.$mapObject
+  }
+
+  if (!mapRef.value || !window.google) return
+
+  const bounds = new google.maps.LatLngBounds()
+
+  // Include address
+  bounds.extend(mapCenter.value)
+
+  // Include POIs
+  props.nearbyPOIs.forEach(poi => {
+    if (poi.coordinates?.lat && poi.coordinates?.lng) {
+      bounds.extend({
+        lat: Number(poi.coordinates.lat),
+        lng: Number(poi.coordinates.lng)
+      })
+    }
+  })
+
+  if (!bounds.isEmpty()) {
+    mapRef.value.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 })
+  }
 }
+
+const onMapReady = (mapInstance) => {
+  mapRef.value = mapInstance
+  if (props.nearbyPOIs.length > 0) {
+    setTimeout(fitBounds, 500)
+  }
+}
+
+// Re-fit bounds when POIs change
+watch(() => props.nearbyPOIs, (newPOIs) => {
+  if (newPOIs.length > 0) {
+    fitBounds()
+  }
+}, { deep: true })
+
+onMounted(() => {
+  setTimeout(() => {
+    if (!mapRef.value && gMapRef.value?.$mapObject) {
+      mapRef.value = gMapRef.value.$mapObject
+      fitBounds()
+    }
+  }, 1000)
+})
+
+const tourStops = computed(() => props.nearbyPOIs.filter(p => p.isTourStop))
+const otherPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
 </script>
 
 <template>
   <div class="address-map">
-    <!-- Map placeholder with stylized representation -->
     <div class="map-container">
-      <div class="map-visual">
-        <!-- Grid pattern background -->
-        <div class="map-grid" />
-
+      <GMapMap
+        ref="gMapRef"
+        :center="mapCenter"
+        :zoom="15"
+        :options="mapOptions"
+        map-type-id="roadmap"
+        class="google-map"
+        style="width: 100%; height: 100%"
+        @click="selectedPOI = null"
+      >
         <!-- Address marker (center) -->
-        <div class="center-marker">
-          <div class="marker-pulse" />
-          <div class="marker-dot" />
-        </div>
+        <GMapMarker
+          :position="mapCenter"
+          :icon="addressIcon"
+          :clickable="false"
+        />
 
-        <!-- POI indicators around the map -->
-        <div class="poi-ring">
-          <div
-            v-for="(poi, index) in nearbyPOIs.slice(0, 8)"
-            :key="poi.id"
-            class="poi-indicator"
-            :class="{ active: selectedPOI === poi.id, 'is-tour-stop': poi.isTourStop }"
-            :style="{
-              '--angle': `${(index * 360) / Math.min(nearbyPOIs.length, 8)}deg`,
-              '--color': typeColors[poi.type] || '#64748b',
-              '--distance': `${30 + (poi.distance / 1.2) * 40}%`
-            }"
-            @click="handlePOIClick(poi.id)"
-          >
-            <div class="indicator-dot" />
-            <span class="indicator-label">{{ poi.name }}</span>
-          </div>
-        </div>
+        <!-- POI markers -->
+        <GMapMarker
+          v-for="poi in nearbyPOIs"
+          :key="poi.id"
+          :position="{ lat: Number(poi.coordinates.lat), lng: Number(poi.coordinates.lng) }"
+          :icon="getPOIIcon(poi)"
+          :clickable="true"
+          @click="handlePOIClick(poi.id)"
+        />
+      </GMapMap>
 
-        <!-- Interactive hint -->
-        <div class="map-hint">
-          <svg class="hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          <span>Interactieve kaart wordt geladen</span>
-        </div>
-      </div>
     </div>
 
     <!-- Legend -->
@@ -87,9 +174,9 @@ const typeColors = {
       </div>
       <div v-if="tourStops.length" class="legend-item">
         <div class="legend-dot legend-tour-stop" />
-        <span>cityCast tour stop ({{ tourStops.length }})</span>
+        <span>cityCast stop ({{ tourStops.length }})</span>
       </div>
-      <div class="legend-item">
+      <div v-if="otherPOIs.length" class="legend-item">
         <div class="legend-dot legend-poi" />
         <span>In de buurt ({{ otherPOIs.length }})</span>
       </div>
@@ -108,144 +195,23 @@ const typeColors = {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
-  background: var(--color-neutral-100);
+  min-height: 300px;
   overflow: hidden;
 }
 
-.map-visual {
+.google-map {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
-/* Grid pattern */
-.map-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(20, 184, 166, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(20, 184, 166, 0.06) 1px, transparent 1px);
-  background-size: 2rem 2rem;
+.google-map :deep(.vue-map-container) {
+  height: 100% !important;
 }
 
-/* Center marker */
-.center-marker {
-  position: relative;
-  z-index: 10;
-  width: 1rem;
-  height: 1rem;
-}
-
-.marker-dot {
-  width: 1rem;
-  height: 1rem;
-  background: var(--color-primary);
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(20, 184, 166, 0.4);
-}
-
-.marker-pulse {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 2.5rem;
-  height: 2.5rem;
-  background: rgba(20, 184, 166, 0.15);
-  border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
-}
-
-/* POI ring */
-.poi-ring {
-  position: absolute;
-  inset: 0;
-}
-
-.poi-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform:
-    rotate(var(--angle))
-    translateY(calc(-1 * var(--distance)))
-    rotate(calc(-1 * var(--angle)));
-  cursor: pointer;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.indicator-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: var(--color);
-  border: 2px solid white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.poi-indicator.is-tour-stop .indicator-dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  background: var(--color-primary);
-  box-shadow: 0 1px 6px rgba(20, 184, 166, 0.4);
-}
-
-.poi-indicator:hover .indicator-dot,
-.poi-indicator.active .indicator-dot {
-  transform: scale(1.5);
-}
-
-.indicator-label {
-  font-size: 0.625rem;
-  font-weight: 500;
-  color: var(--color-neutral-600);
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: all 0.15s ease;
-  pointer-events: none;
-}
-
-.poi-indicator:hover .indicator-label,
-.poi-indicator.active .indicator-label {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Map hint */
-.map-hint {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(8px);
-  border-radius: 2rem;
-  font-size: 0.6875rem;
-  color: var(--color-neutral-500);
-  white-space: nowrap;
-}
-
-.hint-icon {
-  width: 0.75rem;
-  height: 0.75rem;
+.google-map :deep(.vue-map) {
+  height: 100% !important;
 }
 
 /* Legend */
@@ -273,35 +239,26 @@ const typeColors = {
 }
 
 .legend-address {
-  background: var(--color-primary);
+  background: #14b8a6;
   box-shadow: 0 0 0 2px var(--color-primary-100);
 }
 
 .legend-tour-stop {
-  background: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-100);
+  background: #14b8a6;
 }
 
 .legend-poi {
-  background: var(--color-neutral-400);
+  background: #64748b;
 }
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-  .map-container {
+  .map-legend {
     background: var(--color-neutral-100);
   }
 
-  .map-hint {
-    background: rgba(30, 41, 59, 0.9);
-  }
-
-  .marker-dot {
-    border-color: var(--color-neutral-800);
-  }
-
-  .indicator-dot {
-    border-color: var(--color-neutral-800);
+  .legend-item {
+    color: var(--color-neutral-400);
   }
 }
 </style>

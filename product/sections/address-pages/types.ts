@@ -51,7 +51,7 @@ export interface Province {
 export interface NearbyPOI {
   id: string
   name: string
-  type: 'museum' | 'monument' | 'restaurant' | 'markt' | 'transit' | 'park' | 'winkelen'
+  type: string
   icon: string
   description: string
   address: string
