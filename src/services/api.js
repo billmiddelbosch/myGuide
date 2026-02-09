@@ -55,6 +55,13 @@ export default {
     });
   },
 
+  // Get street and city info for address pages
+  getStadStraat(stad, straat, provincie) {
+    return cityApiClient.get('/stadStraat', {
+      params: { stad, straat, provincie }
+    });
+  },
+
   // Get tour types/categories
   gettourTypes() {
     return apiClient.get('/tourTypes');
