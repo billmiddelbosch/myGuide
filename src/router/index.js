@@ -17,7 +17,7 @@ const routes = [
     component: () => import('@/views/sections/TourExperienceView.vue')
   },
   {
-    path: '/:stad/:straat/:huisnummer',
+    path: '/:provincie/:stad/:straat/:huisnummer',
     name: 'adresLanding',
     component: () => import('@/views/sections/AddressPageView.vue')
   },

@@ -5,7 +5,6 @@ import AddressHero from './AddressHero.vue'
 import AddressMap from './AddressMap.vue'
 import CollapsibleSection from './CollapsibleSection.vue'
 import POICard from './POICard.vue'
-import AffiliateCard from './AffiliateCard.vue'
 
 // Props
 const props = defineProps({
@@ -60,18 +59,6 @@ const emit = defineEmits([
 const tourStopPOIs = computed(() => props.nearbyPOIs.filter(p => p.isTourStop))
 const generalPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
 
-const propertyDetails = computed(() => {
-  const details = []
-  if (props.address.woningType) details.push({ label: 'Type', value: props.address.woningType })
-  if (props.address.bouwjaar) details.push({ label: 'Bouwjaar', value: String(props.address.bouwjaar) })
-  if (props.address.oppervlakte) details.push({ label: 'Oppervlakte', value: `${props.address.oppervlakte} m²` })
-  if (props.address.gebruiksdoel) details.push({ label: 'Gebruik', value: props.address.gebruiksdoel })
-  return details
-})
-
-const formatNumber = (num) => {
-  return new Intl.NumberFormat('nl-NL').format(num)
-}
 
 // Sticky CTA detection
 const ctaSection = ref(null)
@@ -107,10 +94,6 @@ const handleSelectPOI = (poiId) => {
   emit('selectPOI', poiId)
 }
 
-const handleClickAffiliate = (affiliateId) => {
-  emit('clickAffiliate', affiliateId)
-}
-
 const handleViewTourStop = (tourStopId) => {
   emit('viewTourStop', tourStopId)
 }
@@ -123,13 +106,13 @@ const handleViewTourStop = (tourStopId) => {
       :street-name="street.naam"
       :huisnummer="address.huisnummer"
       :postcode="address.postcode"
-      :neighborhood="street.neighborhood"
       :city-name="city.naam"
       :gemeente="city.gemeente"
       :province-naam="province.naam"
     />
 
     <!-- Quick facts strip -->
+    <!-- NON MVP
     <div class="quick-facts">
       <div class="facts-inner">
         <div v-for="detail in propertyDetails" :key="detail.label" class="fact-item">
@@ -137,7 +120,7 @@ const handleViewTourStop = (tourStopId) => {
           <span class="fact-value">{{ detail.value }}</span>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Primary CTA banner (compact, sticky) -->
     <section ref="ctaSection" class="cta-section" :class="{ 'is-stuck': isStuck }" aria-label="Ontdek de buurt">
@@ -153,8 +136,8 @@ const handleViewTourStop = (tourStopId) => {
                 <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
               </svg>
               <div class="cta-text">
-                <h2 class="cta-title">{{ primaryCTA.label }}</h2>
-                <p class="cta-description">{{ primaryCTA.description }}</p>
+                <h2 class="cta-title">Ontdek {{ city.naam }} met cityCast</h2>
+                <p class="cta-description">Gratis audiotour door {{ city.naam }} en omgeving</p>
               </div>
             </div>
             <div class="cta-button">
@@ -179,7 +162,7 @@ const handleViewTourStop = (tourStopId) => {
       <!-- Collapsible content sections -->
       <section class="section details-section" aria-labelledby="details-title">
         <div class="section-header">
-          <h2 id="details-title" class="section-title">Meer informatie</h2>
+          <h2 id="details-title" class="section-title">Meer informatie over {{ street.naam }} {{ address.huisnummer }}</h2>
           <p class="section-subtitle">
             Ontdek meer over dit adres, de straat en de buurt
           </p>
@@ -200,6 +183,7 @@ const handleViewTourStop = (tourStopId) => {
       </section>
 
       <!-- City stats -->
+      <!-- NON MVP
       <section class="section stats-section" aria-label="Stadscijfers">
         <div class="stats-card">
           <h3 class="stats-title">{{ city.naam }} in cijfers</h3>
@@ -222,9 +206,10 @@ const handleViewTourStop = (tourStopId) => {
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
       <!-- Affiliate links -->
+      <!-- NON MVP
       <section v-if="affiliateLinks.length" class="section affiliate-section" aria-labelledby="affiliate-title">
         <div class="section-header">
           <h2 id="affiliate-title" class="section-title">Handig voor dit adres</h2>
@@ -238,7 +223,7 @@ const handleViewTourStop = (tourStopId) => {
             @click="handleClickAffiliate"
           />
         </div>
-      </section>
+      </section> -->
 
       <!-- Interactive map -->
       <section class="section map-section" aria-labelledby="map-title">
@@ -308,7 +293,7 @@ const handleViewTourStop = (tourStopId) => {
       <section class="section bottom-cta-section" aria-label="cityCast">
         <div class="bottom-cta" @click="handleExploreCTA">
           <p class="bottom-cta-text">
-            Wil je {{ street.neighborhood }} echt leren kennen?
+            Wil je {{ city.naam }} echt leren kennen?
           </p>
           <div class="bottom-cta-button">
             <svg class="bottom-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

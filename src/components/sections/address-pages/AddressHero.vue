@@ -14,10 +14,6 @@ const props = defineProps({
     type: String,
     required: true
   },
-  neighborhood: {
-    type: String,
-    required: true
-  },
   cityName: {
     type: String,
     required: true
@@ -33,7 +29,7 @@ const props = defineProps({
 })
 
 const breadcrumb = computed(() => {
-  return `${props.provinceNaam} / ${props.cityName} / ${props.neighborhood}`
+  return `${props.provinceNaam} / ${props.cityName}`
 })
 
 const fullAddress = computed(() => {
@@ -57,20 +53,14 @@ const fullAddress = computed(() => {
 
       <!-- Location chips -->
       <div class="location-chips">
+        <!-- NON MVP
         <span class="chip chip-postcode">
           <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="4" width="20" height="16" rx="2" />
             <path d="M2 8h20" />
           </svg>
           {{ postcode }}
-        </span>
-        <span class="chip chip-neighborhood">
-          <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          {{ neighborhood }}
-        </span>
+        </span> -->
         <span class="chip chip-city">
           <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 21h18" />
