@@ -128,10 +128,11 @@ const fetchStadStraat = async () => {
   try {
     const response = await api.getStadStraat(stad.value, straat.value, provincieNaam.value)
     const body = response.data?.body || response.data || {}
-
-    if (body.straat) straatInfo.value = body.straat
-    if (body.stad) stadInfo.value = body.stad
-    if (body.provincie) provincieInfo.value = body.provincie
+    console.log('Fetched street/city info:', body)
+    if (body.parsedStraatData && body.parsedStraatData.straatBeschrijving) straatInfo.value = body.parsedStraatData.straatBeschrijving || ''
+    if (body.parsedStadData && body.parsedStadData.stadBeschrijving) stadInfo.value = body.parsedStadData.stadBeschrijving || ''
+    // NON MVP
+    // if (body.parsedStadData && body.parsedStadData.stadBeschrijving) provincieInfo.value = body.provincie
   } catch (error) {
     console.log('Could not fetch street/city info, using defaults:', error.message)
   }
