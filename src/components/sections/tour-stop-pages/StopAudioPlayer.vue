@@ -1,5 +1,7 @@
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
+
+const PREVIEW_LIMIT = 15
 
 const props = defineProps({
   audioUrl: {
@@ -20,9 +22,7 @@ const props = defineProps({
   }
 })
 
-console.log('AudioPlayer props:', props)
-
-const emit = defineEmits(['playAudio', 'pauseAudio', 'seekAudio'])
+const emit = defineEmits(['playAudio', 'pauseAudio', 'seekAudio', 'previewEnded'])
 
 const audioEl = ref(null)
 const isPlaying = ref(false)
@@ -30,10 +30,19 @@ const currentTime = ref(0)
 const actualDuration = ref(props.duration)
 const isLoading = ref(false)
 const hasError = ref(false)
+const previewEnded = ref(false)
+
+// Reset error state when a valid audio URL arrives
+watch(() => props.audioUrl, (newUrl) => {
+  if (newUrl) {
+    hasError.value = false
+    isLoading.value = true
+  }
+})
 
 const progress = computed(() => {
-  if (!actualDuration.value) return 0
-  return (currentTime.value / actualDuration.value) * 100
+  if (!PREVIEW_LIMIT) return 0
+  return Math.min((currentTime.value / PREVIEW_LIMIT) * 100, 100)
 })
 
 const formatTime = (seconds) => {
@@ -43,10 +52,10 @@ const formatTime = (seconds) => {
 }
 
 const formattedCurrent = computed(() => formatTime(currentTime.value))
-const formattedDuration = computed(() => formatTime(actualDuration.value))
+const formattedDuration = computed(() => formatTime(PREVIEW_LIMIT))
 
 const togglePlay = () => {
-  if (!audioEl.value || !props.isAvailable) return
+  if (!audioEl.value || !props.isAvailable || previewEnded.value) return
 
   if (isPlaying.value) {
     audioEl.value.pause()
@@ -60,8 +69,14 @@ const togglePlay = () => {
 }
 
 const handleTimeUpdate = () => {
-  if (audioEl.value) {
-    currentTime.value = audioEl.value.currentTime
+  if (!audioEl.value) return
+  currentTime.value = audioEl.value.currentTime
+
+  if (currentTime.value >= PREVIEW_LIMIT && !previewEnded.value) {
+    audioEl.value.pause()
+    previewEnded.value = true
+    isPlaying.value = false
+    emit('previewEnded')
   }
 }
 
@@ -91,11 +106,11 @@ const handleError = () => {
 }
 
 const handleSeek = (event) => {
-  if (!audioEl.value) return
+  if (!audioEl.value || previewEnded.value) return
   const rect = event.currentTarget.getBoundingClientRect()
   const x = event.clientX - rect.left
   const ratio = x / rect.width
-  const seekTime = ratio * actualDuration.value
+  const seekTime = Math.min(ratio * PREVIEW_LIMIT, PREVIEW_LIMIT)
   audioEl.value.currentTime = seekTime
   currentTime.value = seekTime
   emit('seekAudio', seekTime)
@@ -111,6 +126,7 @@ onUnmounted(() => {
 <template>
   <div class="audio-player" :class="{ 'is-playing': isPlaying, 'has-error': hasError }">
     <audio
+      v-if="audioUrl"
       ref="audioEl"
       :src="audioUrl"
       preload="metadata"
@@ -127,7 +143,7 @@ onUnmounted(() => {
       <div class="player-main">
         <button
           class="play-button"
-          :disabled="!isAvailable || hasError"
+          :disabled="!isAvailable || hasError || previewEnded"
           @click="togglePlay"
           :aria-label="isPlaying ? 'Pauzeer audio' : 'Speel audio af'"
         >
@@ -148,7 +164,7 @@ onUnmounted(() => {
               <circle cx="12" cy="12" r="10" />
               <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
             </svg>
-            <span class="label-text">cityCast audio</span>
+            <span class="label-text">cityCast audio — preview</span>
           </div>
           <p class="player-stop-name">{{ stopName }}</p>
 

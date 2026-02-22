@@ -131,8 +131,6 @@ const fetchStop = async () => {
           return name === routeName || name.replace(/\s+/g, '-') === routeName.replace(/\s+/g, '-')
         })
 
-        console.log("matched stop", match, "for tour type", typeName)
-
         if (match) {
           // Attach the tourType info
           match.tourType = typeName

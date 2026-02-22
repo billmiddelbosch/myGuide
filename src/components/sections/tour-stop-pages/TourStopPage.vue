@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 import TourStopHero from './TourStopHero.vue'
 import StopAudioPlayer from './StopAudioPlayer.vue'
@@ -57,6 +57,10 @@ const emit = defineEmits([
 // City info collapsed state
 const cityInfoCollapsed = ref(true)
 
+// Audio preview state — reset when navigating to a different stop
+const audioPreviewEnded = ref(false)
+watch(() => props.stop.name, () => { audioPreviewEnded.value = false })
+
 // Sticky CTA detection
 const ctaSection = ref(null)
 const isStuck = ref(false)
@@ -87,6 +91,7 @@ const descriptionParagraphs = computed(() => {
 const handlePlayAudio = () => emit('playAudio')
 const handlePauseAudio = () => emit('pauseAudio')
 const handleSeekAudio = (time) => emit('seekAudio', time)
+const handlePreviewEnded = () => { audioPreviewEnded.value = true }
 const handleSelectNearbyStop = (stopId) => emit('selectNearbyStop', stopId)
 const handlePrimaryCTA = () => emit('primaryCTA')
 const handleSecondaryCTA = () => emit('secondaryCTA')
@@ -160,7 +165,32 @@ const handleToggleCityInfo = () => {
           </p>
         </div>
 
+        <!-- Audio preview CTA (shown after 15s preview) -->
+        <div v-if="audioPreviewEnded" class="preview-cta" @click="handlePrimaryCTA">
+          <div class="preview-cta-inner">
+            <div class="preview-cta-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
+              </svg>
+            </div>
+            <div class="preview-cta-text">
+              <p class="preview-cta-label">Bevalt wat je hoort?</p>
+              <h3 class="preview-cta-title">{{ primaryCTA.label }}</h3>
+              <p class="preview-cta-description">Luister het volledige verhaal en nog veel meer</p>
+            </div>
+            <div class="preview-cta-button">
+              <span>Start</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio player (hidden after preview ends) -->
         <StopAudioPlayer
+          v-else
           :audio-url="audioState.audioUrl"
           :duration="audioState.duration"
           :is-available="audioState.isAvailable"
@@ -168,6 +198,7 @@ const handleToggleCityInfo = () => {
           @play-audio="handlePlayAudio"
           @pause-audio="handlePauseAudio"
           @seek-audio="handleSeekAudio"
+          @preview-ended="handlePreviewEnded"
         />
       </section>
 
@@ -343,6 +374,107 @@ const handleToggleCityInfo = () => {
   font-size: 0.9375rem;
   color: var(--color-neutral-500);
   margin: 0;
+}
+
+/* Preview CTA (replaces audio player after 15s) */
+.preview-cta {
+  cursor: pointer;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  animation: previewFadeIn 0.4s ease;
+}
+
+.preview-cta:hover {
+  box-shadow: 0 6px 24px rgba(20, 184, 166, 0.3);
+}
+
+@keyframes previewFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.preview-cta-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.preview-cta-icon {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: white;
+}
+
+.preview-cta-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.preview-cta-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.preview-cta-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 0.25rem;
+}
+
+.preview-cta-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.preview-cta-description {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0.25rem 0 0;
+}
+
+.preview-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.125rem;
+  background: white;
+  color: var(--color-primary-700);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease;
+}
+
+.preview-cta:hover .preview-cta-button {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.preview-cta-button svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  transition: transform 0.15s ease;
+}
+
+.preview-cta:hover .preview-cta-button svg {
+  transform: translateX(2px);
 }
 
 /* CTA Section (sticky) */
