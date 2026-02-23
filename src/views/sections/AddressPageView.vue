@@ -251,8 +251,16 @@ const handleExploreCTA = () => {
   router.push({ name: 'home' })
 }
 
+const navigateToTourStop = (poiId) => {
+  const poi = nearbyPOIs.value.find(p => p.id === poiId)
+  if (poi) {
+    const slug = poi.name.toLowerCase().replace(/\s+/g, '-')
+    router.push({ name: 'tourStopLanding', params: { stad: stad.value, stopName: slug } })
+  }
+}
+
 const handleSelectPOI = (poiId) => {
-  console.log('Selected POI:', poiId)
+  navigateToTourStop(poiId)
 }
 
 const handleClickAffiliate = (affiliateId) => {
@@ -260,7 +268,7 @@ const handleClickAffiliate = (affiliateId) => {
 }
 
 const handleViewTourStop = (tourStopId) => {
-  console.log('View tour stop:', tourStopId)
+  navigateToTourStop(tourStopId)
 }
 </script>
 

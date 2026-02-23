@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   stopName: {
     type: String,
@@ -15,6 +17,26 @@ const props = defineProps({
   address: {
     type: String,
     required: true
+  },
+  addressStreet: {
+    type: String,
+    default: ''
+  },
+  addressHouseNumber: {
+    type: String,
+    default: ''
+  }
+})
+
+const addressRoute = computed(() => {
+  if (!props.addressStreet || !props.addressHouseNumber || !props.cityName) return null
+  return {
+    name: 'adresLanding',
+    params: {
+      stad: props.cityName,
+      straat: props.addressStreet.toLowerCase().replace(/\s+/g, '-'),
+      huisnummer: props.addressHouseNumber
+    }
   }
 })
 </script>
@@ -37,20 +59,30 @@ const props = defineProps({
 
       <!-- Chips -->
       <div class="hero-chips">
-        <span class="chip chip-type">
+        <!-- <span class="chip chip-type">
           <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
             <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
           </svg>
           cityCast tour stop
-        </span>
+        </span> -->
         <span class="chip chip-category">
           {{ tourTypeLabel }}
         </span>
       </div>
 
       <!-- Address -->
-      <p class="hero-address">
+      <router-link v-if="address && addressRoute" :to="addressRoute" class="hero-address hero-address-link">
+        <svg class="address-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        {{ address }}
+        <svg class="address-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </router-link>
+      <p v-else-if="address" class="hero-address">
         <svg class="address-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
           <circle cx="12" cy="10" r="3" />
@@ -175,10 +207,33 @@ const props = defineProps({
   margin-bottom: 1.5rem;
 }
 
+.hero-address-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.hero-address-link:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .address-icon {
   width: 0.875rem;
   height: 0.875rem;
   flex-shrink: 0;
+}
+
+.address-arrow {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.hero-address-link:hover .address-arrow {
+  transform: translateX(2px);
+  opacity: 0.85;
 }
 
 .hero-accent {

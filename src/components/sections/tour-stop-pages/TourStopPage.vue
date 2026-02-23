@@ -110,6 +110,8 @@ const handleToggleCityInfo = () => {
       :city-name="stop.city"
       :tour-type-label="stop.tourTypeLabel"
       :address="stop.address"
+      :address-street="stop.addressStreet"
+      :address-house-number="stop.addressHouseNumber"
     />
 
     <!-- Primary CTA banner (sticky) -->
