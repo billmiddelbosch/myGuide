@@ -14,6 +14,7 @@ const stopNameFromRoute = computed(() => decodeURIComponent(route.params.stopNam
 // Stop data (populated from API)
 const stopData = ref(null)
 const stopDescription = ref('')
+const stopAddress = ref({ display: '', street: '', houseNumber: '' })
 const loadingStop = ref(true)
 
 const stop = computed(() => {
@@ -28,7 +29,9 @@ const stop = computed(() => {
         lat: parseFloat(stopData.value.latitude) || stopData.value.coordinates?.lat || 0,
         lng: parseFloat(stopData.value.longitude) || stopData.value.coordinates?.lng || 0
       },
-      address: stopData.value.address || '',
+      address: stopAddress.value.display || stopData.value.address || '',
+      addressStreet: stopAddress.value.street,
+      addressHouseNumber: stopAddress.value.houseNumber,
       city: stad.value
     }
   }
@@ -41,6 +44,8 @@ const stop = computed(() => {
     tourTypeLabel: '',
     coordinates: { lat: 0, lng: 0 },
     address: '',
+    addressStreet: '',
+    addressHouseNumber: '',
     city: stad.value
   }
 })
@@ -166,6 +171,39 @@ const fetchCityInfo = async () => {
   } catch (error) {
     console.log('Could not fetch city info:', error.message)
   }
+}
+
+// Reverse geocode stop coordinates to get a street address
+const reverseGeocodeStop = () => {
+  const lat = stop.value.coordinates.lat
+  const lng = stop.value.coordinates.lng
+  if (!lat || !lng) return
+
+  if (!window.google) {
+    setTimeout(reverseGeocodeStop, 500)
+    return
+  }
+
+  const geocoder = new google.maps.Geocoder()
+  geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+    if (status === 'OK' && results[0]) {
+      const components = results[0].address_components
+      const route = components.find(c => c.types.includes('route'))
+      const streetNumber = components.find(c => c.types.includes('street_number'))
+      const locality = components.find(c => c.types.includes('locality'))
+
+      const parts = []
+      if (route) parts.push(route.long_name)
+      if (streetNumber) parts.push(streetNumber.long_name)
+      if (locality) parts.push(locality.long_name)
+
+      stopAddress.value = {
+        display: parts.join(' ') || results[0].formatted_address,
+        street: route?.long_name || '',
+        houseNumber: streetNumber?.long_name || ''
+      }
+    }
+  })
 }
 
 // Fetch a single stop for one tour type (for nearby stops)
@@ -310,6 +348,7 @@ const loadPageData = async () => {
   // Reset state
   stopData.value = null
   stopDescription.value = ''
+  stopAddress.value = { display: '', street: '', houseNumber: '' }
   stadInfo.value = ''
   provincieNaam.value = ''
   audioState.value = { audioUrl: '', duration: 0, isAvailable: false }
@@ -318,9 +357,10 @@ const loadPageData = async () => {
   // Scroll to top
   window.scrollTo(0, 0)
 
-  // Fetch stop data first, then audio (which depends on stop ID)
+  // Fetch stop data first, then audio and address (which depend on stop data)
   await fetchStop()
   fetchStopAudio()
+  reverseGeocodeStop()
 
   // City info and nearby stops can load in parallel
   fetchCityInfo()

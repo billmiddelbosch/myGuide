@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const props = defineProps({
   stop: {
     type: Object,
@@ -7,6 +9,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['select'])
+
+const address = ref('')
 
 const tourTypeColors = {
   history: { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
@@ -25,18 +29,56 @@ const getTypeStyle = (type) => {
     borderColor: colors.border
   }
 }
+
+const reverseGeocode = () => {
+  const lat = props.stop.coordinates?.lat
+  const lng = props.stop.coordinates?.lng
+  if (!lat || !lng) return
+
+  if (!window.google) {
+    setTimeout(reverseGeocode, 500)
+    return
+  }
+
+  const geocoder = new google.maps.Geocoder()
+  geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+    if (status === 'OK' && results[0]) {
+      const components = results[0].address_components
+      const route = components.find(c => c.types.includes('route'))
+      const streetNumber = components.find(c => c.types.includes('street_number'))
+
+      const parts = []
+      if (route) parts.push(route.long_name)
+      if (streetNumber) parts.push(streetNumber.long_name)
+
+      address.value = parts.join(' ')
+    }
+  })
+}
+
+onMounted(() => {
+  reverseGeocode()
+})
 </script>
 
 <template>
   <button class="nearby-card" @click="emit('select', stop.id)">
-    <div class="card-top">
+    <!-- <div class="card-top">
       <span class="type-badge" :style="getTypeStyle(stop.tourType)">
         {{ stop.tourTypeLabel }}
       </span>
       <span class="distance">{{ stop.distance }} {{ stop.distanceUnit }}</span>
-    </div>
+    </div> -->
 
     <h4 class="stop-name">{{ stop.name }}</h4>
+
+    <p v-if="address" class="stop-address">
+      <svg class="address-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+      {{ address }}
+    </p>
 
     <div class="card-footer">
       <span class="tour-badge">
@@ -100,8 +142,24 @@ const getTypeStyle = (type) => {
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-neutral-900);
+  margin: 0 0 0.375rem;
+  line-height: 1.3;
+}
+
+.stop-address {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-neutral-400);
   margin: 0 0 0.625rem;
   line-height: 1.3;
+}
+
+.address-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
 }
 
 .card-footer {
