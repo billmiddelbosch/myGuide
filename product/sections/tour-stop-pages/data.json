@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "models": {
+      "stop": "A cityCast tour stop — a point of interest with a name, description, location, tour type category, and audio narration. This is the main entity displayed on the page.",
+      "city": "The city this stop belongs to. Provides a description and location data for the collapsible city info section and map centering.",
+      "nearbyStops": "Other cityCast tour stops in the same city, displayed on the interactive map to encourage exploration.",
+      "audioState": "The audio file URL and metadata for the stop's prominent audio player.",
+      "primaryCTA": "Configuration for the primary call-to-action button linking to the tour builder.",
+      "secondaryCTA": "Configuration for the secondary call-to-action linking to the cityCast landing page.",
+      "seo": "SEO metadata for the page: title, meta description, and canonical URL path."
+    },
+    "relationships": [
+      "A Stop belongs to a City",
+      "A Stop has one audio file (audioState)",
+      "Nearby Stops are other Stops in the same City, shown on the map",
+      "The primary CTA links to the Tour Builder for the Stop's City",
+      "The secondary CTA links to the cityCast Landing Page"
+    ]
+  },
+  "stop": {
+    "id": "stop-001",
+    "name": "Anne Frank Huis",
+    "description": "Het Anne Frank Huis aan de Prinsengracht 263-267 in Amsterdam is het voormalige schuiladres waar Anne Frank tijdens de Tweede Wereldoorlog haar beroemde dagboek schreef. Samen met haar familie en vier andere onderduikers leefde ze hier ruim twee jaar in het Achterhuis, verborgen achter een draaibare boekenkast.\n\nHet museum, geopend in 1960, vertelt het verhaal van Anne Frank, de onderduikers en de helpers. Bezoekers kunnen het Achterhuis bezoeken en originele documenten bekijken, waaronder Anne's dagboek. Het Anne Frank Huis is een van de meest bezochte musea van Nederland en een indrukwekkend monument voor de slachtoffers van de Holocaust.",
+    "tourType": "history",
+    "tourTypeLabel": "Geschiedenis",
+    "coordinates": {
+      "lat": 52.3753,
+      "lng": 4.8842
+    },
+    "address": "Prinsengracht 263-267",
+    "city": "Amsterdam"
+  },
+  "city": {
+    "id": "city-001",
+    "naam": "Amsterdam",
+    "description": "Amsterdam is de hoofdstad en grootste stad van Nederland met ruim 920.000 inwoners. De stad ligt in de provincie Noord-Holland en is gebouwd op een netwerk van grachten dat in de 17e eeuw — de Gouden Eeuw — werd aangelegd.\n\nAmsterdam staat wereldwijd bekend om zijn culturele rijkdom, met musea als het Rijksmuseum, het Van Gogh Museum en het Stedelijk Museum. De grachtengordel, de diverse buurten en het bruisende nachtleven maken de stad tot een van de populairste bestemmingen van Europa.",
+    "provincie": "Noord-Holland",
+    "center": {
+      "lat": 52.3676,
+      "lng": 4.9041
+    }
+  },
+  "audioState": {
+    "audioUrl": "https://tours-audio.s3.eu-west-2.amazonaws.com/stop-001/audio.mp3",
+    "duration": 195,
+    "isAvailable": true
+  },
+  "nearbyStops": [
+    {
+      "id": "stop-002",
+      "name": "Westerkerk",
+      "tourType": "architecture",
+      "tourTypeLabel": "Architectuur",
+      "coordinates": {
+        "lat": 52.3745,
+        "lng": 4.8839
+      },
+      "distance": 0.12,
+      "distanceUnit": "km"
+    },
+    {
+      "id": "stop-003",
+      "name": "De Negen Straatjes",
+      "tourType": "culture",
+      "tourTypeLabel": "Cultuur",
+      "coordinates": {
+        "lat": 52.3702,
+        "lng": 4.8852
+      },
+      "distance": 0.50,
+      "distanceUnit": "km"
+    },
+    {
+      "id": "stop-004",
+      "name": "Rijksmuseum",
+      "tourType": "art",
+      "tourTypeLabel": "Kunst",
+      "coordinates": {
+        "lat": 52.3600,
+        "lng": 4.8852
+      },
+      "distance": 1.70,
+      "distanceUnit": "km"
+    },
+    {
+      "id": "stop-005",
+      "name": "Van Gogh Museum",
+      "tourType": "art",
+      "tourTypeLabel": "Kunst",
+      "coordinates": {
+        "lat": 52.3584,
+        "lng": 4.8811
+      },
+      "distance": 1.90,
+      "distanceUnit": "km"
+    },
+    {
+      "id": "stop-006",
+      "name": "Concertgebouw",
+      "tourType": "architecture",
+      "tourTypeLabel": "Architectuur",
+      "coordinates": {
+        "lat": 52.3563,
+        "lng": 4.8790
+      },
+      "distance": 2.10,
+      "distanceUnit": "km"
+    }
+  ],
+  "primaryCTA": {
+    "label": "Maak een tour door Amsterdam",
+    "description": "Stel je eigen gratis audiotour samen",
+    "targetUrl": "/builder/amsterdam",
+    "citySlug": "amsterdam"
+  },
+  "secondaryCTA": {
+    "label": "Meer over cityCast",
+    "description": "Ontdek hoe cityCast werkt",
+    "targetUrl": "/"
+  },
+  "seo": {
+    "title": "Anne Frank Huis, Amsterdam — cityCast Audiotour Stop",
+    "description": "Ontdek het Anne Frank Huis in Amsterdam met cityCast. Luister naar de audiotour, bekijk de locatie op de kaart en maak je eigen gratis tour door Amsterdam.",
+    "canonicalPath": "/amsterdam/anne-frank-huis"
+  }
+}

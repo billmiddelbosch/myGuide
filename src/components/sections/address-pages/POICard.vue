@@ -52,13 +52,13 @@ const handleClick = () => {
       <span class="poi-type-badge" :style="getTypeStyle(poi.type)">
         {{ typeLabels[poi.type] || poi.type }}
       </span>
-      <span class="poi-distance">{{ poi.distance }} {{ poi.distanceUnit }}</span>
+      <!-- <span class="poi-distance">{{ poi.distance }} {{ poi.distanceUnit }}</span> -->
     </div>
 
     <h4 class="poi-name">{{ poi.name }}</h4>
     <p class="poi-description">{{ poi.description }}</p>
 
-    <div class="poi-footer">
+    <!-- <div class="poi-footer">
       <span class="poi-address-text">
         <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -73,7 +73,7 @@ const handleClick = () => {
         </svg>
         Tour stop
       </span>
-    </div>
+    </div> -->
   </button>
 </template>
 
