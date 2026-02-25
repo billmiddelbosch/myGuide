@@ -1,11 +1,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useHead } from '@unhead/vue'
 import api from '@/services/api'
 import TourStopPage from '@/components/sections/tour-stop-pages/TourStopPage.vue'
 
 const router = useRouter()
 const route = useRoute()
+
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'https://stadtour.nl'
 
 // Build data from route params
 const stad = computed(() => decodeURIComponent(route.params.stad || ''))
@@ -95,6 +98,75 @@ const seo = computed(() => ({
   description: `Ontdek ${stopNameFromRoute.value} in ${stad.value} met cityCast. Luister naar de audiotour en maak je eigen gratis tour.`,
   canonicalPath: `/${stad.value}/${stopNameFromRoute.value.toLowerCase().replace(/\s+/g, '-')}`
 }))
+
+const jsonLd = computed(() => {
+  const canonicalUrl = `${BASE_URL}${seo.value.canonicalPath}`
+  const stadLower = stad.value.toLowerCase()
+
+  const attractionNode = {
+    '@type': 'TouristAttraction',
+    name: stop.value.name || stopNameFromRoute.value,
+    description: stop.value.description || seo.value.description,
+    url: canonicalUrl,
+    ...(stop.value.address ? {
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: stop.value.address,
+        addressLocality: stad.value,
+        addressCountry: 'NL'
+      }
+    } : {}),
+    ...(stop.value.coordinates.lat && stop.value.coordinates.lng ? {
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: stop.value.coordinates.lat,
+        longitude: stop.value.coordinates.lng
+      }
+    } : {}),
+    ...(audioState.value.isAvailable && audioState.value.audioUrl ? {
+      audio: {
+        '@type': 'AudioObject',
+        name: `${stop.value.name || stopNameFromRoute.value} — cityCast audiotour`,
+        contentUrl: audioState.value.audioUrl,
+        encodingFormat: 'audio/mpeg'
+      }
+    } : {})
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      attractionNode,
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'cityCast', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: stad.value, item: `${BASE_URL}/builder/${stadLower}` },
+          { '@type': 'ListItem', position: 3, name: stop.value.name || stopNameFromRoute.value, item: canonicalUrl }
+        ]
+      }
+    ]
+  }
+})
+
+useHead(computed(() => ({
+  title: seo.value.title,
+  meta: [
+    { name: 'description', content: seo.value.description },
+    { property: 'og:title', content: seo.value.title },
+    { property: 'og:description', content: seo.value.description },
+    { property: 'og:url', content: `${BASE_URL}${seo.value.canonicalPath}` },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:title', content: seo.value.title },
+    { name: 'twitter:description', content: seo.value.description }
+  ],
+  link: [
+    { rel: 'canonical', href: `${BASE_URL}${seo.value.canonicalPath}` }
+  ],
+  script: [
+    { type: 'application/ld+json', key: 'page-schema', innerHTML: JSON.stringify(jsonLd.value) }
+  ]
+})))
 
 // Helpers
 const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : ''

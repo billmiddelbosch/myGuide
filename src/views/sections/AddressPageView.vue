@@ -1,12 +1,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useHead } from '@unhead/vue'
 import data from '@/../product/sections/address-pages/data.json'
 import api from '@/services/api'
 import AddressPage from '@/components/sections/address-pages/AddressPage.vue'
 
 const router = useRouter()
 const route = useRoute()
+
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'https://stadtour.nl'
 
 // Build data from route params
 const stad = computed(() => decodeURIComponent(route.params.stad || ''))
@@ -60,7 +63,7 @@ const contentSections = computed(() => {
       title: `Over de ${straat.value}`,
       subtitle: `${stad.value}`,
       content: straatInfo.value,
-      collapsed: true
+      collapsed: false
     })
   }
 
@@ -87,6 +90,74 @@ const contentSections = computed(() => {
   return sections
 })
 
+const seo = computed(() => ({
+  ...data.seo,
+  title: `${straat.value} ${huisnummer.value}, ${stad.value} — Adresgegevens, buurt & omgeving`,
+  description: `Alles over ${straat.value} ${huisnummer.value} in ${stad.value}: buurtinformatie, bezienswaardigheden en een gratis cityCast audiotour.`,
+  canonicalPath: `/${stad.value}/${straat.value}/${huisnummer.value}`
+}))
+
+const jsonLd = computed(() => {
+  const canonicalUrl = `${BASE_URL}${seo.value.canonicalPath}`
+  const stadLower = stad.value.toLowerCase()
+  const straatLower = straat.value.toLowerCase()
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Place',
+        name: `${straat.value} ${huisnummer.value}, ${stad.value}`,
+        description: seo.value.description,
+        url: canonicalUrl,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: `${straat.value} ${huisnummer.value}`,
+          addressLocality: stad.value,
+          ...(provincieNaam.value && { addressRegion: provincieNaam.value }),
+          ...(address.value.postcode && { postalCode: address.value.postcode }),
+          addressCountry: 'NL'
+        },
+        ...(addressCoordinates.value.lat && addressCoordinates.value.lng ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: addressCoordinates.value.lat,
+            longitude: addressCoordinates.value.lng
+          }
+        } : {})
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'cityCast', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: stad.value, item: `${BASE_URL}/builder/${stadLower}` },
+          { '@type': 'ListItem', position: 3, name: straat.value, item: `${BASE_URL}/${stadLower}/${straatLower}` },
+          { '@type': 'ListItem', position: 4, name: `${straat.value} ${huisnummer.value}`, item: canonicalUrl }
+        ]
+      }
+    ]
+  }
+})
+
+useHead(computed(() => ({
+  title: seo.value.title,
+  meta: [
+    { name: 'description', content: seo.value.description },
+    { property: 'og:title', content: seo.value.title },
+    { property: 'og:description', content: seo.value.description },
+    { property: 'og:url', content: `${BASE_URL}${seo.value.canonicalPath}` },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:title', content: seo.value.title },
+    { name: 'twitter:description', content: seo.value.description }
+  ],
+  link: [
+    { rel: 'canonical', href: `${BASE_URL}${seo.value.canonicalPath}` }
+  ],
+  script: [
+    { type: 'application/ld+json', key: 'page-schema', innerHTML: JSON.stringify(jsonLd.value) }
+  ]
+})))
+
 const nearbyPOIs = ref([])
 const loadingPOIs = ref(false)
 const affiliateLinks = ref(data.affiliateLinks)
@@ -94,12 +165,6 @@ const affiliateLinks = ref(data.affiliateLinks)
 const primaryCTA = computed(() => ({
   ...data.primaryCTA,
   citySlug: stad.value.toLowerCase()
-}))
-
-const seo = computed(() => ({
-  ...data.seo,
-  title: `${straat.value} ${huisnummer.value}, ${stad.value} — Adresgegevens, buurt & omgeving`,
-  canonicalPath: `/${stad.value}/${straat.value}/${huisnummer.value}`
 }))
 
 // Transform API stop data to POI format
