@@ -63,7 +63,7 @@ const contentSections = computed(() => {
       title: `Over de ${straat.value}`,
       subtitle: `${stad.value}`,
       content: straatInfo.value,
-      collapsed: true
+      collapsed: false
     })
   }
 
