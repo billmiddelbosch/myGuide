@@ -62,6 +62,14 @@ export default {
     });
   },
 
+  // Server-side geocoding — forward (address → lat/lng) and reverse (lat/lng → address)
+  geocode({ address, latlng }) {
+    const body = { language: 'nl', region: 'nl' }
+    if (address) body.address = address
+    if (latlng) body.latlng = latlng
+    return cityApiClient.post('/geocode', body);
+  },
+
   // Get tour types/categories
   gettourTypes() {
     return apiClient.get('/tourTypes');

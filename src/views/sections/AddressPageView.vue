@@ -199,41 +199,28 @@ const fetchNearbyPOIs = async () => {
 }
 
 // Geocode the address to get real coordinates and resolve provincie
-const geocodeAddress = () => {
-  if (!window.google) {
-    console.log('Google Maps not loaded yet, retrying...')
-    setTimeout(geocodeAddress, 500)
-    return
-  }
+const geocodeAddress = async () => {
+  try {
+    const query = `${straat.value} ${huisnummer.value}, ${stad.value}, Nederland`
+    const response = await api.geocode({ address: query })
+    const body = response.data?.body || response.data || {}
 
-  const geocoder = new google.maps.Geocoder()
-  const query = `${straat.value} ${huisnummer.value}, ${stad.value}, Nederland`
-
-  geocoder.geocode({ address: query }, (results, status) => {
-    if (status === 'OK' && results[0]) {
-      const result = results[0]
+    if (body.status === 'OK' && body.results?.[0]) {
+      const result = body.results[0]
       const location = result.geometry.location
-      addressCoordinates.value = {
-        lat: location.lat(),
-        lng: location.lng()
-      }
+      addressCoordinates.value = { lat: location.lat, lng: location.lng }
 
-      // Extract provincie from address components
       const provComponent = result.address_components.find(
         c => c.types.includes('administrative_area_level_1')
       )
-      if (provComponent) {
-        provincieNaam.value = provComponent.long_name
-      }
-
-      // Now fetch street/city info with resolved provincie
-      fetchStadStraat()
+      if (provComponent) provincieNaam.value = provComponent.long_name
     } else {
-      console.log('Geocode failed:', status)
-      // Still try to fetch without provincie
-      fetchStadStraat()
+      console.log('Geocode failed:', body.status)
     }
-  })
+  } catch (error) {
+    console.log('Geocode error:', error.message)
+  }
+  fetchStadStraat()
 }
 
 onMounted(() => {

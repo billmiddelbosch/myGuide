@@ -174,36 +174,30 @@ const fetchCityInfo = async () => {
 }
 
 // Reverse geocode stop coordinates to get a street address
-const reverseGeocodeStop = () => {
+const reverseGeocodeStop = async () => {
   const lat = stop.value.coordinates.lat
   const lng = stop.value.coordinates.lng
   if (!lat || !lng) return
 
-  if (!window.google) {
-    setTimeout(reverseGeocodeStop, 500)
-    return
-  }
+  try {
+    const response = await api.geocode({ latlng: `${lat},${lng}` })
+    const body = response.data?.body || response.data || {}
 
-  const geocoder = new google.maps.Geocoder()
-  geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-    if (status === 'OK' && results[0]) {
-      const components = results[0].address_components
+    if (body.status === 'OK' && body.results?.[0]) {
+      const components = body.results[0].address_components
       const route = components.find(c => c.types.includes('route'))
       const streetNumber = components.find(c => c.types.includes('street_number'))
-      const locality = components.find(c => c.types.includes('locality'))
-
-      const parts = []
-      if (route) parts.push(route.long_name)
-      if (streetNumber) parts.push(streetNumber.long_name)
-      if (locality) parts.push(locality.long_name)
 
       stopAddress.value = {
-        display: parts.join(' ') || results[0].formatted_address,
+        display: [route?.long_name, streetNumber?.long_name].filter(Boolean).join(' ')
+          || body.results[0].formatted_address,
         street: route?.long_name || '',
         houseNumber: streetNumber?.long_name || ''
       }
     }
-  })
+  } catch (error) {
+    console.log('Reverse geocode error:', error.message)
+  }
 }
 
 // Fetch a single stop for one tour type (for nearby stops)
