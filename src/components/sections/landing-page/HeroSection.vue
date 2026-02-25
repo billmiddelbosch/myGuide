@@ -59,8 +59,15 @@ const formatNumber = (num) => {
     <div
       class="hero-background"
       :class="{ 'is-loading': isLoading }"
-      :style="{ backgroundImage: `url(${heroImageUrl})` }"
     >
+      <img
+        v-if="heroImageUrl"
+        :src="heroImageUrl"
+        :alt="city.name"
+        class="hero-bg-image"
+        fetchpriority="high"
+        loading="eager"
+      />
       <div class="hero-overlay" />
     </div>
 
@@ -144,9 +151,16 @@ const formatNumber = (num) => {
 .hero-background {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   transform: scale(1.05);
   animation: subtle-zoom 20s ease-in-out infinite alternate;
 }

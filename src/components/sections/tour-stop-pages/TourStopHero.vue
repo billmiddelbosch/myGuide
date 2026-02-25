@@ -28,6 +28,8 @@ const props = defineProps({
   }
 })
 
+const citySlug = computed(() => props.cityName.toLowerCase())
+
 const addressRoute = computed(() => {
   if (!props.addressStreet || !props.addressHouseNumber || !props.cityName) return null
   return {
@@ -50,8 +52,18 @@ const addressRoute = computed(() => {
 
     <div class="hero-inner">
       <!-- Breadcrumb -->
-      <nav class="breadcrumb" aria-label="Locatie">
-        <span class="breadcrumb-text">{{ cityName }}</span>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item">
+            <RouterLink to="/" class="breadcrumb-link">cityCast</RouterLink>
+          </li>
+          <li v-if="cityName" class="breadcrumb-item">
+            <RouterLink :to="{ name: 'builder', params: { city: citySlug } }" class="breadcrumb-link">{{ cityName }}</RouterLink>
+          </li>
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            {{ stopName }}
+          </li>
+        </ol>
       </nav>
 
       <!-- Stop name -->
@@ -146,12 +158,41 @@ const addressRoute = computed(() => {
   margin-bottom: 1rem;
 }
 
-.breadcrumb-text {
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: var(--color-primary-400);
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: '›';
+  padding: 0 0.375rem;
+  color: rgba(255, 255, 255, 0.2);
+  font-family: sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.875rem;
+}
+
+.breadcrumb-link {
+  color: var(--color-primary-400);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--color-primary-300);
+}
+
+.breadcrumb-current {
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .stop-title {
@@ -253,7 +294,7 @@ const addressRoute = computed(() => {
     font-size: 3rem;
   }
 
-  .breadcrumb-text {
+  .breadcrumb-list {
     font-size: 0.8125rem;
   }
 }
