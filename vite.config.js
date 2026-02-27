@@ -18,5 +18,19 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
+  },
+  build: {
+    // Warn when a chunk exceeds 300kb
+    chunkSizeWarningLimit: 300,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vue core — cached across all pages
+          'vue-vendor': ['vue', 'vue-router'],
+          // HTTP client — shared by all API calls
+          'axios-vendor': ['axios'],
+        }
+      }
+    }
   }
 })
