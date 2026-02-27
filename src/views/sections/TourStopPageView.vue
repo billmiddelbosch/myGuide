@@ -28,18 +28,19 @@ const stop = computed(() => {
     return {
       id: stopData.value.stopID || stopData.value.stopId || stopData.value.id || '',
       name: stopData.value.stopName || stopData.value.name || stopNameFromRoute.value,
-      description: stopData.value.stopDescription || stopData.value.description || stopDescription.value || '',
+      description: stopData.value.stopDecription || stopData.value.stopDescription || stopData.value.description || stopDescription.value || '',
       tourType: stopData.value.tourType || stopData.value.stopType || '',
       tourTypeLabel: stopData.value.tourTypeLabel || capitalize(stopData.value.tourType || stopData.value.stopType || ''),
       coordinates: {
-        lat: parseFloat(stopData.value.latitude) || stopData.value.coordinates?.lat || 0,
-        lng: parseFloat(stopData.value.longitude) || stopData.value.coordinates?.lng || 0
+        lat: parseFloat(stopData.value.stopLat) || parseFloat(stopData.value.latitude) || stopData.value.coordinates?.lat || 0,
+        lng: parseFloat(stopData.value.stopLng) || parseFloat(stopData.value.longitude) || stopData.value.coordinates?.lng || 0
       },
       address: stopAddress.value.display || stopData.value.address || '',
       addressStreet: stopAddress.value.street,
       addressHouseNumber: stopAddress.value.houseNumber,
       city: stad.value,
-      extract: stopData.value.extract || null
+      extract: stopData.value.extract || null,
+      preview: stopData.value.preview || null
     }
   }
   // Fallback while loading — minimal data from route params
@@ -184,8 +185,8 @@ const transformStopToNearby = (apiStop, tourType) => {
     tourType: tourType,
     tourTypeLabel: capitalize(tourType),
     coordinates: {
-      lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
-      lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
+      lat: parseFloat(apiStop.stopLat) || parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
+      lng: parseFloat(apiStop.stopLng) || parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
     },
     distance: 0,
     distanceUnit: 'km'
@@ -203,7 +204,7 @@ const fetchStop = async () => {
       const typeName = tourType.typeName || tourType
       try {
         const response = await api.getCityStops(stad.value, typeName)
-        const stops = response.data?.body || response.data || []
+        const stops = (response.data?.body || response.data || []).map(item => item.stop || item)
 
         // Search for the stop by name (case-insensitive, slug-friendly)
         const match = stops.find(s => {
@@ -286,7 +287,7 @@ const reverseGeocodeStop = () => {
 const fetchStopForType = async (tourType) => {
   const typeName = tourType.typeName || tourType
   const response = await api.getCityStops(stad.value, typeName)
-  const stops = response.data?.body || response.data || []
+  const stops = (response.data?.body || response.data || []).map(item => item.stop || item)
 
   if (stops.length === 0) {
     const genResponse = await api.generateCityStops({
@@ -294,7 +295,7 @@ const fetchStopForType = async (tourType) => {
       prompt: tourType.typePrompt || typeName,
       tourType: typeName
     })
-    const generatedStops = genResponse.data?.body || genResponse.data || []
+    const generatedStops = (genResponse.data?.body || genResponse.data || []).map(item => item.stop || item)
     if (generatedStops.length > 0) {
       const nearby = transformStopToNearby(generatedStops[0], typeName)
       if (nearby.coordinates.lat && nearby.coordinates.lng) return nearby
@@ -427,8 +428,8 @@ const enrichStopInBackground = () => {
   // Skip if already enriched
   if (data.enrichedAt || (data.kinds && data.kinds.length > 0)) return
 
-  const lat = parseFloat(data.latitude) || data.coordinates?.lat
-  const lng = parseFloat(data.longitude) || data.coordinates?.lng
+  const lat = parseFloat(data.stopLat) || parseFloat(data.latitude) || data.coordinates?.lat
+  const lng = parseFloat(data.stopLng) || parseFloat(data.longitude) || data.coordinates?.lng
   const stopId = data.stopID || data.stopId || data.id
   const stopCity = stad.value
   const stopName = data.stopName || data.name

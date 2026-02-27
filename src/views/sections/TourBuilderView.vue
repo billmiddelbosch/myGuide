@@ -34,17 +34,19 @@ const transformStopData = (apiStop, category, order) => {
   return {
     id: stopId,
     name: apiStop.stopName || apiStop.name || 'Onbekende locatie',
-    description: apiStop.stopDescription || apiStop.description || '',
+    description: apiStop.stopDecription || apiStop.stopDescription || apiStop.description || '',
     shortDescription: apiStop.shortDescription || '',
     imageUrl: apiStop.imageUrl || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
     category: category,
     duration: apiStop.duration || 15,
     coordinates: {
-      lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
-      lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
+      lat: parseFloat(apiStop.stopLat) || parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
+      lng: parseFloat(apiStop.stopLng) || parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
     },
     address: apiStop.address || '',
     kinds: apiStop.kinds || [],
+    extract: apiStop.extract || null,
+    preview: apiStop.preview || null,
     audioStatus: 'pending',
     order: order
   }
@@ -171,7 +173,7 @@ const handleGenerateTour = async () => {
         console.log(`Fetching stops for category: ${categoryId} with prompt: ${prompt}`)
         console.log('Current city:', city.value)
         const response = await api.getCityStops(city.value.name, categoryId)
-        const stopsData = response.data?.body || response.data || []
+        const stopsData = (response.data?.body || response.data || []).map(item => item.stop || item)
 
         // Transform and categorize stops
         console.log('Raw stops data from API:', stopsData)
@@ -284,7 +286,7 @@ const handleGenerateTour = async () => {
           tourType
         })
 
-        const generatedStops = generateResponse.data?.body || generateResponse.data || []
+        const generatedStops = (generateResponse.data?.body || generateResponse.data || []).map(item => item.stop || item)
         console.log('Generated stops from API:', generatedStops)
 
         if (generatedStops.length > 0) {

@@ -23,7 +23,7 @@ const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
 const OTM_API_KEY = '5ae2e3f221c38a28845f05b64b23b92a4db41729d0fa97fbdee51b3c';
-const OTM_BASE = 'https://api.opentripmap.com/0.1/en/places';
+const OTM_BASE = 'https://api.opentripmap.com/0.1/nl/places';
 const STOPS_TABLE = 'cityStops';
 const STOPS_TABLE_KEY = 'stopID';
 const STOPS_TABLE_SORT_KEY = 'stopCity';

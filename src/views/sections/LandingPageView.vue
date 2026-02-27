@@ -94,7 +94,7 @@ const audioBaseUrl = experienceData.audioBaseUrl
 const fetchAudioPreviews = async (cityName) => {
   try {
     const response = await api.getCityStops(cityName, 'Cultuur')
-    const stops = response.data?.body || response.data || []
+    const stops = (response.data?.body || response.data || []).map(item => item.stop || item)
     if (stops.length === 0) return
 
     // Pick 3 random stops
@@ -102,7 +102,7 @@ const fetchAudioPreviews = async (cityName) => {
     const picked = shuffled.slice(0, 3)
 
     // Compose S3 audio URLs
-    const audioUrls = picked.map(s => `${audioBaseUrl}/${s.id}.mp3`)
+    const audioUrls = picked.map(s => `${audioBaseUrl}/${s.stopID || s.id}.mp3`)
 
     // Assign first 2 audio URLs to the feature cards that have audio buttons
     features.value = features.value.map(f => {
@@ -122,7 +122,7 @@ const fetchAudioPreviews = async (cityName) => {
         cityName: cityName,
         stopName: picked[2].stopName || picked[2].name || audioPreview.value.stopName,
         audioUrl: audioUrls[2],
-        transcript: picked[2].description || audioPreview.value.transcript
+        transcript: picked[2].stopDecription || picked[2].description || audioPreview.value.transcript
       }
     }
     console.log('audio URLs:', audioUrls[0], audioUrls[1], audioUrls[2])

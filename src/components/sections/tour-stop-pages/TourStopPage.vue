@@ -118,6 +118,7 @@ const handleToggleCityInfo = () => {
       :address="stop.address"
       :address-street="stop.addressStreet"
       :address-house-number="stop.addressHouseNumber"
+      :preview="stop.preview"
     />
 
     <!-- Primary CTA banner (sticky) -->
