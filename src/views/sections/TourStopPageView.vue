@@ -4,6 +4,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import api from '@/services/api'
 import TourStopPage from '@/components/sections/tour-stop-pages/TourStopPage.vue'
+import { useWeather } from '@/composables/useWeather'
+
+const { weather, fetchWeather } = useWeather()
 
 const router = useRouter()
 const route = useRoute()
@@ -425,6 +428,7 @@ const loadPageData = async () => {
   provincieNaam.value = ''
   audioState.value = { audioUrl: '', duration: 0, isAvailable: false }
   nearbyStops.value = []
+  weather.value = null
 
   // Scroll to top
   window.scrollTo(0, 0)
@@ -438,6 +442,17 @@ const loadPageData = async () => {
   fetchCityInfo()
   fetchNearbyStops()
 }
+
+// Fetch weather reactively when stop coordinates become available
+watch(
+  () => stop.value.coordinates,
+  ({ lat, lng }) => {
+    if (lat && lng && !weather.value) {
+      fetchWeather({ lat, lng })
+    }
+  },
+  { deep: true }
+)
 
 // Reload when route params change (navigating between stops)
 watch(
@@ -495,6 +510,7 @@ const handleSecondaryCTA = () => {
     :audio-state="audioState"
     :nearby-stops="nearbyStops"
     :loading-stops="loadingStops"
+    :weather="weather"
     :primary-c-t-a="primaryCTA"
     :secondary-c-t-a="secondaryCTA"
     :seo="seo"
