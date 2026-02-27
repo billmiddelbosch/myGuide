@@ -25,6 +25,10 @@ const props = defineProps({
   addressHouseNumber: {
     type: String,
     default: ''
+  },
+  preview: {
+    type: Object,
+    default: null
   }
 })
 
@@ -44,11 +48,16 @@ const addressRoute = computed(() => {
 </script>
 
 <template>
-  <header class="stop-hero">
-    <div class="hero-decoration">
+  <header
+    class="stop-hero"
+    :class="{ 'stop-hero--image': preview?.source }"
+    :style="preview?.source ? { backgroundImage: `url(${preview.source})` } : {}"
+  >
+    <div v-if="!preview?.source" class="hero-decoration">
       <div class="deco-circle circle-1" />
       <div class="deco-circle circle-2" />
     </div>
+    <div v-if="preview?.source" class="hero-image-overlay" />
 
     <div class="hero-inner">
       <!-- Breadcrumb -->
@@ -119,6 +128,23 @@ const addressRoute = computed(() => {
   padding: 3rem 1.5rem 2.5rem;
   position: relative;
   overflow: hidden;
+}
+
+.stop-hero--image {
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.55) 40%,
+    rgba(0, 0, 0, 0.82) 100%
+  );
+  pointer-events: none;
 }
 
 .hero-decoration {

@@ -34,16 +34,19 @@ const transformStopData = (apiStop, category, order) => {
   return {
     id: stopId,
     name: apiStop.stopName || apiStop.name || 'Onbekende locatie',
-    description: apiStop.stopDescription || apiStop.description || '',
+    description: apiStop.stopDecription || apiStop.stopDescription || apiStop.description || '',
     shortDescription: apiStop.shortDescription || '',
     imageUrl: apiStop.imageUrl || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
     category: category,
     duration: apiStop.duration || 15,
     coordinates: {
-      lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
-      lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
+      lat: parseFloat(apiStop.stopLat) || parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
+      lng: parseFloat(apiStop.stopLng) || parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
     },
     address: apiStop.address || '',
+    kinds: apiStop.kinds || [],
+    extract: apiStop.extract || null,
+    preview: apiStop.preview || null,
     audioStatus: 'pending',
     order: order
   }
@@ -126,6 +129,34 @@ const handleToggleCategory = (categoryId) => {
   }
 }
 
+/**
+ * Fire-and-forget: enrich each stop with OpenTripMap data after generation.
+ * Runs sequentially with a small delay between calls to avoid rate limiting.
+ * Never throws — failures are logged silently so the UI is never affected.
+ */
+const enrichStopsInBackground = (stops, cityName) => {
+  const run = async () => {
+    for (const stop of stops) {
+      if (!stop.coordinates?.lat || !stop.coordinates?.lng) continue
+      try {
+        await api.getStopEnrichment({
+          lat: stop.coordinates.lat,
+          lng: stop.coordinates.lng,
+          stopId: stop.id,
+          stopCity: cityName,
+          stopName: stop.name
+        })
+        console.log('[enrichment] enriched:', stop.name)
+      } catch (err) {
+        console.warn('[enrichment] failed for:', stop.name, err?.message)
+      }
+      // Small delay to stay within OpenTripMap free tier rate limits
+      await new Promise(resolve => setTimeout(resolve, 300))
+    }
+  }
+  run()
+}
+
 const handleGenerateTour = async () => {
   console.log('Generate tour with preferences:', preferences)
   loadingStates.generatingTour = true
@@ -142,7 +173,7 @@ const handleGenerateTour = async () => {
         console.log(`Fetching stops for category: ${categoryId} with prompt: ${prompt}`)
         console.log('Current city:', city.value)
         const response = await api.getCityStops(city.value.name, categoryId)
-        const stopsData = response.data?.body || response.data || []
+        const stopsData = (response.data?.body || response.data || []).map(item => item.stop || item)
 
         // Transform and categorize stops
         console.log('Raw stops data from API:', stopsData)
@@ -203,6 +234,12 @@ const handleGenerateTour = async () => {
 
       suggestedStops.value = allSuggestedStops
 
+      // Enrich stops that are missing enrichment data in the background
+      const stopsNeedingEnrichment = allStops.filter(s => !s.kinds || s.kinds.length === 0)
+      if (stopsNeedingEnrichment.length > 0) {
+        enrichStopsInBackground(stopsNeedingEnrichment, city.value.name)
+      }
+
       const tourPolyline = suggestedStops
         if (tourPolyline) {
           proposedTour.value.polyline = tourPolyline
@@ -249,7 +286,7 @@ const handleGenerateTour = async () => {
           tourType
         })
 
-        const generatedStops = generateResponse.data?.body || generateResponse.data || []
+        const generatedStops = (generateResponse.data?.body || generateResponse.data || []).map(item => item.stop || item)
         console.log('Generated stops from API:', generatedStops)
 
         if (generatedStops.length > 0) {
@@ -301,6 +338,9 @@ const handleGenerateTour = async () => {
             }
 
             suggestedStops.value = processedSuggested
+
+            // Enrich stops in the background — does not block the UI
+            enrichStopsInBackground(processedStops, city.value.name)
           } else {
             // Fall back to mock data if no valid stops generated
             proposedTour.value = { ...data.proposedTour }

@@ -1,0 +1,13 @@
+{
+  "name": "citycast-stop-enrichment-lambda",
+  "version": "1.0.0",
+  "description": "Lambda handler for stop enrichment via OpenTripMap API",
+  "main": "index.js",
+  "scripts": {
+    "zip": "zip -r function.zip index.js node_modules"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  }
+}
