@@ -175,13 +175,13 @@ const transformStopToPOI = (apiStop, tourType, index) => {
     name: apiStop.stopName || apiStop.name || 'Onbekende locatie',
     type: tourType,
     icon: tourType,
-    description: apiStop.stopDescription || apiStop.description || '',
+    description: apiStop.stopDecription || apiStop.stopDescription || apiStop.description || '',
     address: apiStop.address || '',
     distance: 0,
     distanceUnit: 'km',
     coordinates: {
-      lat: parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
-      lng: parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
+      lat: parseFloat(apiStop.stopLat) || parseFloat(apiStop.latitude) || apiStop.coordinates?.lat || 0,
+      lng: parseFloat(apiStop.stopLng) || parseFloat(apiStop.longitude) || apiStop.coordinates?.lng || 0
     },
     isTourStop: true,
     tourStopId: stopId
@@ -207,7 +207,7 @@ const fetchStadStraat = async () => {
 const fetchStopForType = async (tourType) => {
   const typeName = tourType.typeName || tourType
   const response = await api.getCityStops(stad.value, typeName)
-  const stops = response.data?.body || response.data || []
+  const stops = (response.data?.body || response.data || []).map(item => item.stop || item)
 
   if (stops.length === 0) {
     console.log(`No stops for ${typeName}, generating...`)
@@ -216,7 +216,7 @@ const fetchStopForType = async (tourType) => {
       prompt: tourType.typePrompt || typeName,
       tourType: typeName
     })
-    const generatedStops = genResponse.data?.body || genResponse.data || []
+    const generatedStops = (genResponse.data?.body || genResponse.data || []).map(item => item.stop || item)
     if (generatedStops.length > 0) {
       const poi = transformStopToPOI(generatedStops[0], typeName, 0)
       if (poi.coordinates.lat && poi.coordinates.lng) return poi
