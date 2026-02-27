@@ -89,7 +89,8 @@ onUnmounted(() => {
 
 // Computed
 const descriptionParagraphs = computed(() => {
-  return props.stop.description.split('\n').filter(line => line.trim())
+  const text = props.stop.extract?.text || props.stop.description || ''
+  return text.split('\n').filter(line => line.trim())
 })
 
 // Handlers
@@ -117,6 +118,7 @@ const handleToggleCityInfo = () => {
       :address="stop.address"
       :address-street="stop.addressStreet"
       :address-house-number="stop.addressHouseNumber"
+      :preview="stop.preview"
     />
 
     <!-- Primary CTA banner (sticky) -->

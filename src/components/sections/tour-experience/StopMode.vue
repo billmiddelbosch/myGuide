@@ -129,28 +129,34 @@ const handleAudioStateUpdate = (newState) => {
   <div class="stop-mode">
     <!-- Content Area -->
     <div class="stop-content">
-      <!-- Stop Info -->
-      <div class="stop-info">
-        <h1 class="stop-title">{{ stop.name }}</h1>
-        <p class="stop-address">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-          </svg>
-          {{ stop.address }}
-        </p>
+      <!-- Stop Info / Hero -->
+      <div
+        class="stop-info"
+        :class="{ 'stop-info--image': stop.preview?.source }"
+        :style="stop.preview?.source ? { backgroundImage: `url(${stop.preview.source})` } : {}"
+      >
+        <div class="stop-info-inner">
+          <h1 class="stop-title">{{ stop.name }}</h1>
+          <p class="stop-address">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+            </svg>
+            {{ stop.address }}
+          </p>
 
-        <!-- Duration indicator -->
-        <div class="duration-pill">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-          </svg>
-          <span>{{ stop.duration }} min</span>
+          <!-- Duration indicator -->
+          <div class="duration-pill">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <span>{{ stop.duration }} min</span>
+          </div>
         </div>
       </div>
 
       <!-- Description -->
       <div class="stop-description">
-        <p>{{ stop.description }}</p>
+        <p>{{ stop.extract?.text || stop.description }}</p>
       </div>
 
       <!-- Audio Player -->
@@ -259,6 +265,53 @@ const handleAudioStateUpdate = (newState) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.stop-info--image {
+  background-size: cover;
+  background-position: center;
+  min-height: 14rem;
+  position: relative;
+}
+
+.stop-info--image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.1) 100%);
+  border-radius: inherit;
+}
+
+.stop-info-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stop-info--image .stop-info-inner {
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.stop-info--image .stop-title {
+  color: white;
+}
+
+.stop-info--image .stop-address {
+  color: rgba(255,255,255,0.8);
+}
+
+.stop-info--image .stop-address svg {
+  color: rgba(255,255,255,0.8);
+}
+
+.stop-info--image .duration-pill {
+  background: rgba(255,255,255,0.15);
+  color: white;
 }
 
 .stop-title {

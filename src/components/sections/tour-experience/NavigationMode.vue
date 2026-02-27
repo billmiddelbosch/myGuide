@@ -321,6 +321,9 @@ onMounted(() => {
 
       <!-- Stop Preview Card -->
       <div class="stop-preview">
+        <div v-if="currentStop.preview?.source" class="preview-image-wrapper">
+          <img :src="currentStop.preview.source" :alt="currentStop.name" class="place-image" />
+        </div>
         <div class="preview-content">
           <h3 class="preview-name">{{ currentStop.name }}</h3>
           <p class="preview-description">{{ currentStop.shortDescription }}</p>
