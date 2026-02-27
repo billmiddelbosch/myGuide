@@ -5,6 +5,7 @@ import TourStopHero from './TourStopHero.vue'
 import StopAudioPlayer from './StopAudioPlayer.vue'
 import StopMap from './StopMap.vue'
 import NearbyStopCard from './NearbyStopCard.vue'
+import WeatherWidget from './WeatherWidget.vue'
 import CollapsibleSection from '@/components/sections/address-pages/CollapsibleSection.vue'
 
 // Props
@@ -40,6 +41,10 @@ const props = defineProps({
   seo: {
     type: Object,
     required: true
+  },
+  weather: {
+    type: Object,
+    default: null
   }
 })
 
@@ -219,6 +224,15 @@ const handleToggleCityInfo = () => {
             {{ paragraph }}
           </p>
         </div>
+      </section>
+
+      <!-- Weather widget -->
+      <section v-if="weather" class="section weather-section" aria-labelledby="weather-title">
+        <div class="section-header">
+          <h2 id="weather-title" class="section-title">Weer in {{ stop.city }}</h2>
+          <p class="section-subtitle">Huidige condities en verwachting voor de komende dagen</p>
+        </div>
+        <WeatherWidget :weather="weather" />
       </section>
 
       <!-- Interactive map -->
