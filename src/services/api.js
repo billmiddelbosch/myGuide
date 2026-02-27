@@ -127,6 +127,13 @@ export default {
     });
   },
 
+  // Get enrichment data for a stop from OpenTripMap (wikipedia extract, image, kinds, rate)
+  getStopEnrichment({ lat, lng, stopId, stopName }) {
+    return apiClient.get('/stopEnrichment', {
+      params: { lat, lng, stopId, stopName }
+    });
+  },
+
   // Create a Mollie payment for a donation
   createPayment({ amount, tourId, tourCity, redirectUrl }) {
     return apiClient.post('/payment', {
