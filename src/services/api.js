@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://trca8esu3j.execute-api.eu-west-2.amazonaws.com/production';
-const CITY_API_BASE_URL = 'https://0ovja4ep62.execute-api.eu-west-2.amazonaws.com/production';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const CITY_API_BASE_URL = import.meta.env.VITE_CITY_API_BASE_URL;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
