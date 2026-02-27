@@ -128,10 +128,16 @@ export default {
   },
 
   // Get enrichment data for a stop from OpenTripMap (wikipedia extract, image, kinds, rate)
-  getStopEnrichment({ lat, lng, stopId, stopName }) {
-    return apiClient.get('/stopEnrichment', {
-      params: { lat, lng, stopId, stopName }
-    });
+  getStopEnrichment({ lat, lng, stopId, stopCity, stopName }) {
+    const params = {
+      lat: String(lat),
+      lng: String(lng),
+      stopId: String(stopId),
+      stopCity: String(stopCity),
+      stopName: String(stopName)
+    }
+    console.log('Fetching enrichment data for stop:', params);
+    return apiClient.get('/stopEnrichment', { params });
   },
 
   // Create a Mollie payment for a donation

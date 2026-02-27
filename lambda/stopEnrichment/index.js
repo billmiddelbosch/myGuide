@@ -41,11 +41,15 @@ const corsHeaders = {
 exports.handler = async (event) => {
   console.log('Event:', JSON.stringify(event, null, 2));
 
-  if (event.httpMethod === 'OPTIONS') {
+  // Support both Lambda Proxy integration (event.httpMethod) and
+  // non-proxy / custom mapping template format (event.context['http-method'])
+  const httpMethod = event.httpMethod || (event.context && event.context['http-method']) || 'GET';
+
+  if (httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders, body: '' };
   }
 
-  if (event.httpMethod !== 'GET') {
+  if (httpMethod !== 'GET') {
     return {
       statusCode: 405,
       headers: corsHeaders,
@@ -76,7 +80,9 @@ exports.handler = async (event) => {
  *   stopName - Stop name used to find the best POI match (optional)
  */
 async function handleGetEnrichment(event) {
-  const params = event.queryStringParameters || {};
+  // Support both Lambda Proxy integration (event.queryStringParameters) and
+  // non-proxy / custom mapping template format (event.params.querystring)
+  const params = event.queryStringParameters || (event.params && event.params.querystring) || {};
   const { lat, lng, stopId, stopCity, stopName } = params;
 
   if (!lat || !lng) {
@@ -151,11 +157,17 @@ async function fetchFromOpenTripMap(lat, lng, stopName) {
   const radiusRes = await fetch(radiusUrl);
 
   if (!radiusRes.ok) {
-    console.error('OpenTripMap radius search failed:', radiusRes.status, await radiusRes.text());
+    console.error('OpenTripMap radius search failed:', radiusRes.status);
     return null;
   }
 
-  const pois = await radiusRes.json();
+  let pois;
+  try {
+    pois = await radiusRes.json();
+  } catch {
+    console.error('OpenTripMap radius search returned non-JSON response');
+    return null;
+  }
 
   if (!Array.isArray(pois) || pois.length === 0) {
     console.log('No POIs found near coordinates');
@@ -184,11 +196,18 @@ async function fetchFromOpenTripMap(lat, lng, stopName) {
   const detailRes = await fetch(detailUrl);
 
   if (!detailRes.ok) {
-    console.error('OpenTripMap detail fetch failed:', detailRes.status, await detailRes.text());
+    console.error('OpenTripMap detail fetch failed:', detailRes.status);
     return null;
   }
 
-  const place = await detailRes.json();
+  let place;
+  try {
+    place = await detailRes.json();
+  } catch {
+    console.error('OpenTripMap detail fetch returned non-JSON response');
+    return null;
+  }
+
   return extractEnrichment(place);
 }
 
@@ -247,8 +266,8 @@ async function getExistingEnrichment(stopId, stopCity) {
     const result = await docClient.send(new GetCommand({
       TableName: STOPS_TABLE,
       Key: { [STOPS_TABLE_KEY]: stopId, [STOPS_TABLE_SORT_KEY]: stopCity },
-      ProjectionExpression: 'enrichedAt, kinds, rate, image, preview, extract, wikidata, wikipedia, #url',
-      ExpressionAttributeNames: { '#url': 'url' }
+      ProjectionExpression: 'enrichedAt, kinds, rate, image, preview, #extract, wikidata, wikipedia, #url',
+      ExpressionAttributeNames: { '#extract': 'extract', '#url': 'url' }
     }));
 
     if (!result.Item || !result.Item.enrichedAt) return null;

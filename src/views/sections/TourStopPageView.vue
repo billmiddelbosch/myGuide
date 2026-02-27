@@ -38,7 +38,8 @@ const stop = computed(() => {
       address: stopAddress.value.display || stopData.value.address || '',
       addressStreet: stopAddress.value.street,
       addressHouseNumber: stopAddress.value.houseNumber,
-      city: stad.value
+      city: stad.value,
+      extract: stopData.value.extract || null
     }
   }
   // Fallback while loading — minimal data from route params
@@ -418,6 +419,26 @@ const fetchStopAudio = async () => {
   }
 }
 
+// Trigger stop enrichment in the background if enrichment data is missing
+const enrichStopInBackground = () => {
+  const data = stopData.value
+  if (!data) return
+
+  // Skip if already enriched
+  if (data.enrichedAt || (data.kinds && data.kinds.length > 0)) return
+
+  const lat = parseFloat(data.latitude) || data.coordinates?.lat
+  const lng = parseFloat(data.longitude) || data.coordinates?.lng
+  const stopId = data.stopID || data.stopId || data.id
+  const stopCity = stad.value
+  const stopName = data.stopName || data.name
+
+  if (!lat || !lng || !stopId) return
+
+  api.getStopEnrichment({ lat, lng, stopId, stopCity, stopName })
+    .catch(err => console.warn('[enrichment] failed for stop:', stopName, err?.message))
+}
+
 // Reset all state and refetch everything
 const loadPageData = async () => {
   // Reset state
@@ -435,6 +456,7 @@ const loadPageData = async () => {
 
   // Fetch stop data first, then audio and address (which depend on stop data)
   await fetchStop()
+  enrichStopInBackground()
   fetchStopAudio()
   reverseGeocodeStop()
 
