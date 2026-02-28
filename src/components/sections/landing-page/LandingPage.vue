@@ -44,6 +44,10 @@ const props = defineProps({
   locationDenied: {
     type: Boolean,
     default: false
+  },
+  stopImageUrl: {
+    type: String,
+    default: null
   }
 })
 
@@ -135,6 +139,7 @@ const showMoreTestimonials = () => {
       :social-proof="socialProof"
       :is-logged-in="isLoggedIn"
       :saved-tours-count="savedToursCount"
+      :stop-image-url="stopImageUrl"
       @start-tour="handleStartTour"
       @select-city="handleSelectCity"
       @go-to-my-tours="handleGoToMyTours"
