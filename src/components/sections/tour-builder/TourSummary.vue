@@ -59,8 +59,8 @@ const getTransportIcon = (mode) => {
   <div class="tour-summary">
     <!-- Header -->
     <div class="summary-header">
-      <button class="back-button" @click="emit('back')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="back-button" @click="emit('back')" aria-label="Terug">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
       </button>
@@ -130,7 +130,7 @@ const getTransportIcon = (mode) => {
           <span class="stop-number">{{ stop.order }}</span>
           <div class="stop-info">
             <span class="stop-name">{{ stop.name }}</span>
-            <span class="stop-duration">{{ formatDuration(stop.duration) }}</span>
+            <!-- <span class="stop-duration">{{ formatDuration(stop.duration) }}</span> -->
           </div>
         </div>
       </div>
@@ -196,27 +196,33 @@ const getTransportIcon = (mode) => {
 }
 
 .back-button {
+  appearance: none;
+  -webkit-appearance: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  background: var(--color-neutral-100);
-  border: none;
-  border-radius: 0.75rem;
-  color: var(--color-neutral-600);
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
 }
 
 .back-button:hover {
-  background: var(--color-neutral-200);
-  color: var(--color-neutral-900);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .back-button svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: #ffffff;
 }
 
 .summary-title {
@@ -460,17 +466,11 @@ const getTransportIcon = (mode) => {
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   .summary-title {
-    color: var(--color-neutral-900);
+    color: var(--color-neutral-100);
   }
 
-  .back-button {
-    background: var(--color-neutral-200);
-    color: var(--color-neutral-500);
-  }
-
-  .back-button:hover {
-    background: var(--color-neutral-300);
-    color: var(--color-neutral-700);
+  .preview-title {
+    color: var(--color-neutral-300);
   }
 
   .stat-card,

@@ -480,11 +480,11 @@ const handleBackToPreferences = () => {
   }
 
   .loading-title {
-    color: var(--color-neutral-100);
+    color: var(--color-neutral-900);
   }
 
   .loading-text {
-    color: var(--color-neutral-400);
+    color: var(--color-neutral-700);
   }
 }
 

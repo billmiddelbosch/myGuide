@@ -36,8 +36,8 @@ const formatDuration = (minutes) => {
 <template>
   <div class="stop-card" :style="{ '--accent-color': categoryColor }">
     <!-- Close button -->
-    <button class="close-button" @click="emit('close')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button class="close-button" @click="emit('close')" aria-label="Sluit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <path d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
@@ -49,7 +49,7 @@ const formatDuration = (minutes) => {
         <h3 class="stop-name">{{ stop.name }}</h3>
       </div>
 
-      <p class="stop-address">
+      <p v-if="stop.address" class="stop-address">
         <svg viewBox="0 0 24 24" fill="currentColor" class="address-icon">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
         </svg>
@@ -108,32 +108,36 @@ const formatDuration = (minutes) => {
 }
 
 .close-button {
+  appearance: none;
+  -webkit-appearance: none;
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 10;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  border: none;
-  border-radius: 50%;
-  color: white;
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.15s ease;
 }
 
 .close-button:hover {
-  background: rgba(0, 0, 0, 0.7);
-  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .close-button svg {
   width: 1rem;
   height: 1rem;
+  flex-shrink: 0;
+  stroke: #ffffff;
 }
 
 /* Content */
