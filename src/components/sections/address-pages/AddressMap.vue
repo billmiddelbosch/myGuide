@@ -14,14 +14,34 @@ const props = defineProps({
 
 const emit = defineEmits(['selectPOI'])
 
+const isExpanded = ref(false)
 const gMapRef = ref(null)
 const mapRef = ref(null)
 const selectedPOI = ref(null)
+
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
 const mapCenter = computed(() => ({
   lat: Number(props.coordinates.lat) || 52.3676,
   lng: Number(props.coordinates.lng) || 4.9041
 }))
+
+// Static map image URL (Google Static Maps API)
+const staticMapUrl = computed(() => {
+  const { lat, lng } = mapCenter.value
+  const marker = `color:0x14b8a6|label:|${lat},${lng}`
+  const params = new URLSearchParams({
+    center: `${lat},${lng}`,
+    zoom: 15,
+    size: '800x400',
+    scale: 2,
+    maptype: 'roadmap',
+    markers: marker,
+    style: 'feature:poi|element:labels|visibility:off',
+    key: apiKey
+  })
+  return `https://maps.googleapis.com/maps/api/staticmap?${params}`
+})
 
 const mapOptions = {
   zoomControl: true,
@@ -87,11 +107,8 @@ const fitBounds = async () => {
   if (!mapRef.value || !window.google) return
 
   const bounds = new google.maps.LatLngBounds()
-
-  // Include address
   bounds.extend(mapCenter.value)
 
-  // Include POIs
   props.nearbyPOIs.forEach(poi => {
     if (poi.coordinates?.lat && poi.coordinates?.lng) {
       bounds.extend({
@@ -106,19 +123,15 @@ const fitBounds = async () => {
   }
 }
 
-const onMapReady = (mapInstance) => {
-  mapRef.value = mapInstance
-  if (props.nearbyPOIs.length > 0) {
-    setTimeout(fitBounds, 500)
-  }
-}
-
-// Re-fit bounds when POIs change
 watch(() => props.nearbyPOIs, (newPOIs) => {
-  if (newPOIs.length > 0) {
-    fitBounds()
-  }
+  if (newPOIs.length > 0 && isExpanded.value) fitBounds()
 }, { deep: true })
+
+watch(isExpanded, (expanded) => {
+  if (expanded && props.nearbyPOIs.length > 0) {
+    setTimeout(fitBounds, 300)
+  }
+})
 
 onMounted(() => {
   setTimeout(() => {
@@ -135,35 +148,58 @@ const otherPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
 
 <template>
   <div class="address-map">
-    <div class="map-container">
-      <GMapMap
-        ref="gMapRef"
-        :center="mapCenter"
-        :zoom="15"
-        :options="mapOptions"
-        map-type-id="roadmap"
-        class="google-map"
-        style="width: 100%; height: 100%"
-        @click="selectedPOI = null"
-      >
-        <!-- Address marker (center) -->
-        <GMapMarker
-          :position="mapCenter"
-          :icon="addressIcon"
-          :clickable="false"
-        />
+    <!-- Static map (default) -->
+    <div v-if="!isExpanded" class="static-map-container">
+      <img
+        :src="staticMapUrl"
+        alt="Kaart van dit adres"
+        class="static-map-img"
+      />
+      <button class="expand-btn" @click="isExpanded = true" aria-label="Open interactieve kaart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+        </svg>
+        Open kaart
+      </button>
+    </div>
 
-        <!-- POI markers -->
-        <GMapMarker
-          v-for="poi in nearbyPOIs"
-          :key="poi.id"
-          :position="{ lat: Number(poi.coordinates.lat), lng: Number(poi.coordinates.lng) }"
-          :icon="getPOIIcon(poi)"
-          :clickable="true"
-          @click="handlePOIClick(poi.id)"
-        />
-      </GMapMap>
+    <!-- Interactive map (expanded) -->
+    <div v-else class="map-wrapper">
+      <div class="map-container">
+        <GMapMap
+          ref="gMapRef"
+          :center="mapCenter"
+          :zoom="15"
+          :options="mapOptions"
+          map-type-id="roadmap"
+          class="google-map"
+          style="width: 100%; height: 100%"
+          @click="selectedPOI = null"
+        >
+          <!-- Address marker (center) -->
+          <GMapMarker
+            :position="mapCenter"
+            :icon="addressIcon"
+            :clickable="false"
+          />
 
+          <!-- POI markers -->
+          <GMapMarker
+            v-for="poi in nearbyPOIs"
+            :key="poi.id"
+            :position="{ lat: Number(poi.coordinates.lat), lng: Number(poi.coordinates.lng) }"
+            :icon="getPOIIcon(poi)"
+            :clickable="true"
+            @click="handlePOIClick(poi.id)"
+          />
+        </GMapMap>
+      </div>
+
+      <button class="collapse-btn" @click="isExpanded = false" aria-label="Sluit interactieve kaart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
 
     <!-- Legend -->
@@ -191,6 +227,57 @@ const otherPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
   border: 1px solid var(--color-neutral-200);
 }
 
+/* Static map */
+.static-map-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 240px;
+  overflow: hidden;
+  background: var(--color-neutral-100);
+}
+
+.static-map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.expand-btn {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  background: white;
+  color: var(--color-neutral-700);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 0.625rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.15s ease;
+}
+
+.expand-btn:hover {
+  background: var(--color-neutral-50);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.expand-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Interactive map */
+.map-wrapper {
+  position: relative;
+}
+
 .map-container {
   position: relative;
   width: 100%;
@@ -212,6 +299,39 @@ const otherPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
 
 .google-map :deep(.vue-map) {
   height: 100% !important;
+}
+
+.collapse-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.15s ease;
+  z-index: 1000;
+}
+
+.collapse-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.collapse-btn svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: #ffffff;
 }
 
 /* Legend */
@@ -259,6 +379,16 @@ const otherPOIs = computed(() => props.nearbyPOIs.filter(p => !p.isTourStop))
 
   .legend-item {
     color: var(--color-neutral-400);
+  }
+
+  .expand-btn {
+    background: var(--color-neutral-800);
+    border-color: var(--color-neutral-700);
+    color: var(--color-neutral-200);
+  }
+
+  .expand-btn:hover {
+    background: var(--color-neutral-700);
   }
 }
 </style>

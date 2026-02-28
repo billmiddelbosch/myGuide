@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Preconnect: resolve origins before any blocking resource -->
+    <!-- Preconnect: resolve DNS + TLS for the 4 most critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://maps.googleapis.com" />
-    <!-- DNS prefetch for API origins -->
-    <link rel="dns-prefetch" href="https://trca8esu3j.execute-api.eu-west-2.amazonaws.com" />
-    <link rel="dns-prefetch" href="https://0ovja4ep62.execute-api.eu-west-2.amazonaws.com" />
+    <link rel="preconnect" href="https://trca8esu3j.execute-api.eu-west-2.amazonaws.com" crossorigin />
+    <!-- DNS prefetch for secondary origins -->
     <link rel="dns-prefetch" href="https://api.open-meteo.com" />
+    <link rel="dns-prefetch" href="https://0ovja4ep62.execute-api.eu-west-2.amazonaws.com" />
 
     <!-- Fonts: preloaded non-blocking to remove from critical render path.
          onload swaps rel to stylesheet once downloaded; noscript fallback for JS-off. -->

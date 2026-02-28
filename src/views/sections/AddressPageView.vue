@@ -5,6 +5,7 @@ import { useHead } from '@unhead/vue'
 import data from '@/../product/sections/address-pages/data.json'
 import api from '@/services/api'
 import AddressPage from '@/components/sections/address-pages/AddressPage.vue'
+import { useWeather } from '@/composables/useWeather'
 
 const router = useRouter()
 const route = useRoute()
@@ -158,6 +159,8 @@ useHead(computed(() => ({
   ]
 })))
 
+const { weather, fetchWeather } = useWeather()
+
 const nearbyPOIs = ref([])
 const loadingPOIs = ref(false)
 const affiliateLinks = ref(data.affiliateLinks)
@@ -283,6 +286,8 @@ const geocodeAddress = () => {
         lng: location.lng()
       }
 
+      fetchWeather({ lat: location.lat(), lng: location.lng() })
+
       // Extract provincie from address components
       const provComponent = result.address_components.find(
         c => c.types.includes('administrative_area_level_1')
@@ -349,6 +354,7 @@ const handleViewTourStop = (tourStopId) => {
     :affiliate-links="affiliateLinks"
     :primary-c-t-a="primaryCTA"
     :seo="seo"
+    :weather="weather"
     @toggle-section="handleToggleSection"
     @explore-c-t-a="handleExploreCTA"
     @select-p-o-i="handleSelectPOI"
