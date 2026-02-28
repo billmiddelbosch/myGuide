@@ -101,6 +101,12 @@ const fetchAudioPreviews = async (cityName) => {
     const shuffled = [...stops].sort(() => Math.random() - 0.5)
     const picked = shuffled.slice(0, 3)
 
+    // Use the first stop with a preview image as hero background
+    const stopWithImage = shuffled.find(s => s.preview?.source)
+    if (stopWithImage) {
+      heroStopImageUrl.value = stopWithImage.preview.source
+    }
+
     // Compose S3 audio URLs
     const audioUrls = picked.map(s => `${audioBaseUrl}/${s.stopID || s.id}.mp3`)
 
@@ -139,6 +145,9 @@ onMounted(async () => {
   await detectUserCity()
   fetchAudioPreviews(currentCity.value.name)
 })
+
+// Hero background image from a cityStop with a preview
+const heroStopImageUrl = ref(null)
 
 // Modal state
 const isCityPickerOpen = ref(false)
@@ -261,6 +270,7 @@ const handlePlayFeatureAudio = (featureId) => {
     :social-proof="socialProof"
     :user="user"
     :location-denied="locationDenied"
+    :stop-image-url="heroStopImageUrl"
     @start-tour="handleStartTour"
     @select-city="handleSelectCity"
     @go-to-my-tours="handleGoToMyTours"

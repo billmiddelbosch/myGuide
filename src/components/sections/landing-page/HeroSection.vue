@@ -19,6 +19,10 @@ const props = defineProps({
   savedToursCount: {
     type: Number,
     default: 0
+  },
+  stopImageUrl: {
+    type: String,
+    default: null
   }
 })
 
@@ -30,7 +34,7 @@ const { photoUrl, isLoading, getPhotoForCity } = usePlacePhoto()
 
 // The actual hero image URL to display
 const heroImageUrl = computed(() => {
-  return photoUrl.value || props.city.heroImageUrl
+  return props.stopImageUrl || photoUrl.value || props.city.heroImageUrl
 })
 
 // Fetch Google Places photo for the city

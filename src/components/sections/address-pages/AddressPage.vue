@@ -5,6 +5,7 @@ import AddressHero from './AddressHero.vue'
 import AddressMap from './AddressMap.vue'
 import CollapsibleSection from './CollapsibleSection.vue'
 import POICard from './POICard.vue'
+import WeatherWidget from '@/components/sections/tour-stop-pages/WeatherWidget.vue'
 
 // Props
 const props = defineProps({
@@ -47,6 +48,10 @@ const props = defineProps({
   seo: {
     type: Object,
     required: true
+  },
+  weather: {
+    type: Object,
+    default: null
   }
 })
 
@@ -229,12 +234,20 @@ const handleViewTourStop = (tourStopId) => {
         </div>
       </section> -->
 
+      <!-- Weather widget -->
+      <section v-if="weather" class="section weather-section" aria-labelledby="weather-title">
+        <div class="section-header">
+          <h2 id="weather-title" class="section-title">Weer in {{ city.naam }}</h2>
+        </div>
+        <WeatherWidget :weather="weather" />
+      </section>
+
       <!-- Interactive map -->
       <section class="section map-section" aria-labelledby="map-title">
         <div class="section-header">
           <h2 id="map-title" class="section-title">In de buurt</h2>
           <p class="section-subtitle">
-            {{ nearbyPOIs.length }} locaties rondom {{ street.naam }} {{ address.huisnummer }}
+            {{ nearbyPOIs.length }} tour stops rondom {{ street.naam }} {{ address.huisnummer }}
           </p>
         </div>
 

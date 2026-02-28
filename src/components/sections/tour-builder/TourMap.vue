@@ -408,11 +408,11 @@ const userLocationIcon = {
     <div class="map-legend">
       <div class="legend-item">
         <span class="legend-marker tour" />
-        <span>Tour stops</span>
+        <span>Selecteer om stop te verwijderen</span>
       </div>
       <div class="legend-item">
-        <span class="legend-marker suggested" />
-        <span>Toevoegen</span>
+        <span class="legend-marker suggested">+</span>
+        <span>Selecteer om stop toe te voegen</span>
       </div>
       <div v-if="userLocation" class="legend-item">
         <span class="legend-marker user" />
@@ -420,8 +420,17 @@ const userLocationIcon = {
       </div>
     </div>
 
-    <!-- Tap hint -->
-    <p class="tap-hint">Tik op een marker voor details</p>
+    <!-- Map instructions -->
+    <!-- <div class="map-instructions">
+      <div class="instruction-item">
+        <span class="instruction-dot add" />
+        <span>Tik op een <strong>+</strong> marker om een stop toe te voegen</span>
+      </div>
+      <div class="instruction-item">
+        <span class="instruction-dot remove" />
+        <span>Tik op een <strong>genummerde</strong> marker om te verwijderen</span>
+      </div>
+    </div> -->
 
   </div>
 </template>
@@ -541,18 +550,52 @@ const userLocationIcon = {
 
 .legend-marker.suggested {
   background: white;
-  border: 2px dashed var(--color-neutral-400);
+  border: 2px dashed var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-primary);
 }
 
 .legend-marker.user {
   background: #4285F4;
 }
 
-.tap-hint {
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--color-neutral-400);
+.map-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.625rem 0.75rem;
   margin-top: 0.5rem;
+  background: var(--color-neutral-50);
+  border-radius: 0.75rem;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-neutral-500);
+}
+
+.instruction-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.instruction-dot.add {
+  background: white;
+  border: 2px dashed var(--color-neutral-400);
+}
+
+.instruction-dot.remove {
+  background: var(--color-primary);
 }
 
 .debug-info {
@@ -583,6 +626,20 @@ const userLocationIcon = {
   }
 
   .legend-marker.suggested {
+    background: var(--color-neutral-200);                                                                                                                                                                 
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .map-instructions {
+    background: var(--color-neutral-100);
+  }
+
+  .instruction-item {
+    color: var(--color-neutral-400);
+  }
+
+  .instruction-dot.add {
     background: var(--color-neutral-200);
     border-color: var(--color-neutral-500);
   }
