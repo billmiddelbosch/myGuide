@@ -26,6 +26,11 @@ const routes = [
     name: 'adresLanding',
     component: () => import('@/views/sections/AddressPageView.vue')
   },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('@/views/sections/AdminView.vue')
+  }
   // Future routes:
   // { path: '/my-tours', name: 'my-tours', component: () => import('@/views/sections/MyToursView.vue') }
 ]

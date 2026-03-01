@@ -1,0 +1,272 @@
+{
+  "_meta": {
+    "models": {
+      "commercialStops": "Curated tour stops added by admins with commercial intent. These are stored in DynamoDB and always shown first when building a tour for their city — identical in appearance to AI-generated stops.",
+      "affiliateLinks": "Viator products linked to a specific city or stop. Displayed as inline product cards with booking info and a direct book button on address-pages and tour-stop-pages.",
+      "cities": "The available cities admins can link commercial stops or affiliate products to.",
+      "poiCategories": "The point-of-interest categories used to classify commercial stops — same as AI-generated stops.",
+      "viatorSearchResults": "Mock Viator API product results returned when the admin searches by keyword. Used to preview and select products to link as affiliate cards."
+    },
+    "relationships": [
+      "Each CommercialStop belongs to one City and one POICategory",
+      "Each AffiliateLink belongs to either a City or a Stop (not both)",
+      "ViatorSearchResults are transient — they are only shown during search and become AffiliateLinks when linked"
+    ]
+  },
+
+  "cities": [
+    { "id": "amsterdam", "name": "Amsterdam" },
+    { "id": "rotterdam", "name": "Rotterdam" },
+    { "id": "den-haag", "name": "Den Haag" },
+    { "id": "utrecht", "name": "Utrecht" },
+    { "id": "haarlem", "name": "Haarlem" },
+    { "id": "leiden", "name": "Leiden" },
+    { "id": "delft", "name": "Delft" },
+    { "id": "maastricht", "name": "Maastricht" }
+  ],
+
+  "poiCategories": [
+    { "id": "history", "name": "Geschiedenis", "color": "#8b5cf6" },
+    { "id": "architecture", "name": "Architectuur", "color": "#3b82f6" },
+    { "id": "food", "name": "Eten & Drinken", "color": "#f59e0b" },
+    { "id": "art", "name": "Kunst & Cultuur", "color": "#ec4899" },
+    { "id": "nature", "name": "Natuur", "color": "#22c55e" }
+  ],
+
+  "commercialStops": [
+    {
+      "id": "cs-001",
+      "cityId": "amsterdam",
+      "cityName": "Amsterdam",
+      "name": "Heineken Experience",
+      "description": "Ontdek de geschiedenis van het beroemde Nederlandse biermerk in dit interactieve museum in de originele brouwerij uit 1867. Inclusief proeverij en rondleiding.",
+      "categoryId": "history",
+      "categoryName": "Geschiedenis",
+      "lat": 52.3579,
+      "lng": 4.8939,
+      "createdAt": "2026-01-15T10:30:00Z"
+    },
+    {
+      "id": "cs-002",
+      "cityId": "rotterdam",
+      "cityName": "Rotterdam",
+      "name": "Markthal Rotterdam",
+      "description": "De iconische boogvormige markthal is een must-see voor elke bezoeker. Met meer dan 100 marktkoopmannen, horecaondernemers en vers voedsel-speciaalzaken.",
+      "categoryId": "architecture",
+      "categoryName": "Architectuur",
+      "lat": 51.9202,
+      "lng": 4.4870,
+      "createdAt": "2026-01-20T14:00:00Z"
+    },
+    {
+      "id": "cs-003",
+      "cityId": "amsterdam",
+      "cityName": "Amsterdam",
+      "name": "Stedelijk Museum",
+      "description": "Het Stedelijk Museum Amsterdam is een museum voor moderne en hedendaagse kunst en vormgeving. De collectie bevat ruim 90.000 werken van wereldfaam.",
+      "categoryId": "art",
+      "categoryName": "Kunst & Cultuur",
+      "lat": 52.3580,
+      "lng": 4.8797,
+      "createdAt": "2026-02-01T09:00:00Z"
+    },
+    {
+      "id": "cs-004",
+      "cityId": "utrecht",
+      "cityName": "Utrecht",
+      "name": "Domtoren",
+      "description": "De Domtoren is de hoogste kerkentoren van Nederland met 112 meter. Beklim de 465 treden voor een spectaculair uitzicht over de stad en omgeving.",
+      "categoryId": "history",
+      "categoryName": "Geschiedenis",
+      "lat": 52.0906,
+      "lng": 5.1213,
+      "createdAt": "2026-02-05T11:15:00Z"
+    },
+    {
+      "id": "cs-005",
+      "cityId": "delft",
+      "cityName": "Delft",
+      "name": "Royal Delft",
+      "description": "De enige nog actieve Delfts Blauw-fabriek uit de 17e eeuw. Zie hoe ambachtslieden met de hand schilderen en bezoek het museum met prachtige historische stukken.",
+      "categoryId": "art",
+      "categoryName": "Kunst & Cultuur",
+      "lat": 52.0054,
+      "lng": 4.3518,
+      "createdAt": "2026-02-10T13:45:00Z"
+    },
+    {
+      "id": "cs-006",
+      "cityId": "maastricht",
+      "cityName": "Maastricht",
+      "name": "Boekhandel Dominicanen",
+      "description": "Een van de mooiste boekhandels ter wereld, gevestigd in een prachtig gerestaureerde 13e-eeuwse dominicaanse kerk met adembenemende gewelven.",
+      "categoryId": "architecture",
+      "categoryName": "Architectuur",
+      "lat": 50.8500,
+      "lng": 5.6917,
+      "createdAt": "2026-02-14T16:00:00Z"
+    }
+  ],
+
+  "affiliateLinks": [
+    {
+      "id": "al-001",
+      "linkedTo": "city",
+      "cityId": "amsterdam",
+      "cityName": "Amsterdam",
+      "stopId": null,
+      "stopName": null,
+      "viatorProductCode": "3731CANAL",
+      "title": "Amsterdam Canal Cruise — 1 uur rondvaart",
+      "description": "Ontdek Amsterdam vanuit het water op deze klassieke rondvaart door de grachtengordel. Luister naar de audiotour in 19 talen terwijl je langs historische bruggen en gevels vaart.",
+      "imageUrl": "https://images.viator.com/amsterdam-canal-cruise.jpg",
+      "price": 18.00,
+      "currency": "EUR",
+      "rating": 4.6,
+      "reviewCount": 12847,
+      "duration": "1 uur",
+      "createdAt": "2026-01-18T10:00:00Z"
+    },
+    {
+      "id": "al-002",
+      "linkedTo": "city",
+      "cityId": "amsterdam",
+      "cityName": "Amsterdam",
+      "stopId": null,
+      "stopName": null,
+      "viatorProductCode": "5786FOOD",
+      "title": "Amsterdam Street Food Tour — Jordaan & De Pijp",
+      "description": "Proef de beste street food van Amsterdam op deze wandelende foodtour door de gezelligste buurten. Inclusief stroopwafels, haring, bitterballen en lokale speciaalbieren.",
+      "imageUrl": "https://images.viator.com/amsterdam-food-tour.jpg",
+      "price": 45.00,
+      "currency": "EUR",
+      "rating": 4.8,
+      "reviewCount": 3421,
+      "duration": "3 uur",
+      "createdAt": "2026-01-22T12:00:00Z"
+    },
+    {
+      "id": "al-003",
+      "linkedTo": "stop",
+      "cityId": null,
+      "cityName": null,
+      "stopId": "cs-001",
+      "stopName": "Heineken Experience",
+      "viatorProductCode": "2948HEIN",
+      "title": "Heineken Experience — Skip the Line ticket",
+      "description": "Sla de rij over bij de Heineken Experience en ontdek het verhaal achter het beroemdste Nederlandse biermerk. Inclusief twee drankjes en een rondleiding door de originele brouwerij.",
+      "imageUrl": "https://images.viator.com/heineken-experience.jpg",
+      "price": 26.00,
+      "currency": "EUR",
+      "rating": 4.4,
+      "reviewCount": 8234,
+      "duration": "1.5 uur",
+      "createdAt": "2026-01-25T09:30:00Z"
+    },
+    {
+      "id": "al-004",
+      "linkedTo": "city",
+      "cityId": "rotterdam",
+      "cityName": "Rotterdam",
+      "stopId": null,
+      "stopName": null,
+      "viatorProductCode": "4102RTD",
+      "title": "Rotterdam Architectuurtour — Skyline & Havens",
+      "description": "Ontdek Rotterdam, de stad van moderne architectuur en wereldhavens. Een gids neemt je mee langs de meest iconische gebouwen van Nederland, waaronder de Kubuswoningen en de Erasmusbrug.",
+      "imageUrl": "https://images.viator.com/rotterdam-architecture.jpg",
+      "price": 32.00,
+      "currency": "EUR",
+      "rating": 4.7,
+      "reviewCount": 1876,
+      "duration": "2.5 uur",
+      "createdAt": "2026-02-03T14:30:00Z"
+    },
+    {
+      "id": "al-005",
+      "linkedTo": "stop",
+      "cityId": null,
+      "cityName": null,
+      "stopId": "cs-004",
+      "stopName": "Domtoren",
+      "viatorProductCode": "6610DOM",
+      "title": "Domtoren Utrecht — Begeleide beklimming",
+      "description": "Beklim de Domtoren onder begeleiding van een gids en leer alles over de rijke geschiedenis van de hoogste middeleeuwse toren van Nederland. Spectaculair uitzicht inbegrepen.",
+      "imageUrl": "https://images.viator.com/domtoren-utrecht.jpg",
+      "price": 14.00,
+      "currency": "EUR",
+      "rating": 4.5,
+      "reviewCount": 2109,
+      "duration": "1 uur",
+      "createdAt": "2026-02-08T11:00:00Z"
+    }
+  ],
+
+  "viatorSearchResults": [
+    {
+      "productCode": "3731CANAL",
+      "title": "Amsterdam Canal Cruise — 1 uur rondvaart",
+      "description": "Ontdek Amsterdam vanuit het water op deze klassieke rondvaart door de grachtengordel.",
+      "imageUrl": "https://images.viator.com/amsterdam-canal-cruise.jpg",
+      "price": 18.00,
+      "currency": "EUR",
+      "rating": 4.6,
+      "reviewCount": 12847,
+      "duration": "1 uur"
+    },
+    {
+      "productCode": "5786FOOD",
+      "title": "Amsterdam Street Food Tour — Jordaan & De Pijp",
+      "description": "Proef de beste street food van Amsterdam op deze wandelende foodtour door de gezelligste buurten.",
+      "imageUrl": "https://images.viator.com/amsterdam-food-tour.jpg",
+      "price": 45.00,
+      "currency": "EUR",
+      "rating": 4.8,
+      "reviewCount": 3421,
+      "duration": "3 uur"
+    },
+    {
+      "productCode": "7823VGM",
+      "title": "Van Gogh Museum — Skip the Line toegang",
+      "description": "Bezoek het Van Gogh Museum zonder wachtrij en ontdek de grootste collectie werken van Vincent van Gogh ter wereld.",
+      "imageUrl": "https://images.viator.com/van-gogh-museum.jpg",
+      "price": 22.00,
+      "currency": "EUR",
+      "rating": 4.7,
+      "reviewCount": 19340,
+      "duration": "Flexibel"
+    },
+    {
+      "productCode": "1044BIKE",
+      "title": "Amsterdam Fietstour — Historisch centrum",
+      "description": "Verken Amsterdam op de meest authentieke manier: per fiets. Een lokale gids neemt je mee door het historische centrum, de Jordaan en langs de mooiste grachten.",
+      "imageUrl": "https://images.viator.com/amsterdam-bike-tour.jpg",
+      "price": 29.00,
+      "currency": "EUR",
+      "rating": 4.9,
+      "reviewCount": 5672,
+      "duration": "3 uur"
+    },
+    {
+      "productCode": "9231REM",
+      "title": "Rijksmuseum — Rondleiding meesterwerken",
+      "description": "Ontdek de hoogtepunten van het Rijksmuseum met een deskundige gids: van Rembrandt en Vermeer tot Nachtwacht.",
+      "imageUrl": "https://images.viator.com/rijksmuseum-tour.jpg",
+      "price": 35.00,
+      "currency": "EUR",
+      "rating": 4.8,
+      "reviewCount": 7821,
+      "duration": "2 uur"
+    },
+    {
+      "productCode": "4455ANN",
+      "title": "Anne Frank Huis — Rondleiding met tickets",
+      "description": "Bezoek het Anne Frank Huis met een expert gids en leer meer over de aangrijpende geschiedenis van Anne Frank en haar familie.",
+      "imageUrl": "https://images.viator.com/anne-frank-house.jpg",
+      "price": 38.00,
+      "currency": "EUR",
+      "rating": 4.6,
+      "reviewCount": 4930,
+      "duration": "2 uur"
+    }
+  ]
+}

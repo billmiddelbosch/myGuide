@@ -26,6 +26,12 @@ A street within a city, with a descriptive text about the street's character and
 ### Address
 A specific address (street + house number) that serves as an SEO landing page. Inherits descriptive context from its Street and City. Coordinates are retrieved dynamically via Google Maps geocoding in the frontend.
 
+### CommercialStop
+A curated tour stop managed by an admin, stored in DynamoDB with commercial intent. Always prioritized over AI-generated stops when available for a city. Visually identical to regular stops in the tour experience.
+
+### AffiliateLink
+A Viator product associated with a City or Stop. Displays product information retrieved from the Viator API (title, description, images, price, reviews) and includes a direct booking option within myGuide via the Viator booking flow.
+
 ## Relationships
 
 - User has many Tours
@@ -42,3 +48,9 @@ A specific address (street + house number) that serves as an SEO landing page. I
 - Street belongs to City
 - Street has many Addresses
 - Address belongs to Street
+- City has many CommercialStops
+- CommercialStop belongs to City
+- CommercialStop belongs to POICategory
+- City has many AffiliateLinks
+- Stop has many AffiliateLinks
+- AffiliateLink belongs to City or Stop

@@ -19,3 +19,6 @@ Audio playback with AI-generated narration, GPS-triggered stops, and route guida
 
 ### 6. My Tours
 Save, download, and manage tours for offline access.
+
+### 7. Admin
+Manage commercial tour stops in DynamoDB and configure Viator affiliate links per city or stop.
