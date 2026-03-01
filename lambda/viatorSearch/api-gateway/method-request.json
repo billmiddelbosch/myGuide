@@ -1,0 +1,43 @@
+{
+  "resource": "/viatorSearch",
+  "httpMethod": "GET",
+  "authorizationType": "NONE",
+  "apiKeyRequired": true,
+  "requestParameters": {
+    "method.request.querystring.query": true,
+    "method.request.querystring.count": false
+  },
+  "requestValidatorId": "Validate query string parameters",
+  "methodResponses": {
+    "200": {
+      "statusCode": "200",
+      "responseModels": {
+        "application/json": "ViatorSearchResponse"
+      },
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Origin": false
+      }
+    },
+    "400": {
+      "statusCode": "400",
+      "responseModels": {
+        "application/json": "Error"
+      }
+    },
+    "500": {
+      "statusCode": "500",
+      "responseModels": {
+        "application/json": "Error"
+      }
+    }
+  },
+  "integration": {
+    "type": "AWS_PROXY",
+    "httpMethod": "POST",
+    "uri": "arn:aws:apigateway:{region}:lambda:path/2015-03-31/functions/{lambda-arn}/invocations",
+    "requestParameters": {
+      "integration.request.querystring.query": "method.request.querystring.query",
+      "integration.request.querystring.count": "method.request.querystring.count"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ViatorSearchResponse",
+  "description": "Response model for GET /viatorSearch — normalised Viator product search results",
+  "type": "object",
+  "required": ["results"],
+  "properties": {
+    "results": {
+      "type": "array",
+      "description": "List of matching Viator products",
+      "items": {
+        "type": "object",
+        "required": ["productCode", "title"],
+        "properties": {
+          "productCode": {
+            "type": "string",
+            "description": "Viator product code, e.g. 3731CANAL"
+          },
+          "title": {
+            "type": "string",
+            "description": "Product title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short product description"
+          },
+          "imageUrl": {
+            "type": ["string", "null"],
+            "description": "URL of the primary product image (≥400px wide)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Starting price in the requested currency"
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency code, e.g. EUR"
+          },
+          "rating": {
+            "type": "number",
+            "description": "Combined average rating (0–5, one decimal)"
+          },
+          "reviewCount": {
+            "type": "integer",
+            "description": "Total number of reviews"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Human-readable duration, e.g. '2 uur' or 'Flexibel'"
+          }
+        }
+      }
+    },
+    "totalCount": {
+      "type": "integer",
+      "description": "Total number of matching products available in Viator (may exceed the returned results count)"
+    }
+  }
+}

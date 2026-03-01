@@ -140,6 +140,13 @@ export default {
     return apiClient.get('/stopEnrichment', { params });
   },
 
+  // Search Viator products by free-text query (proxied via Lambda to keep API key server-side)
+  searchViator(query, count = 10) {
+    return apiClient.get('/viatorSearch', {
+      params: { query, count }
+    });
+  },
+
   // Create a Mollie payment for a donation
   createPayment({ amount, tourId, tourCity, redirectUrl }) {
     return apiClient.post('/payment', {

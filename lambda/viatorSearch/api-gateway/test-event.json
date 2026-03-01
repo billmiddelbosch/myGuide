@@ -1,0 +1,19 @@
+{
+  "httpMethod": "GET",
+  "path": "/viatorSearch",
+  "queryStringParameters": {
+    "query": "Amsterdam canal cruise",
+    "count": "5"
+  },
+  "headers": {
+    "Content-Type": "application/json",
+    "x-api-key": "test-key"
+  },
+  "requestContext": {
+    "httpMethod": "GET",
+    "path": "/viatorSearch",
+    "stage": "development"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}
