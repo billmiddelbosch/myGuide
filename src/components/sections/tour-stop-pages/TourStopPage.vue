@@ -7,6 +7,7 @@ import StopMap from './StopMap.vue'
 import NearbyStopCard from './NearbyStopCard.vue'
 import WeatherWidget from './WeatherWidget.vue'
 import CollapsibleSection from '@/components/sections/address-pages/CollapsibleSection.vue'
+import ViatorCarousel from '@/components/shared/ViatorCarousel.vue'
 
 // Props
 const props = defineProps({
@@ -45,6 +46,10 @@ const props = defineProps({
   weather: {
     type: Object,
     default: null
+  },
+  viatorResults: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -304,6 +309,9 @@ const handleToggleCityInfo = () => {
           @toggle="handleToggleCityInfo"
         />
       </section>
+
+      <!-- Viator carousel -->
+      <ViatorCarousel v-if="viatorResults.length > 0" :results="viatorResults" class="section" />
 
       <!-- Bottom CTA area -->
       <section class="section bottom-cta-section" aria-label="cityCast">

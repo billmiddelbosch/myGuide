@@ -83,6 +83,7 @@ const audioState = ref({
 // Nearby stops (fetched from API)
 const nearbyStops = ref([])
 const loadingStops = ref(false)
+const viatorResults = ref([])
 
 // CTA config (derived from route params)
 const primaryCTA = computed(() => ({
@@ -450,6 +451,7 @@ const loadPageData = async () => {
   provincieNaam.value = ''
   audioState.value = { audioUrl: '', duration: 0, isAvailable: false }
   nearbyStops.value = []
+  viatorResults.value = []
   weather.value = null
 
   // Scroll to top
@@ -461,9 +463,16 @@ const loadPageData = async () => {
   fetchStopAudio()
   reverseGeocodeStop()
 
-  // City info and nearby stops can load in parallel
+  // City info, nearby stops and Viator results load in parallel
   fetchCityInfo()
   fetchNearbyStops()
+  api.searchViator(stad.value)
+    .then(response => {
+      viatorResults.value = response.data?.results || []
+    })
+    .catch(() => {
+      viatorResults.value = []
+    })
 }
 
 // Fetch weather reactively when stop coordinates become available
@@ -537,6 +546,7 @@ const handleSecondaryCTA = () => {
     :primary-c-t-a="primaryCTA"
     :secondary-c-t-a="secondaryCTA"
     :seo="seo"
+    :viator-results="viatorResults"
     @play-audio="handlePlayAudio"
     @pause-audio="handlePauseAudio"
     @seek-audio="handleSeekAudio"

@@ -6,6 +6,7 @@ import AddressMap from './AddressMap.vue'
 import CollapsibleSection from './CollapsibleSection.vue'
 import POICard from './POICard.vue'
 import WeatherWidget from '@/components/sections/tour-stop-pages/WeatherWidget.vue'
+import ViatorCarousel from '@/components/shared/ViatorCarousel.vue'
 
 // Props
 const props = defineProps({
@@ -52,6 +53,10 @@ const props = defineProps({
   weather: {
     type: Object,
     default: null
+  },
+  viatorResults: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -311,6 +316,9 @@ const handleViewTourStop = (tourStopId) => {
           />
         </div>
       </section> -->
+
+      <!-- Viator carousel -->
+      <ViatorCarousel v-if="viatorResults.length > 0" :results="viatorResults" class="section" />
 
       <!-- Bottom CTA -->
       <section class="section bottom-cta-section" aria-label="cityCast">

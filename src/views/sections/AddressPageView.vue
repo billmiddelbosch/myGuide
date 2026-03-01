@@ -163,6 +163,7 @@ const { weather, fetchWeather } = useWeather()
 
 const nearbyPOIs = ref([])
 const loadingPOIs = ref(false)
+const viatorResults = ref([])
 const affiliateLinks = ref(data.affiliateLinks)
 
 const primaryCTA = computed(() => ({
@@ -306,9 +307,20 @@ const geocodeAddress = () => {
   })
 }
 
+const fetchViatorResults = () => {
+  api.searchViator(stad.value)
+    .then(response => {
+      viatorResults.value = response.data?.results || []
+    })
+    .catch(() => {
+      viatorResults.value = []
+    })
+}
+
 onMounted(() => {
   geocodeAddress()
   fetchNearbyPOIs()
+  fetchViatorResults()
 })
 
 // Event handlers
@@ -355,6 +367,7 @@ const handleViewTourStop = (tourStopId) => {
     :primary-c-t-a="primaryCTA"
     :seo="seo"
     :weather="weather"
+    :viator-results="viatorResults"
     @toggle-section="handleToggleSection"
     @explore-c-t-a="handleExploreCTA"
     @select-p-o-i="handleSelectPOI"
