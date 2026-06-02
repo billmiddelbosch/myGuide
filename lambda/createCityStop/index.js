@@ -5,6 +5,16 @@ import { v4 as uuidv4 } from 'uuid';
 AWS.config.update({region: 'eu-west-2'});
 const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
+let cachedApiKey = null;
+
+async function getGoogleApiKey() {
+  if (cachedApiKey) return cachedApiKey;
+  const client = new AWS.SecretsManager({ region: 'eu-west-2' });
+  const data = await client.getSecretValue({ SecretId: 'myGuide/googlePlacesApiKey' }).promise();
+  cachedApiKey = JSON.parse(data.SecretString).GOOGLE_PLACES_API_KEY;
+  return cachedApiKey;
+}
+
 // CHECK if a stop with the same name, city and tourType already exists
 async function findExistingStop(name, city) {
   const params = {
@@ -152,7 +162,7 @@ export const handler = async (event) => {
     // } 
 
     // const googleResponse = responseGoogleAI.data.candidates[0].content.parts[0].text;
-    const key = 'AIzaSyDlrxzsPxCFR_YZESrvezNpWzSjZMC3hTQ'
+    const googleApiKey = await getGoogleApiKey();
 
     const searchResponse = await axios.post(
       "https://places.googleapis.com/v1/places:searchText",
@@ -163,7 +173,7 @@ export const handler = async (event) => {
       },
       {
         headers: {
-          "X-Goog-Api-Key": "AIzaSyD26RA-Gb-tv2s0r-PT9Gn6kHaZVY2NrSc",
+          "X-Goog-Api-Key": googleApiKey,
           // "X-Goog-FieldMask": "places.id,places.displayName,places.location,places.editorialSummary",
           "X-Goog-FieldMask": "places.id,places.displayName,places.location",
           "Content-Type": "application/json"

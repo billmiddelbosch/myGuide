@@ -1,0 +1,710 @@
+{
+  "/MyGuideStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:158:5)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/CityStopsTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CityStopsTableName"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:164:5)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/FeedbackTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "FeedbackTableName"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:165:5)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/MyGuideStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/MyGuideStack/CreateCityStopFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CreateCityStopFnB82E3EA1"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:51:30)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/FeedbackFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "FeedbackFn6C7432D5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:64:24)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/PaymentsFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PaymentsFn08FA78A0"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:86:24)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/StopEnrichmentFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StopEnrichmentFn5E108B9D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:98:30)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApi63136E72"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Account": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApiAccountB35A2358"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApiEndpoint6FFA17C6"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/MyGuideStack/CreateCityStopFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CreateCityStopFnServiceRole54DF2FD6"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:51:30)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/FeedbackFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "FeedbackFnServiceRole8F29EE28"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:64:24)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/PaymentsFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PaymentsFnServiceRole4D72C08F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:86:24)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/StopEnrichmentFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StopEnrichmentFnServiceRole5745203A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:98:30)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/CloudWatchRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApiCloudWatchRole141E8466"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApiDeployment044E4C1728944d082e0c0f31eaa8ec63c21300d1"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/DeploymentStage.production/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApiDeploymentStageproduction397961A0"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/CreateCityStopFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CreateCityStopFnServiceRoleDefaultPolicyCD0DD03D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...SecretBase.grantRead in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:60:24)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)"
+      ]
+    }
+  ],
+  "/MyGuideStack/FeedbackFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "FeedbackFnServiceRoleDefaultPolicy0977AB85"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/MyGuideStack/PaymentsFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PaymentsFnServiceRoleDefaultPolicy5AA4E18D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...SecretBase.grantRead in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:95:18)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)"
+      ]
+    }
+  ],
+  "/MyGuideStack/StopEnrichmentFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StopEnrichmentFnServiceRoleDefaultPolicyA6A37509"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApiOPTIONSC87A62BC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new RestApi2 in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:128:17)"
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/cityStops/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApicityStopsDB8D4503"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:140:14)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedback93456A65"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:144:39)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/payment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApipaymentAE0E4329"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:149:14)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/stopEnrichment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApistopEnrichmentE1B0A4CE"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:153:14)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/cityStops/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApicityStopsOPTIONS514EE39D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:140:14)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)"
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/cityStops/POST/ApiPermission.MyGuideStackMyGuideApiBC5B3885.POST..cityStops": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApicityStopsPOSTApiPermissionMyGuideStackMyGuideApiBC5B3885POSTcityStops7D1FB198"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:141:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/cityStops/POST/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.POST..cityStops": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApicityStopsPOSTApiPermissionTestMyGuideStackMyGuideApiBC5B3885POSTcityStopsC2860269"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:141:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/cityStops/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApicityStopsPOST1CF7D245"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:141:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackOPTIONS22442584"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:144:39)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)"
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/GET/ApiPermission.MyGuideStackMyGuideApiBC5B3885.GET..feedback": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackGETApiPermissionMyGuideStackMyGuideApiBC5B3885GETfeedback6FDC330C"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:145:22)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/GET/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.GET..feedback": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackGETApiPermissionTestMyGuideStackMyGuideApiBC5B3885GETfeedbackB1ABBA4C"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:145:22)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackGET25724690"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:145:22)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/POST/ApiPermission.MyGuideStackMyGuideApiBC5B3885.POST..feedback": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackPOSTApiPermissionMyGuideStackMyGuideApiBC5B3885POSTfeedbackEF77C66E"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:146:22)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/POST/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.POST..feedback": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackPOSTApiPermissionTestMyGuideStackMyGuideApiBC5B3885POSTfeedback6010BEAE"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:146:22)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/feedback/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApifeedbackPOSTDF91AACE"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:146:22)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/payment/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApipaymentOPTIONS631C6B96"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:149:14)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)"
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/payment/POST/ApiPermission.MyGuideStackMyGuideApiBC5B3885.POST..payment": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApipaymentPOSTApiPermissionMyGuideStackMyGuideApiBC5B3885POSTpayment8AD222D5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:150:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/payment/POST/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.POST..payment": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApipaymentPOSTApiPermissionTestMyGuideStackMyGuideApiBC5B3885POSTpayment7F3B3D89"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:150:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/payment/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApipaymentPOSTFACE3E42"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:150:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/stopEnrichment/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApistopEnrichmentOPTIONSEFD1C361"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...RootResource.addResource in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:153:14)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)"
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/stopEnrichment/GET/ApiPermission.MyGuideStackMyGuideApiBC5B3885.GET..stopEnrichment": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApistopEnrichmentGETApiPermissionMyGuideStackMyGuideApiBC5B3885GETstopEnrichmentECD9FEF8"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:154:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/stopEnrichment/GET/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.GET..stopEnrichment": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApistopEnrichmentGETApiPermissionTestMyGuideStackMyGuideApiBC5B3885GETstopEnrichment5A01514B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:154:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/MyGuideStack/MyGuideApi/Default/stopEnrichment/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MyGuideApistopEnrichmentGET42C26240"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addMethod in aws-cdk-lib...",
+        "new MyGuideStack (C:\\Users\\bmidd\\development\\myGuide\\infra\\lib\\myguide-stack.ts:154:8)",
+        "<anonymous> (C:\\Users\\bmidd\\development\\myGuide\\infra\\bin\\myguide.ts:7:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ]
+}
