@@ -10,7 +10,7 @@
  * is available the next time GET /cityStops is called.
  *
  * Environment variables:
- *   OPENTRIPMAP_API_KEY  - OpenTripMap API key (free at opentripmap.org)
+ *   OTM_SECRET_NAME      - Secrets Manager secret name for the OpenTripMap API key
  *   STOPS_TABLE          - DynamoDB table name for cityStops (required)
  *   STOPS_TABLE_KEY      - Partition key field name on the stops table (default: stopID)
  *   STOPS_TABLE_SORT_KEY - Sort key field name on the stops table (default: stopCity)
@@ -18,15 +18,24 @@
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
+const smClient = new SecretsManagerClient({});
 
-const OTM_API_KEY = '5ae2e3f221c38a28845f05b64b23b92a4db41729d0fa97fbdee51b3c';
+let cachedOtmApiKey = null;
+
+async function getOtmApiKey() {
+  if (cachedOtmApiKey) return cachedOtmApiKey;
+  const res = await smClient.send(new GetSecretValueCommand({ SecretId: process.env.OTM_SECRET_NAME }));
+  cachedOtmApiKey = res.SecretString;
+  return cachedOtmApiKey;
+}
 const OTM_BASE = 'https://api.opentripmap.com/0.1/nl/places';
-const STOPS_TABLE = 'cityStops';
-const STOPS_TABLE_KEY = 'stopID';
-const STOPS_TABLE_SORT_KEY = 'stopCity';
+const STOPS_TABLE = process.env.STOPS_TABLE ?? 'cityStops';
+const STOPS_TABLE_KEY = process.env.STOPS_TABLE_KEY ?? 'stopID';
+const STOPS_TABLE_SORT_KEY = process.env.STOPS_TABLE_SORT_KEY ?? 'stopCity';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -150,8 +159,10 @@ async function handleGetEnrichment(event) {
  * Step 3: Fetch full place details including wikipedia extract and image
  */
 async function fetchFromOpenTripMap(lat, lng, stopName) {
+  const apiKey = await getOtmApiKey();
+
   // Step 1: Find POIs within 200m — focus on kinds that have rich data
-  const radiusUrl = `${OTM_BASE}/radius?radius=200&lon=${lng}&lat=${lat}&format=json&limit=10&kinds=interesting_places,historic,architecture,cultural,museums,religion,natural&apikey=${OTM_API_KEY}`;
+  const radiusUrl = `${OTM_BASE}/radius?radius=200&lon=${lng}&lat=${lat}&format=json&limit=10&kinds=interesting_places,historic,architecture,cultural,museums,religion,natural&apikey=${apiKey}`;
 
   console.log('Radius search:', { lat, lng, stopName });
   const radiusRes = await fetch(radiusUrl);
@@ -190,7 +201,7 @@ async function fetchFromOpenTripMap(lat, lng, stopName) {
 
   // Step 3: Fetch full details for the matched POI
   const xid = bestMatch.xid;
-  const detailUrl = `${OTM_BASE}/xid/${xid}?apikey=${OTM_API_KEY}`;
+  const detailUrl = `${OTM_BASE}/xid/${xid}?apikey=${apiKey}`;
 
   console.log('Fetching details for xid:', xid, 'name:', bestMatch.name);
   const detailRes = await fetch(detailUrl);

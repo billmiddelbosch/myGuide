@@ -1,0 +1,23 @@
+{
+  "name": "myguide-lambdas",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run bundle:createCityStop && npm run bundle:feedback && npm run bundle:payments && npm run bundle:stopEnrichment",
+    "bundle:createCityStop": "esbuild createCityStop/index.js --bundle --platform=node --target=node22 --format=cjs --outfile=dist/createCityStop/index.js",
+    "bundle:feedback": "esbuild feedback/index.js --bundle --platform=node --target=node22 --format=cjs --outfile=dist/feedback/index.js --external:@aws-sdk/*",
+    "bundle:payments": "esbuild payments/index.js --bundle --platform=node --target=node22 --format=cjs --outfile=dist/payments/index.js --external:@aws-sdk/*",
+    "bundle:stopEnrichment": "esbuild stopEnrichment/index.js --bundle --platform=node --target=node22 --format=cjs --outfile=dist/stopEnrichment/index.js --external:@aws-sdk/*"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "@mollie/api-client": "^3.0.0",
+    "aws-sdk": "^2.1691.0",
+    "axios": "^1.13.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

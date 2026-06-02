@@ -1,0 +1,1438 @@
+{
+ "Description": "myGuide — API Gateway + Lambda + DynamoDB for the cityCast app",
+ "Resources": {
+  "CreateCityStopFnServiceRole54DF2FD6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/CreateCityStopFn/ServiceRole/Resource"
+   }
+  },
+  "CreateCityStopFnServiceRoleDefaultPolicyCD0DD03D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:eu-west-2:344050431068:secret:myGuide/googlePlacesApiKey-??????"
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:dynamodb:eu-west-2:344050431068:table/cityStops"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CreateCityStopFnServiceRoleDefaultPolicyCD0DD03D",
+    "Roles": [
+     {
+      "Ref": "CreateCityStopFnServiceRole54DF2FD6"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/CreateCityStopFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CreateCityStopFnB82E3EA1": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-344050431068-eu-west-2",
+     "S3Key": "e8d50dae85e48e9eaa4f0581f9f8e73bbedcafbd92eeedaec08dcfc93cfe0a55.zip"
+    },
+    "FunctionName": "myguide-createCityStop",
+    "Handler": "index.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "CreateCityStopFnServiceRole54DF2FD6",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "CreateCityStopFnServiceRoleDefaultPolicyCD0DD03D",
+    "CreateCityStopFnServiceRole54DF2FD6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/CreateCityStopFn/Resource",
+    "aws:asset:path": "asset.e8d50dae85e48e9eaa4f0581f9f8e73bbedcafbd92eeedaec08dcfc93cfe0a55",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "FeedbackFnServiceRole8F29EE28": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/FeedbackFn/ServiceRole/Resource"
+   }
+  },
+  "FeedbackFnServiceRoleDefaultPolicy0977AB85": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:dynamodb:eu-west-2:344050431068:table/myguide-feedback"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "FeedbackFnServiceRoleDefaultPolicy0977AB85",
+    "Roles": [
+     {
+      "Ref": "FeedbackFnServiceRole8F29EE28"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/FeedbackFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "FeedbackFn6C7432D5": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-344050431068-eu-west-2",
+     "S3Key": "a0e1903e7ac6a19cf862b038ed7ec02e0e34a8f71067d55a9236784d5b7e333c.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "DYNAMODB_TABLE": "myguide-feedback"
+     }
+    },
+    "FunctionName": "myguide-feedback",
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "FeedbackFnServiceRole8F29EE28",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "FeedbackFnServiceRoleDefaultPolicy0977AB85",
+    "FeedbackFnServiceRole8F29EE28"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/FeedbackFn/Resource",
+    "aws:asset:path": "asset.a0e1903e7ac6a19cf862b038ed7ec02e0e34a8f71067d55a9236784d5b7e333c",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PaymentsFnServiceRole4D72C08F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/PaymentsFn/ServiceRole/Resource"
+   }
+  },
+  "PaymentsFnServiceRoleDefaultPolicy5AA4E18D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:eu-west-2:344050431068:secret:myGuide/mollieApiKey-??????"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PaymentsFnServiceRoleDefaultPolicy5AA4E18D",
+    "Roles": [
+     {
+      "Ref": "PaymentsFnServiceRole4D72C08F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/PaymentsFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "PaymentsFn08FA78A0": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-344050431068-eu-west-2",
+     "S3Key": "750388812fb0e3fcb5c0972e8007a996f4b0aa0b9277b6646c4cb2fc3e17199f.zip"
+    },
+    "FunctionName": "myguide-payments",
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "PaymentsFnServiceRole4D72C08F",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "PaymentsFnServiceRoleDefaultPolicy5AA4E18D",
+    "PaymentsFnServiceRole4D72C08F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/PaymentsFn/Resource",
+    "aws:asset:path": "asset.750388812fb0e3fcb5c0972e8007a996f4b0aa0b9277b6646c4cb2fc3e17199f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "StopEnrichmentFnServiceRole5745203A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/StopEnrichmentFn/ServiceRole/Resource"
+   }
+  },
+  "StopEnrichmentFnServiceRoleDefaultPolicyA6A37509": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:dynamodb:eu-west-2:344050431068:table/cityStops"
+      },
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:eu-west-2:344050431068:secret:myGuide/openTripMapApiKey-??????"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "StopEnrichmentFnServiceRoleDefaultPolicyA6A37509",
+    "Roles": [
+     {
+      "Ref": "StopEnrichmentFnServiceRole5745203A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/StopEnrichmentFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "StopEnrichmentFn5E108B9D": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-344050431068-eu-west-2",
+     "S3Key": "6c68d69315193b12dbd34b8e49f9373c0848716e3f1ce822349efc422e8dc32d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "STOPS_TABLE": "cityStops",
+      "STOPS_TABLE_KEY": "stopID",
+      "STOPS_TABLE_SORT_KEY": "stopCity",
+      "OTM_SECRET_NAME": "myGuide/openTripMapApiKey"
+     }
+    },
+    "FunctionName": "myguide-stopEnrichment",
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "StopEnrichmentFnServiceRole5745203A",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "StopEnrichmentFnServiceRoleDefaultPolicyA6A37509",
+    "StopEnrichmentFnServiceRole5745203A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/StopEnrichmentFn/Resource",
+    "aws:asset:path": "asset.6c68d69315193b12dbd34b8e49f9373c0848716e3f1ce822349efc422e8dc32d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "MyGuideApi63136E72": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "myGuide cityCast API Gateway",
+    "Name": "myguide-api"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Resource"
+   }
+  },
+  "MyGuideApiCloudWatchRole141E8466": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/CloudWatchRole/Resource"
+   }
+  },
+  "MyGuideApiAccountB35A2358": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "MyGuideApiCloudWatchRole141E8466",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "MyGuideApi63136E72"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Account"
+   }
+  },
+  "MyGuideApiDeployment044E4C1728944d082e0c0f31eaa8ec63c21300d1": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "myGuide cityCast API Gateway",
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "DependsOn": [
+    "MyGuideApicityStopsOPTIONS514EE39D",
+    "MyGuideApicityStopsPOST1CF7D245",
+    "MyGuideApicityStopsDB8D4503",
+    "MyGuideApifeedbackGET25724690",
+    "MyGuideApifeedbackOPTIONS22442584",
+    "MyGuideApifeedbackPOSTDF91AACE",
+    "MyGuideApifeedback93456A65",
+    "MyGuideApiOPTIONSC87A62BC",
+    "MyGuideApipaymentOPTIONS631C6B96",
+    "MyGuideApipaymentPOSTFACE3E42",
+    "MyGuideApipaymentAE0E4329",
+    "MyGuideApistopEnrichmentGET42C26240",
+    "MyGuideApistopEnrichmentOPTIONSEFD1C361",
+    "MyGuideApistopEnrichmentE1B0A4CE"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "MyGuideApiDeploymentStageproduction397961A0": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "MyGuideApiDeployment044E4C1728944d082e0c0f31eaa8ec63c21300d1"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": false,
+      "HttpMethod": "*",
+      "ResourcePath": "/*",
+      "ThrottlingBurstLimit": 100,
+      "ThrottlingRateLimit": 50
+     }
+    ],
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    },
+    "StageName": "production"
+   },
+   "DependsOn": [
+    "MyGuideApiAccountB35A2358"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/DeploymentStage.production/Resource"
+   }
+  },
+  "MyGuideApiOPTIONSC87A62BC": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://citycast.nl'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "ResponseTemplates": {
+        "application/json": "#set($origin = $input.params().header.get(\"Origin\"))\n#if($origin == \"\")\n  #set($origin = $input.params().header.get(\"origin\"))\n#end\n#if($origin == \"https://www.citycast.nl\" || $origin == \"http://localhost:5173\")\n  #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin)\n#end"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "MyGuideApi63136E72",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/OPTIONS/Resource"
+   }
+  },
+  "MyGuideApicityStopsDB8D4503": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "MyGuideApi63136E72",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "cityStops",
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/cityStops/Resource"
+   }
+  },
+  "MyGuideApicityStopsOPTIONS514EE39D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://citycast.nl'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "ResponseTemplates": {
+        "application/json": "#set($origin = $input.params().header.get(\"Origin\"))\n#if($origin == \"\")\n  #set($origin = $input.params().header.get(\"origin\"))\n#end\n#if($origin == \"https://www.citycast.nl\" || $origin == \"http://localhost:5173\")\n  #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin)\n#end"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "MyGuideApicityStopsDB8D4503"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/cityStops/OPTIONS/Resource"
+   }
+  },
+  "MyGuideApicityStopsPOSTApiPermissionMyGuideStackMyGuideApiBC5B3885POSTcityStops7D1FB198": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CreateCityStopFnB82E3EA1",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/",
+       {
+        "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+       },
+       "/POST/cityStops"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/cityStops/POST/ApiPermission.MyGuideStackMyGuideApiBC5B3885.POST..cityStops"
+   }
+  },
+  "MyGuideApicityStopsPOSTApiPermissionTestMyGuideStackMyGuideApiBC5B3885POSTcityStopsC2860269": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CreateCityStopFnB82E3EA1",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/test-invoke-stage/POST/cityStops"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/cityStops/POST/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.POST..cityStops"
+   }
+  },
+  "MyGuideApicityStopsPOST1CF7D245": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CreateCityStopFnB82E3EA1",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "MyGuideApicityStopsDB8D4503"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/cityStops/POST/Resource"
+   }
+  },
+  "MyGuideApifeedback93456A65": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "MyGuideApi63136E72",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "feedback",
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/Resource"
+   }
+  },
+  "MyGuideApifeedbackOPTIONS22442584": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://citycast.nl'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "ResponseTemplates": {
+        "application/json": "#set($origin = $input.params().header.get(\"Origin\"))\n#if($origin == \"\")\n  #set($origin = $input.params().header.get(\"origin\"))\n#end\n#if($origin == \"https://www.citycast.nl\" || $origin == \"http://localhost:5173\")\n  #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin)\n#end"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "MyGuideApifeedback93456A65"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/OPTIONS/Resource"
+   }
+  },
+  "MyGuideApifeedbackGETApiPermissionMyGuideStackMyGuideApiBC5B3885GETfeedback6FDC330C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "FeedbackFn6C7432D5",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/",
+       {
+        "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+       },
+       "/GET/feedback"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/GET/ApiPermission.MyGuideStackMyGuideApiBC5B3885.GET..feedback"
+   }
+  },
+  "MyGuideApifeedbackGETApiPermissionTestMyGuideStackMyGuideApiBC5B3885GETfeedbackB1ABBA4C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "FeedbackFn6C7432D5",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/test-invoke-stage/GET/feedback"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/GET/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.GET..feedback"
+   }
+  },
+  "MyGuideApifeedbackGET25724690": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "FeedbackFn6C7432D5",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "MyGuideApifeedback93456A65"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/GET/Resource"
+   }
+  },
+  "MyGuideApifeedbackPOSTApiPermissionMyGuideStackMyGuideApiBC5B3885POSTfeedbackEF77C66E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "FeedbackFn6C7432D5",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/",
+       {
+        "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+       },
+       "/POST/feedback"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/POST/ApiPermission.MyGuideStackMyGuideApiBC5B3885.POST..feedback"
+   }
+  },
+  "MyGuideApifeedbackPOSTApiPermissionTestMyGuideStackMyGuideApiBC5B3885POSTfeedback6010BEAE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "FeedbackFn6C7432D5",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/test-invoke-stage/POST/feedback"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/POST/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.POST..feedback"
+   }
+  },
+  "MyGuideApifeedbackPOSTDF91AACE": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "FeedbackFn6C7432D5",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "MyGuideApifeedback93456A65"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/feedback/POST/Resource"
+   }
+  },
+  "MyGuideApipaymentAE0E4329": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "MyGuideApi63136E72",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "payment",
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/payment/Resource"
+   }
+  },
+  "MyGuideApipaymentOPTIONS631C6B96": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://citycast.nl'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "ResponseTemplates": {
+        "application/json": "#set($origin = $input.params().header.get(\"Origin\"))\n#if($origin == \"\")\n  #set($origin = $input.params().header.get(\"origin\"))\n#end\n#if($origin == \"https://www.citycast.nl\" || $origin == \"http://localhost:5173\")\n  #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin)\n#end"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "MyGuideApipaymentAE0E4329"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/payment/OPTIONS/Resource"
+   }
+  },
+  "MyGuideApipaymentPOSTApiPermissionMyGuideStackMyGuideApiBC5B3885POSTpayment8AD222D5": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "PaymentsFn08FA78A0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/",
+       {
+        "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+       },
+       "/POST/payment"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/payment/POST/ApiPermission.MyGuideStackMyGuideApiBC5B3885.POST..payment"
+   }
+  },
+  "MyGuideApipaymentPOSTApiPermissionTestMyGuideStackMyGuideApiBC5B3885POSTpayment7F3B3D89": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "PaymentsFn08FA78A0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/test-invoke-stage/POST/payment"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/payment/POST/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.POST..payment"
+   }
+  },
+  "MyGuideApipaymentPOSTFACE3E42": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "PaymentsFn08FA78A0",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "MyGuideApipaymentAE0E4329"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/payment/POST/Resource"
+   }
+  },
+  "MyGuideApistopEnrichmentE1B0A4CE": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "MyGuideApi63136E72",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "stopEnrichment",
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/stopEnrichment/Resource"
+   }
+  },
+  "MyGuideApistopEnrichmentOPTIONSEFD1C361": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://citycast.nl'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "ResponseTemplates": {
+        "application/json": "#set($origin = $input.params().header.get(\"Origin\"))\n#if($origin == \"\")\n  #set($origin = $input.params().header.get(\"origin\"))\n#end\n#if($origin == \"https://www.citycast.nl\" || $origin == \"http://localhost:5173\")\n  #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin)\n#end"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "MyGuideApistopEnrichmentE1B0A4CE"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/stopEnrichment/OPTIONS/Resource"
+   }
+  },
+  "MyGuideApistopEnrichmentGETApiPermissionMyGuideStackMyGuideApiBC5B3885GETstopEnrichmentECD9FEF8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "StopEnrichmentFn5E108B9D",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/",
+       {
+        "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+       },
+       "/GET/stopEnrichment"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/stopEnrichment/GET/ApiPermission.MyGuideStackMyGuideApiBC5B3885.GET..stopEnrichment"
+   }
+  },
+  "MyGuideApistopEnrichmentGETApiPermissionTestMyGuideStackMyGuideApiBC5B3885GETstopEnrichment5A01514B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "StopEnrichmentFn5E108B9D",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-2:344050431068:",
+       {
+        "Ref": "MyGuideApi63136E72"
+       },
+       "/test-invoke-stage/GET/stopEnrichment"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/stopEnrichment/GET/ApiPermission.Test.MyGuideStackMyGuideApiBC5B3885.GET..stopEnrichment"
+   }
+  },
+  "MyGuideApistopEnrichmentGET42C26240": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "StopEnrichmentFn5E108B9D",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "MyGuideApistopEnrichmentE1B0A4CE"
+    },
+    "RestApiId": {
+     "Ref": "MyGuideApi63136E72"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/MyGuideApi/Default/stopEnrichment/GET/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02PQW+DMAyFf0vvwetop53ppt2mVXT3ygSPppAEYWcIIf77lNCpPb3PfpafnUP+8grbDY6c6brNOlPBfBLUrcKRz3M9ObS+ruAbq44OyKQ6tFWNMH8Ep8V4p95+3CMfabCG2Xi3KIMW5tJ3FI2kR98ZPaW5RIvi3RmZSRiKKIp3cAi6JUlp2JsGhUacYC6JpehN2nXHQmsfnKh36js/WXISuw/VSbBJB6xQEvsw6PWZT5KLr6N5o3/3FpJ4We7tdGNcZFwTZ76C9EEW5XxNcOWn33wPz3vYbq5sTDYEJ8YSlKv+AUd6k1JuAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyGuideStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "MyGuideApiEndpoint6FFA17C6": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "MyGuideApi63136E72"
+      },
+      ".execute-api.eu-west-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "myGuide API Gateway base URL — set as VITE_API_BASE_URL in .env.production",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "MyGuideApi63136E72"
+      },
+      ".execute-api.eu-west-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "MyGuideApiDeploymentStageproduction397961A0"
+      },
+      "/"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "myguide-api-url"
+   }
+  },
+  "CityStopsTableName": {
+   "Value": "cityStops"
+  },
+  "FeedbackTableName": {
+   "Value": "myguide-feedback"
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
