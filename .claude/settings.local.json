@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(npm run dev:*)",
-      "Bash(npm install axios)"
+      "Bash(npm install axios)",
+      "Bash(rtk git *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\bmidd\\\\AIntern\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\bmidd\\\\development\\\\myGuide\" -Force)",
+      "Bash(Select-Object Name)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx cdk *)",
+      "Bash(npm run *)"
     ]
   }
 }
